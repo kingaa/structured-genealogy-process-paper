@@ -29,10 +29,17 @@ opts_chunk$set(
   warning=FALSE
   )
 
+knit_hooks$set(
+  document = function (x) {
+    sub('\\usepackage[]{color}','\\usepackage{xcolor}',x,fixed=TRUE)
+  }
+)
+
 options(
   width=60,
   keep.source=TRUE,
-  encoding="UTF-8"
+  encoding="UTF-8",
+  dplyr.summarise.inform=FALSE
 )
 
 registerS3method(

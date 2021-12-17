@@ -288,9 +288,7 @@ The structured genealogy evolves over time, so we can proceed to define the \emp
 \section{Discussion}
 
 
-
-
-\bibliographystyle{preprint}
+\bibliographystyle{../preprint}
 \bibliography{phylopomp}
 
 \end{document}
