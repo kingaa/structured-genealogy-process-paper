@@ -73,6 +73,55 @@ and
 % 
 % where $\omega'\preceq\omega$ implies that $\omega$ is an extension of $\omega'$ and $\indicator{}$ is an indicator function.
 
+\begin{figure}
+  \resizebox{0.6\linewidth}{!}{
+    \begin{tikzpicture}[scale=1.8]
+      \usetikzlibrary{arrows}
+      \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
+      \tikzstyle{det}=[color=black, thick, >=stealth]
+      \tikzstyle{stoch}=[color=black, dashed, thick, >=stealth]
+      \node (O) at (0,0) {$\Master_t$};
+      \node (X) at (180:2) {$\X_t$};
+      \node (H) at (210:2) {$\Hist_t$};
+      \node (I) at (240:2) {$\Inv_t$};
+      \node (G) at (270:2) {$\Gen_t$};
+      \node (P) at (300:2) {$\Prune_t$};
+      \node (V) at (330:2) {$\Vis_t$};
+      \node (W) at (360:2) {$\Wch_i$};
+      \draw [det,->] (O) -- (X);
+      \draw [det,->] (O) -- (H);
+      \draw [det,->] (H) -- (X);
+      \draw [det,->] (O) -- (I);
+      \draw [det,->] (O) -- (G);
+      \draw [det,->] (O) -- (P);
+      \draw [det,->] (O) -- (V);
+      \draw [det,->] (O) -- (W);
+      \draw [det,->] (V) -- (W);
+      \draw [det,->] (G) -- (I) node[midway,below,sloped] {$\mathrm{ext}$};
+      \draw [det,->] (G) -- (P) node[midway,below,sloped] {$\mathrm{prune}$};
+      \draw [det,->] (P) -- (V) node[midway,below,sloped] {$\mathrm{obs}$};
+      \draw [stoch,->] (H) -- (I);
+      \draw [stoch,->] (H) -- (G);
+      \draw [stoch,->] (H) -- (V);
+      \draw [stoch,->] (H) -- (W);
+    \end{tikzpicture}
+  }
+  \caption{
+    \label{fig:constellation}
+    Relations among the various Markov processes discussed in the paper.
+    Deterministic maps are indicated with solid arrows;
+    random maps are shown as dashed arrows.
+    All the maps shown commute.
+    $\X_t$ is the \emph{population process}, a model of the dynamics of some system, which we take as a starting point.
+    $\Hist_t$ is the \emph{history process}, which records the full history of $\X_t$.
+    $\Inv_t$ is the \emph{inventory process}: at each time $t$, $\Inv_t$ is an inventory of all extant individuals in the population, each of which has a globally unique name.
+    $\Gen_t$ is the \emph{genealogy process}, which captures the precise genealogical relationships among all individuals in $\Inv_t$, as well as among any samples that have been taken from the population.
+    $\Vis_t$ is the \emph{visible genealogy process}, which is $\Gen_t$ pruned so that only relationships among samples remain.
+    Finally $\Wch_i$ is the \emph{embedded chain of the visible genealogy process}, which is $\Vis_{s_i}$, $s_i$ being the time of the $i$-th sample.
+    All of these processes can be obtained via deterministic procedures applied to the \emph{master process} $\Master_t$, as described in the text.
+  }
+\end{figure}
+
 \paragraph{Births}
 Within a structured infective population, the parent and the child, at a given birth event, can be in different classes. That is, an individual in class $i$ can give birth to a newborn individual in Class $j$, where $i,j=1,\dots,J$. We then define the birth function $B_{ij}:\Uspace\to\N$ for any $i,j=1,\dots,J$. The set of birth events where an individual in Class $i$ gives birth to $n$ individuals in Class $j$ is $\Bset_{ij}\coloneqq\,B_{ij}^{-1}(\{1\})$. Trivially, the set of birth events in Class $j$ is $\Bset_j\coloneqq\bigcup_{i}\Bset_{ij}$.
 
