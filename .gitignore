@@ -9,3 +9,7 @@ tmp/**
 *.so
 *.tex
 .DS_Store
+*.nav
+*.snm
+*.toc
+*.brf
