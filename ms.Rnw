@@ -42,7 +42,10 @@ set.seed(1159254136)
 \maketitle
 
 \begin{abstract}
-  This is a followup paper on Markov Genealogy Process. We construct a continuous time Markov Process, called Structure Genealogy Process, to include structures in the focal population with a moderate adjustments in the setting of individuals, genealogies, and genealogy processes. We derive the exact expression of likelihood of a structured genealogy and develop simulation-based algorithms to conduct statistical inferences. Numerical simulation and real-world examples are included.
+This is a followup paper on Markov Genealogy Process. 
+We construct a continuous time Markov Process, called Structure Genealogy Process, to include structures in the focal population with a moderate adjustments in the setting of individuals, genealogies, and genealogy processes. 
+We derive the exact expression of likelihood of a structured genealogy and develop simulation-based algorithms to conduct statistical inferences. 
+Numerical simulation and real-world examples are included.
 \end{abstract}
 
 \section{Introduction}
@@ -50,7 +53,10 @@ set.seed(1159254136)
 \section{Mathematical settings}
 \label{sec:settings}
 \paragraph{Markov genealogy process}
-A population process $\sg{X}_t\in\Xspace$ as a non-explosive Markov jump process is defined, where $t\in\Time$ indicates the time and the population is divided into $J\in\N$ demes, with initial-state distribution $p_0(x)$. We then define the jump rate functions $\jumprate_u(t,x)\in\rate$, where $u, x\in\Xspace$ are the jump event and states, respectively. Thus, the population process $\sg{X}_t$ is a stochastic process by defining a sequence of jumps, $\omega=\left(t_k, u_k, n_k\right)_{k=1}^K$, where $K\in\N\cup\{\infty\}$ is the total number of jumps and for the $k$-th jump, $t_k\in\Time$ is the time, $u_k\in\Uspace$ is the event type, and $n_{k}\in\N$ is the label of the individual who conducts $u_k$. The full construction can be referred to \citet{King2021}. We define the following functions on $\omega\in\Omega$:
+A population process $\sg{X}_t\in\Xspace$ as a non-explosive Markov jump process is defined, where $t\in\Time$ indicates the time and the population is divided into $J\in\N$ demes, with initial-state distribution $p_0(x)$. 
+We then define the jump rate functions $\jumprate_u(t,x)\in\rate$, where $u, x\in\Xspace$ are the jump event and states, respectively. 
+Thus, the population process $\sg{X}_t$ is a stochastic process by defining a sequence of jumps, $\omega=\left(t_k, u_k, n_k\right)_{k=1}^K$, where $K\in\N\cup\{\infty\}$ is the total number of jumps and for the $k$-th jump, $t_k\in\Time$ is the time, $u_k\in\Uspace$ is the event type, and $n_{k}\in\N$ is the label of the individual who conducts $u_k$. 
+The full construction can be referred to \citet{King2021}. We define the following functions on $\omega\in\Omega$:
 
 \begin{equation}
   T_k(\omega)\coloneqq t_k,\qquad U_k(\omega)\coloneqq u_k,\qquad N_k(\omega)\coloneqq n_k,\qquad K(\omega)\coloneqq K
@@ -81,22 +87,25 @@ and
       \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
       \tikzstyle{det}=[color=black, thick, >=stealth]
       \tikzstyle{stoch}=[color=black, dashed, thick, >=stealth]
-      \node (O) at (0,0) {$\Master_t$};
+      \node (A) at (0,0) {$\Master_t$};
       \node (X) at (180:2) {$\X_t$};
-      \node (H) at (210:2) {$\Hist_t$};
-      \node (I) at (240:2) {$\Inv_t$};
-      \node (G) at (270:2) {$\Gen_t$};
-      \node (P) at (300:2) {$\Prune_t$};
-      \node (V) at (330:2) {$\Vis_t$};
-      \node (W) at (360:2) {$\Wch_i$};
-      \draw [det,->] (O) -- (X);
-      \draw [det,->] (O) -- (H);
+      \node (H) at (216:2) {$\Hist_t$};
+      \node (I) at (252:2) {$\Inv_t$};
+      \node (G) at (288:2) {$\Gen_t$};
+      \node (P) at (324:2) {$\Prune_t$};
+      \node (V) at (360:2) {$\Vis_t$};
+      \node (W) at (342:1.5) {$\Wch_i$};
+      \node (O) at (306:1.2) {$\Och_i$};
+      \draw [det,->] (A) -- (X);
+      \draw [det,->] (A) -- (H);
       \draw [det,->] (H) -- (X);
-      \draw [det,->] (O) -- (I);
-      \draw [det,->] (O) -- (G);
-      \draw [det,->] (O) -- (P);
-      \draw [det,->] (O) -- (V);
-      \draw [det,->] (O) -- (W);
+      \draw [det,->] (A) -- (I);
+      \draw [det,->] (A) -- (G);
+      \draw [det,->] (A) -- (V);
+      \draw [det,->] (A) -- (P);
+      \draw [det,->] (A) -- (O);
+      \draw [det,->] (P) -- (O);
+      \draw [det,->] (A) -- (W);
       \draw [det,->] (V) -- (W);
       \draw [det,->] (G) -- (I) node[midway,below,sloped] {$\mathrm{ext}$};
       \draw [det,->] (G) -- (P) node[midway,below,sloped] {$\mathrm{prune}$};
@@ -104,6 +113,8 @@ and
       \draw [stoch,->] (H) -- (I);
       \draw [stoch,->] (H) -- (G);
       \draw [stoch,->] (H) -- (V);
+      \draw [stoch,->] (H) -- (P);
+      \draw [stoch,->] (H) -- (O);
       \draw [stoch,->] (H) -- (W);
     \end{tikzpicture}
   }
@@ -124,33 +135,44 @@ and
 \end{figure}
 
 \paragraph{Births}
-Within a structured infective population, the parent and the child, at a given birth event, can be in different demes. That is, an individual in Deme $i$ can give birth to a newborn individual in Deme $j$, where $i,j=1,\dots,J$. We then define the birth function $B_{ij}:\Uspace\to\N$ for any $i,j=1,\dots,J$. The set of birth events where an individual in Deme $i$ gives birth to $n$ individuals in Deme $j$ is $\Bset_{ij}\coloneqq\,B_{ij}^{-1}(\{1\})$. Trivially, the set of birth events in Deme $j$ is $\Bset_j\coloneqq\bigcup_{i}\Bset_{ij}$.
+Within a structured infective population, the parent and the child, at a given birth event, can be in different demes.
+That is, an individual in Deme $i$ can give birth to a newborn individual in Deme $j$, where $i,j=1,\dots,J$. 
+We then define the birth function $B_{ij}:\Uspace\to\N$ for any $i,j=1,\dots,J$. 
+The set of birth events where an individual in Deme $i$ gives birth to $n$ individuals in Deme $j$ is $\Bset_{ij}\coloneqq\,B_{ij}^{-1}(\{1\})$. 
+Trivially, the set of birth events in Deme $j$ is $\Bset_j\coloneqq\bigcup_{i}\Bset_{ij}$.
 
 
 \paragraph{Transitions}
-Infective demes are interchangeable and we define the transition function from Deme $i$ to $j$ for any $i\neq j$ and $i,j=1,\dots,J$ as $M_{ij}:\Uspace\to\N$ to represent the number of infectives transiting to Deme $j$ from Deme $i$. Thus the set or transition is $\Mset_{ij}\coloneqq\,M^{-1}_{ij}(\{1\})$ since we assume single transition at a single transition event. Similarly, we disallow coninciding transition events and other events. 
+Infective demes are interchangeable and we define the transition function from Deme $i$ to $j$ for any $i\neq j$ and $i,j=1,\dots,J$ as $M_{ij}:\Uspace\to\N$ to represent the number of infectives transiting to Deme $j$ from Deme $i$.
+Thus the set or transition is $\Mset_{ij}\coloneqq\,M^{-1}_{ij}(\{1\})$ since we assume single transition at a single transition event. 
+Similarly, we disallow coninciding transition events and other events. 
 
 \paragraph{Samples}
-We assume samples are taken serially and no births or deaths are coincided. We then define the sampling function on the probability space of the population process $\sg{X}_t$: $G:\Uspace\to\N_0$ is the number of samples taken at event $u$, then the set of sampling events is $\Sset\coloneqq\,G^{-1}(\{1\})$. Of course, the non-coincidence assumption can be easily relaxed while it's not the focus in this paper.
+We assume samples are taken serially and no births or deaths are coincided. 
+We then define the sampling function on the probability space of the population process $\sg{X}_t$: $G:\Uspace\to\N_0$ is the number of samples taken at event $u$, then the set of sampling events is $\Sset\coloneqq\,G^{-1}(\{1\})$. 
+Of course, the non-coincidence assumption can be easily relaxed while it's not the focus in this paper.
 
 
 \paragraph{Deaths and population size}
-The population, the set of infected individuals in the context of epidemiology, is structured, categorized into interchangeable demes. We can then define population size function and death functions in Deme $j$, respectively, as $I_{j}, D_{j}:\Xspace\to\N$ for any $j=1,\cdots,J$. 
+The population, the set of infected individuals in the context of epidemiology, is structured, categorized into interchangeable demes. 
+We can then define population size function and death functions in Deme $j$, respectively, as $I_{j}, D_{j}:\Xspace\to\N$ for any $j=1,\cdots,J$. 
 \begin{equation}
   \jumprate_u(t,x) > 0 \Longrightarrow I_j(x+u)-I_j(x)=\sum_{i}\,B_{ij}(u)+\sum_{i}M_{ij}(u)-D_j(u)-\sum_{i}M_{ji}(u),
 \end{equation}
 
-for all $x, u\in\Xspace$. We disallow simultaneous death at a single death event at this stage and define the set of death events in Deme $j$ as $\Dset_j\coloneqq\,D^{-1}(\{1\})$. We also insist, birth and death events don't coincide for any demes, $i,j$, that is,  $\Bset_{j}\cap\Dset_{i}=\emptyset$. Eventually, we can have the function for total population size by letting $I(x)\coloneqq\sum_{j=1}^J\,I_j(x)$ and it's trivial that 
+for all $x, u\in\Xspace$. We disallow simultaneous death at a single death event at this stage and define the set of death events in Deme $j$ as $\Dset_j\coloneqq\,D^{-1}(\{1\})$. 
+We also insist, birth and death events don't coincide for any demes, $i,j$, that is,  $\Bset_{j}\cap\Dset_{i}=\emptyset$. 
+Eventually, we can have the function for total population size by letting $I(x)\coloneqq\sum_{j=1}^J\,I_j(x)$ and it's trivial that 
 
 \begin{equation}
   \jumprate_u(t,x) > 0 \Longrightarrow I(x+u)-I(x)=\sum_{i,j}B_{i,j}(u)-\sum_{j}D_j(u),
 \end{equation}
 
 
-
 \section{Examples}
 
-Some commonly used compartmental models in epidemiology are in fact structured, either explicitly or implicitly. Here, we demonstrate below how these representatives fit within the population processes we described previously.
+Some commonly used compartmental models in epidemiology are in fact structured, either explicitly or implicitly. 
+Here, we demonstrate below how these representatives fit within the population processes we described previously.
 
 \begin{figure}
 \begin{minipage}{.5\textwidth}
@@ -193,12 +215,14 @@ Some commonly used compartmental models in epidemiology are in fact structured, 
 \end{figure}
 
 \paragraph{SEIR model}
-The SEIR model is a simple extension of the most basic SIR model, by adding the latent infected compartment ``E'' into the system, where susceptible individual first become ``exposed'' when being infected, then turn into being infectious and eventually recover or get removed from the system. The infected population, which we are mostly interested in, is divided into two demes:
+The SEIR model is a simple extension of the most basic SIR model, by adding the latent infected compartment ``E'' into the system, where susceptible individual first become ``exposed'' when being infected, then turn into being infectious and eventually recover or get removed from the system. 
+The infected population, which we are mostly interested in, is divided into two demes:
 \begin{inparaenum}
   \item ``E'' represents those that are not able to spread the disease though infected and 
   \item ``I'' are those that are infectious. 
 \end{inparaenum}
-To fit within the aforementioned population process, we take $d=4$ so that the state vector is $\sg{X}=\left(s,e,i,g\right)$, where $s,e,i,g$ are the number of susceptibles, exposeds, infectives, and the cumulative number of genomic samples collected, respectively. We then summarize four types of jumps, with rate functions:
+To fit within the aforementioned population process, we take $d=4$ so that the state vector is $\sg{X}=\left(s,e,i,g\right)$, where $s,e,i,g$ are the number of susceptibles, exposeds, infectives, and the cumulative number of genomic samples collected, respectively. 
+We then summarize four types of jumps, with rate functions:
 
 \begin{equation*}
   \jumprate_u =
@@ -211,11 +235,17 @@ To fit within the aforementioned population process, we take $d=4$ so that the s
   \end{cases}
 \end{equation*}
 
-The above shows the rates of being infected, progression from exposed to infectious, recovery, and sampling, respectively. As in \citet{King2021}, the transmission $b(t)$ is time-dependent, and the sampling rate $\psi$ is any function, as long as the constraints in Section 2 are satisfied. Therefore, $I_1(\sg{X})=e$, $I_2(\sg{X})=i$, $I(\sg{X})=e+i$, $\Bset_{21}=\{\left(-1,1,0,0\right)\}$, $\Mset_{12}=\{\left(0,-1,1,0\right)\}$, $\Dset_2=\{\left(0,0,-1,0\right)\}$, $\Sset=\{\left(0,0,0,1\right)\}$, and $\Bset_{11}=\Bset_{12}=\Bset_{22}=\Mset_{21}=\Dset_1=\emptyset$.
+The above shows the rates of being infected, progression from exposed to infectious, recovery, and sampling, respectively. 
+As in \citet{King2021}, the transmission $b(t)$ is time-dependent, and the sampling rate $\psi$ is any function, as long as the constraints in Section 2 are satisfied. 
+Therefore, $I_1(\sg{X})=e$, $I_2(\sg{X})=i$, $I(\sg{X})=e+i$, $\Bset_{21}=\{\left(-1,1,0,0\right)\}$, $\Mset_{12}=\{\left(0,-1,1,0\right)\}$, $\Dset_2=\{\left(0,0,-1,0\right)\}$, $\Sset=\{\left(0,0,0,1\right)\}$, and $\Bset_{11}=\Bset_{12}=\Bset_{22}=\Mset_{21}=\Dset_1=\emptyset$.
 
 \paragraph{SI$^2$R model}
 
-We can customize the state and event vector to fit a complex system. In SI$^2$R model, we have two different while interchangeable demes of infectious individuals, the \emph{per capita} transmissibility therefore in the first deme is $b_1(t)$ whilst in the second deme is $b_2(t)$. Transition rates between Deme $i$ and $j$ are also defined: Deme $i$ infection turns into Deme $j$ at rate $r_{ij}$ for $i,j=1,2$ and $i\neq j$. Furthermore, we also suppose that, once being infected, a susceptible individual becomes Deme 1 infectious with probability $\rho$ while Deme 2 infectious with probability $1-\rho$. To specify each event and the number of individuals involved, we define a relatively complex state vector by setting $d=10$ and $\sg{X}=\left(s,i_1,i_2,b_{11},b_{12},b_{21},b_{22},m_{12},m_{21},g\right)$, for $s$, $i_1$, and $i_2$ being the population size of the susceptible, the infectives in Deme 1, and those in Deme 2, respectively, and $b_{11}$, $b_{12}$, $b_{21}$, $b_{22}$, $m_{12}$, and $m_{21}$ being the cumulative number of events of parents in Deme 1 giving to children in Deme 1 and 2, parents in Deme 2 giving birth to children in Deme 1 and 2, individuals transiting from Deme 1 to Deme 2, and vice versa, and sampling, respectively. In this case, we can summarize the event rates as:
+We can customize the state and event vector to fit a complex system. 
+In SI$^2$R model, we have two different while interchangeable demes of infectious individuals, the \emph{per capita} transmissibility therefore in the first deme is $b_1(t)$ whilst in the second deme is $b_2(t)$. 
+Transition rates between Deme $i$ and $j$ are also defined: Deme $i$ infection turns into Deme $j$ at rate $r_{ij}$ for $i,j=1,2$ and $i\neq j$. Furthermore, we also suppose that, once being infected, a susceptible individual becomes Deme 1 infectious with probability $\rho$ while Deme 2 infectious with probability $1-\rho$. 
+To specify each event and the number of individuals involved, we define a relatively complex state vector by setting $d=10$ and $\sg{X}=\left(s,i_1,i_2,b_{11},b_{12},b_{21},b_{22},m_{12},m_{21},g\right)$, for $s$, $i_1$, and $i_2$ being the population size of the susceptible, the infectives in Deme 1, and those in Deme 2, respectively, and $b_{11}$, $b_{12}$, $b_{21}$, $b_{22}$, $m_{12}$, and $m_{21}$ being the cumulative number of events of parents in Deme 1 giving to children in Deme 1 and 2, parents in Deme 2 giving birth to children in Deme 1 and 2, individuals transiting from Deme 1 to Deme 2, and vice versa, and sampling, respectively. 
+In this case, we can summarize the event rates as:
 
 \begin{equation*}
   \jumprate_u =
@@ -234,7 +264,8 @@ We can customize the state and event vector to fit a complex system. In SI$^2$R 
   \end{cases}
 \end{equation*}
 
-The nine non-zero rates above represent those of infection into Deme 1 infected by individuals in Deme 1, infection into Deme 2 infected by individuals in Deme 1, infection in Deme 1 infected by individuals in Deme 2, infection into Deme 2 infected by individuals in Deme 1, transition from Deme 1 to Deme 2, transition from Deme 2 to Deme 1, recovery from Deme 1, recovery from Deme 2, and sampling, respectively. We then summarize the population functions and sets as follows:
+The nine non-zero rates above represent those of infection into Deme 1 infected by individuals in Deme 1, infection into Deme 2 infected by individuals in Deme 1, infection in Deme 1 infected by individuals in Deme 2, infection into Deme 2 infected by individuals in Deme 1, transition from Deme 1 to Deme 2, transition from Deme 2 to Deme 1, recovery from Deme 1, recovery from Deme 2, and sampling, respectively. 
+We then summarize the population functions and sets as follows:
 
 \begin{align*}
 \begin{array}{lll}
@@ -248,15 +279,24 @@ The nine non-zero rates above represent those of infection into Deme 1 infected 
 \end{align*}
 
 \paragraph{Migration}
-One special case of the SI$^2$R model is that with one-time migration or introduction. In other words, an infectious individual from another population join our interested population at a certain point of time $\tau$ and then stay and spread the disease. In this case, if this specific individual is defined as Deme 1 while other infectious individuals as Deme 2, the transition rate $r_{12}$ is a Dirac delta function $\delta(t)$, where $\delta(t)=\infty$ for $t=\tau$ and $\delta(t)=0$ for $t\neq\tau$, and $r_{21}=0$ all the time.
+One special case of the SI$^2$R model is that with one-time migration or introduction. 
+In other words, an infectious individual from another population join our interested population at a certain point of time $\tau$ and then stay and spread the disease. 
+In this case, if this specific individual is defined as Deme 1 while other infectious individuals as Deme 2, the transition rate $r_{12}$ is a Dirac delta function $\delta(t)$, where $\delta(t)=\infty$ for $t=\tau$ and $\delta(t)=0$ for $t\neq\tau$, and $r_{21}=0$ all the time.
 
 \paragraph{Superspreading}
-The definition of superspreading is ambiguous in epidemiology. Some researchers view it as a certain individual who has extremely strong transmissibility with high reproduction rate and call this individual \emph{superspreader}; others avoid to invidualize this phenomenon and consider it as an event where a cluster of infections appears in a single event within a small amount of time and define it as a \emph{superspreading event}. The first definition can be represented by the SI$^2$R model with two demes of infectious individuals: one with extremely strong transmissibility and the other with weak transmissibility. That is, $b_1(t)\ggg b_2(t)$ if Deme 1 is the set of highly infective individuals and Deme 2 is the set of ordinary infective. In terms of the second definition, the involvement of polytomies and multifurcating trees adds an extra layer of complexity in the population model, along with the issues of measurement error and model robustness, such that we would like to postpone the development of a new framework to a future study.
+The definition of superspreading is ambiguous in epidemiology. 
+Some researchers view it as a certain individual who has extremely strong transmissibility with high reproduction rate and call this individual \emph{superspreader}; 
+others avoid to invidualize this phenomenon and consider it as an event where a cluster of infections appears in a single event within a small amount of time and define it as a \emph{superspreading event}. 
+The first definition can be represented by the SI$^2$R model with two demes of infectious individuals: one with extremely strong transmissibility and the other with weak transmissibility. 
+That is, $b_1(t)\ggg b_2(t)$ if Deme 1 is the set of highly infective individuals and Deme 2 is the set of ordinary infective. 
+In terms of the second definition, the involvement of polytomies and multifurcating trees adds an extra layer of complexity in the population model, along with the issues of measurement error and model robustness, such that we would like to postpone the development of a new framework to a future study.
 
 \section{Structure genealogy processes}
 
-\paragraph{Inventory process, deme process}
-First, we define a global set $\Names\coloneqq\N$, which is a collection of infinite unique names. For any Deme $j$ of infective population, we define an inventory $\Inv_t^j(\omega)=\mathrm{inven}\left(\omega\vert_t,j\right)$, a list to document all the extant infected individuals in Deme $j$ at time $t$, by their names, where $\omega\vert_t$ is the sequence of jumps up to time $t$. On top of the global set $\Names$ and the $\mathrm{inven}$ procedure, we can then define six operators: 
+\paragraph{Inventory process}
+First, we define a global set $\Names\coloneqq\N$, which is a collection of infinite unique names. 
+For any Deme $j$ of infective population, we define an inventory $\Inv_t^j(\omega)=\mathrm{inven}\left(\omega\vert_t,j\right)$, a list to document all the extant infected individuals in Deme $j$ at time $t$, by their names, where $\omega\vert_t$ is the sequence of jumps up to time $t$. 
+On top of the global set $\Names$ and the $\mathrm{inven}$ procedure, we can then define six operators: 
 \begin{enumerate}[(1)]
   \item $\mathrm{next}(\Names)$ returns the minimum integer in $\Names$, call it $n$, and update the global set $\Names=\Names\setminus\{n\}$;
   \item $\mathrm{initialize}(I)\coloneqq\bigcup_{i=1}^I\{\mathrm{next}(\Names)\}$;
@@ -280,24 +320,49 @@ Now the deterministic and recursive procedure $\mathrm{inven}$ is described as f
   \end{cases}
 \end{equation}
 
-Eventually, we can define $\mathrm{inven}(\omega)\coloneqq\{\mathrm{inven}(\omega,j)\}_{j=1}^J$ as a list of inventories, such that $\Inv_t(\omega)\coloneqq\{\Inv_t^j(\omega)\}_{j=1}^J$. We can further define the deme process $\demefuc_t^j(\omega)\coloneqq\frac{\Inv_t^j(\omega)}{\Inv_t(\omega)}$ and $\demefuc_t(\omega)\coloneqq\{\demefuc_t^j(\omega)\}_{j=1}^J$.
+Eventually, we can define $\mathrm{inven}(\omega)\coloneqq\{\mathrm{inven}(\omega,j)\}_{j=1}^J$ as a list of inventories, such that $\Inv_t(\omega)\coloneqq\{\Inv_t^j(\omega)\}_{j=1}^J$.
 
 \paragraph{Structured genealogies}
 Types of nodes are defined in a structured genealogy: \emph{Leaves} are the extant members at current time and \emph{Internal Nodes} represent ancestors to a certain subset of extant members, which we further define \emph{Sampling Nodes} and \emph{Transition Nodes}, whose differences will be clear in a moment.
 
-For the sake of distinction and visualization, we define a set of \emph{colored ball}s, $(f,n)\in\Colors\times\N$, where $n$ is the label and $f$ is the color of the ball, and $\Colors\coloneqq\{\green,\black,\blue,\red,\purple\}$. Therefore, we can define a genealogy \emph{node} as a quadruple $(n,t,w,z)$, where $n\in\N$ is the node's \emph{name}, $t\in\Time$ is its time, $w$ is the node's \emph{pocket} (\ie unordered pair of colored balls), and $z\in\N$ is the node's \emph{deme}. For a node $\Node{p}$, we will use $n(\Node{p})$, $t(\Node{p})$, $w(\Node{p})$, and $z(\Node{p})$ to denote the name, time, pocket, and deme of $\Node{p}$, respectively. We then assign black, green, blue, and purple balls to serve as pointers to the extant population at time $t$, to the internal nodes, to the samples, and to the transitions between demes, respectively.
+For the sake of distinction and visualization, we define a set of \emph{colored ball}s, $(f,n)\in\Colors\times\N$, where $n$ is the label and $f$ is the color of the ball, and $\Colors\coloneqq\{\green,\black,\blue,\red,\purple\}$.
+Therefore, we can define a genealogy \emph{node} as a quadruple $(n,t,w,z)$, where $n\in\N$ is the node's \emph{name}, $t\in\Time$ is its time, $w$ is the node's \emph{pocket} (\ie unordered pair of colored balls), and $z\in\N$ is the node's \emph{deme}. 
+For a node $\Node{p}$, we will use $n(\Node{p})$, $t(\Node{p})$, $w(\Node{p})$, and $z(\Node{p})$ to denote the name, time, pocket, and deme of $\Node{p}$, respectively. 
+We then assign black, green, blue, and purple balls to serve as pointers to the extant population at time $t$, to the internal nodes, to the samples, and to the transitions between demes, respectively.
 
-Eventually, the current time $t$ and the sequence of nodes, $\Gen=\left(t,\left(\Node{p}_k\right)_{k=0}^{K-1}\right)$, explicitly define a structured genealogy $\Gen$, where $t\in\Time$, $K\in\N$, and node $\Node{p}_k$ are subjected to conditions described in \citet{King2021}. We then use $t(\Gen)$, $K(\Gen)$, and $\Node{p}_k(\Gen)$ to represent the time, the length (\ie the number of nodes), and the $k$-th node of the genealogy $\Gen$, respectively.
+Eventually, the current time $t$ and the sequence of nodes, $\Gen=\left(t,\left(\Node{p}_k\right)_{k=0}^{K-1}\right)$, explicitly define a structured genealogy $\Gen$, where $t\in\Time$, $K\in\N$, and node $\Node{p}_k$ are subjected to conditions described in \citet{King2021}. 
+We then use $t(\Gen)$, $K(\Gen)$, and $\Node{p}_k(\Gen)$ to represent the time, the length (\ie the number of nodes), and the $k$-th node of the genealogy $\Gen$, respectively. 
+We define $\seq{\Gen}$ as the node sequence of genealogy $\Gen$, where $\Node{p}\in\Gen$ when $\Node{p}$ is one node in $\seq{\Gen}$.
+
 
 \paragraph{Effect of births, death, sampling and transistions}
+Births, deaths, samples, and transitions change the topology of a structured genealogy. 
+A death at time $t$ indicates the removal of a leaf in the genealogy and the dismiss of a node. The detailed definition can be found in \citet{King2021}.
 
-Births, deaths, samples, and transitions change the topology of a structured genealogy. A death at time $t$ indicates the removal of a leaf in the genealogy and the dismiss of a node. The detailed definition can be found in \citet{King2021} and here we continue to use the $\mathrm{drop}(\Gen)$ to denote the resulting sequence of nodes.
+A birth at time $t$ in a structured genealogy is similar to that in a unstructured one \citep{King2021}: a black ball is selected as the parent and a new node introduced as the child, who is in the same deme as the parent. Let $\Ball{b}$ be randomly selected black ball, named \emph{n}, which is the parent, and there exists a node $\Node{p}\in\Gen$ holding $\Ball{b}\in w(\Node{p})=\{\Ball{b},\Ball{b}'\}$ where $\Ball{b}'$ is the other ball held by $\Node{p}$. 
+Here, we assume the parent is from Deme $i$ (\ie $n\in\Inv_i$) and the child is born into Deme $j$. 
+We then can produce a new node $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},i)$, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, $\Ball{b}''=(\black,c)$, and update $\Inv_j=\Inv_j\cup\{c\}$. 
+By swapping balls between $\Node{p}$ and $\Node{p}'$, it ends up that $w(\Node{p})=\{\Ball{g},\Ball{b}'\}$ and $w(\Node{p}')=\{\Ball{b},\Ball{b}''\}$. 
+We denote the resulting sequence of nodes as $\mathrm{add}(\seq{\Gen},n)$.
 
-A birth at time $t$ in a structured genealogy is similar to that in a unstructured one \citep{King2021}, while the new member introduced to the queue of sequence is in the same deme as the parent. Let $\Ball{b}$ be the $n$-th black ball, the parent, and there exists a node $\Node{p}\in\Gen$ with $\Ball{b}\in w(\Node{p})=\{\Ball{b},\Ball{b}'\}$ where $\Ball{b}'$ is the other ball held by $\Node{p}$. We then can produce a new node $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},z(\Node{p}))$, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, and $\Ball{b}''=(\black,c)$. By swapping balls between $\Node{p}$ and $\Node{p}'$, it ends up that $w(\Node{p})=\{\Ball{g},\Ball{b}'\}$ and $w(\Node{p}')=\{\Ball{b},\Ball{b}''\}$. We denote the resulting sequence of nodes as $\mathrm{add}(\seq{\Gen},n)$.
+A death at time $t$ is defined in the same way as that in \citet{King2021} and we continue to use the notation $\mathrm{drop}(\seq{\Gen},n)$ to denote the resulting sequence of nodes for a death, where an individual with name \emph{n} is selected randomly to be removed from the population.
 
-A sample at time $t$ results in the participation of a new node with a new blue ball. The procedure is similar to the previous sampling in \citet{King2021} and the birth mentioned above: the $n$-th black ball held by $\Node{p}$ (\ie $w(\Node{p})=\{\Ball{b},\Ball{b}'\}$) is selected, then a new node $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},z(\Node{p}))$ is generated, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, and $\Ball{b}''=(\blue,q)$, at the end $\Node{p}$ exchanges $\Ball{b}$ for $\Ball{g}$ with $\Node{p}'$. Here, $q$ is the name of the new blue ball, which is the ordinal number of the transition, $q=|\{\Ball{b}\in w(\Gen)\;|\;\Ball{b}\ \text{is blue}\}|$. Note that, same as that in a birth, $z(\Node{p}')=z(\Node{p})$. We also use the same notation $\mathrm{sample}(\Gen,n)$ as the resulting sequence of nodes.
+A sample at time $t$ results in the participation of a new node with a new blue ball. 
+The procedure is similar to the previous sampling in \citet{King2021} and the birth mentioned above: a black ball, named \emph{n}, where $n\in\Inv_j$, and held by $\Node{p}$ (\ie $w(\Node{p})=\{\Ball{b},\Ball{b}'\}$), is selected at random. 
+Then a new node $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},j)$ is generated, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, and $\Ball{b}''=(\blue,q)$. 
+At the end, $\Node{p}$ exchanges $\Ball{b}$ for $\Ball{g}$ with $\Node{p}'$. 
+Here, $q$ is the name of the new blue ball, which is the ordinal number of the transition, $q=|\{\Ball{b}\in w(\Gen)\;|\;\Ball{b}\ \text{is blue}\}|$. 
+We use the notation $\mathrm{sample}(\seq{\Gen},n)$ as the resulting sequence of nodes.
 
-A transition at time $t$ leads to the inclusion of a new node with a new purple ball. Let $\Ball{b}$ denotes the $n$-th black ball selected to indicate an extant in the population transits from his/her/their current deme to a new one. Assuming that the unique node $\Node{p}\in\Gen$ baring this selected black ball (\ie $\Ball{b}\in w(\Node{p})=\{\Ball{b},\Ball{b}'\}$) is in Deme $i$ (\ie $z(\Node{p})=i$) and it's transiting to Deme $j$ where $j\neq i$. Now we initialize a new node by taking $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},j)$, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, and $\Ball{b}''=(\purple,q)$. Similar to other events, we swap $\Ball{b}$ for $\Ball{g}$ between nodes $\Node{p}$ and $\Node{p}'$ and insert $\Node{p}'$ at the last position of the node-sequence. Here, $q$ is the name of the new purple ball, which is the ordinal number of the transition, $q=|\{\Ball{b}\in w(\Gen)\;|\;\Ball{b}\ \text{is purple}\}|$. We call this new node $\Node{p}'$ the \emph{Transition Nodes} in the genealogy and denote the resulting sequence of nodes by $\mathrm{transition}(\seq{\Gen},n,i,j)$.
+A transition at time $t$ leads to the inclusion of a new node with a new purple ball. 
+Let $\Ball{b}$ denote the
+black ball with name \emph{n} and selected to indicate an extant in the population transits from his/her current
+deme to a new one. 
+Assuming this selected individual is from Deme $i$ (\ie $i\in\Inv_i$) and transiting to Deme $j$ ($j\neq i$), we then initialize a new node by taking $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},i)$, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, and $\Ball{b}''=(\purple,q)$. 
+Note that, we update $\Inv_i=\Inv_i\setminus\{n\}$ and $\Inv_j=\Inv_j\cup\{n\}$. 
+Similar to other events, we therefore swap $\Ball{b}$ for $\Ball{g}$ between nodes $\Node{p}$ and $\Node{p}'$ and insert $\Node{p}'$ at the last position of the node-sequence. 
+Here, \emph{q} is the name of the new purple ball, which is the ordinal number of the transition,  $q=|\{\Ball{b}\in w(\Gen)\;|\;\Ball{b}\ \text{is purple}\}|$. 
+We call this new node $\Node{p}'$ the \emph{Transition Nodes} in the genealogy and denote the resulting sequence of nodes by $\mathrm{transition}(\seq{\Gen},n)$.
 
 \paragraph{Event times}
 
@@ -324,7 +389,9 @@ $\Zset^j(\Gen)$ holds the transition times derived from nodes in Deme $j$,
 and $\Qset^j(\Gen)$ is the set of \emph{direct-descent times} derived from samples in Deme $j$. Trivially, $\Masterset(\Gen) = \cup_j \Masterset^j(\Gen)$, $\Cset(\Gen) = \cup_j \Cset^j(\Gen)$, $\Lset(\Gen) = \cup_j\Lset^j(\Gen)$, $\Tset(\Gen)=\cup_j\Tset^j(\Gen)$, $\Zset(\Gen)=\cup_j\Zset^j(\Gen)$, and $\Qset(\Gen)=\cup_j\Qset^j(\Gen)$, representing all internal node times, branch times, leaf times, sample times, transistion times, and direct-descent times for $\Gen$, respectively.
 
 \paragraph{Structured genealogy process}
-The structured genealogy evolves over time, so we can proceed to define the \emph{structured genealogy process} $\Gen_t$ now. We define $\Gen_t(\omega) = \left(t,\mathrm{geneal}(\restrict{\omega}{t})\right)$, for the end time $t\in\Time$ and the sequence of jumps $\omega\in\Omega$. The operation $\mathrm{geneal}$ is defined recursively as follows for $\omega\in\mathring\Omega$: 
+The structured genealogy evolves over time, so we can proceed to define the \emph{structured genealogy process} $\Gen_t$ now. 
+We define $\Gen_t(\omega) = \left(t,\mathrm{geneal}(\restrict{\omega}{t})\right)$, for the end time $t\in\Time$ and the sequence of jumps $\omega\in\Omega$. 
+We first initialize the global set of names by letting $\Names=\N\setminus\{1,2,\dots,I(\X_0(\omega))\}$, then the operation $\mathrm{geneal}$ is defined recursively as follows for $\omega\in\mathring\Omega$: 
 
 \fontsize{10pt}{12pt}\selectfont
 \begin{equation}\label{eq:Gdef}
@@ -334,25 +401,95 @@ The structured genealogy evolves over time, so we can proceed to define the \emp
     \mathrm{add}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega)), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Bset;\\
     \mathrm{drop}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega)), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Dset;\\
     \mathrm{sample}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega)), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Sset;\\
-    \mathrm{transition}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega),i,j), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Mset_{ij};\\
-    \mathrm{geneal}(\predec{\omega}), &\text{otherwise}.
+    \mathrm{transition}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega)), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Mset;\\
+    \mathrm{geneal}(\predec{\omega}), &\text{otherwise};
   \end{cases}
 \end{equation}
 \normalsize
 
+where $\Bset\coloneqq\bigcup_{i,j}\Bset_{ij}$, $\Dset\coloneqq\bigcup_j\Dset_j$, and $\Mset\coloneqq\bigcup_{i,j}\Mset_{ij}$. 
 A deterministic map, $\mathrm{ext}$, can be defined, such that $\Inv_t(\omega)=\mathrm{ext}(\Gen_t(\omega))$ for all $\omega\in\Omega$. 
 
 \paragraph{Branch color}
 
 
 
-\paragraph{Pruned genealogy process, visible genealogy process}
-We divide the procedure of deriving a sampled genealogy from a full genealogy into two steps: \emph{pruning} and \emph{obscuring}. The former one indicates dropping all unsampled individuals (\ie black balls) in a genealogy and remaining the relationship between samples and transition records of samples, and the latter one represents further erasing all deme-transition records of samples and obtaining an ``obscured'' sampled genealogy.
+\paragraph{Pruned genealogy process}
+The sampled genealogy contains only relations among genomic samples. 
+In other words, information in a full genealogy about unsampled individuals and deme transitions are unobserved in a sampled genealogy, which we call it a visible genealogy. 
+We divide the procedure of deriving a visible genealogy from a full genealogy into two separate steps: \emph{pruning} and \emph{obscuring}. 
+The former drops all unsampled individuals (\ie black balls) in a genealogy and remains the relationship between samples and deme-transition records of samples, and the latter further erases all deme-transition records of samples and obtains an obscured genealogy.
+
+Given a genealogy $\Gen$, we define $\Inv=\mathrm{ext}(\Gen)$.
+%% Then. by definition, for each $c\in\Inv$, $(\black,c)\in w(\Gen)$.
+Let $\mathrm{prune}(\Gen)$ be the pruned genealogy derived by applying iterative $\mathrm{drop}$ operation to $\Gen$ for each name $c\in\Inv$.
+Specifically, suppose $\Inv^j=\{n_0^j,\dots,n_{m_j-1}^j\}$ is the inventory for Deme $j$ and $\Inv=\{\Inv^j\}_{j=1}^{J}$, where $J$ is the total number of demes. 
+Then we can define the set of all names in $\Inv$ as $\mathcal{N}\coloneqq\bigcup_{j=1}^J \Inv^j=\{c_0,\dots,c_{m-1}\}$, where $m=\sum_j m_j$.
+Let $\Node{P}_0=\seq\Gen$ and $\Node{P}_{k}=\mathrm{drop}(\Node{P}_{k-1},c_{k-1})$, for $k=1,\dots,m$.
+Then $\mathrm{prune}(\Gen)\coloneqq(t(\Gen),\Node{P}_{m})$.
+\Cref{fig:prune} illustrates the pruning procedure.
+
+For $\omega\in\Omega$, we define the \emph{pruned genealogy process},
+\begin{equation}
+  \Prune_t(\omega)\coloneqq\textrm{prune}(\Gen_t(\omega)).
+\end{equation}
+Note that $\Prune_t$ so defined is a itself a genealogy.
+\Cref{fig:prune}B depicts one example of $\Prune_t$ both graphically (as a tree) and diagrammatically (as a node-sequence).
+
+\paragraph{Obscured genealogy process}
+We first define an operation $\mathrm{reverse}$ on the sequence of nodes of a genealogy as follows: 
+\begin{inparaenum}[(1)]
+  \item a random purple ball $\Ball{b}$ with name $q$ is selected such that there exists a node $\Node{p}$, where $\Ball{b}\in w(\Node{p})=\{\Ball{b}, \Ball{b}'\}$ and $\Ball{b}'$ is the other ball held by $\Node{p}$;
+  \item there also exists a node $\Node{p}'$ such that $\Ball{g}=\left(\green,n(\Node{p})\right)\in w(\Node{p}')=\{\Ball{g},\Ball{b}''\}$ where $\Ball{b}''$ is the other ball held by $\Node{p}'$;
+  \item swapping balls between $\Node{p}$ and $\Node{p}'$ results in $w(\Node{p}')=\{\Ball{b}',\Ball{b}''\}$ and $w(\Node{p})=\{\Ball{g},\Ball{b}\}$;
+  \item we delete $\Node{p}$ from the node sequence.
+\end{inparaenum}
+The resulting sequence of nodes is denoted as $\mathrm{reverse}(\seq{\Gen},q)$.
+
+Suppose for a genealogy $\Gen$, the set of the serial number of the purple balls is $\{0,1,\dots,q\}$ and the list of inventories is $\Inv=\{\Inv^j\}_{j=1}^J$. $\mathrm{obs}(\Gen)$ applies the following steps on $\Gen$: 
+\begin{inparaenum}[(a)]
+  \item let $\Node{P}_0=\seq{\Gen}$ and $\Node{P}_{k}=\mathrm{reverse}(\Node{P}_{k-1},k)$, for $k=1,\dots,q$; and
+  \item for $\Node{P}_q$, we update $\Inv=\bigcup_{j}\Inv^j$ and for each node $\Node{p}\in\seq{\Gen}$, $z(\Node{p})=0$.
+\end{inparaenum}
+
+For $\omega\in\Omega$, we define the \emph{obscured genealogy process},
+\begin{equation}
+  \Obscure_t(\omega)\coloneqq\textrm{obs}(\Gen_t(\omega)).
+\end{equation}
+Note that $\Obscure_t$ so defined is a itself a genealogy.
+\Cref{fig:obs}B depicts one example of $\Obscure_t$ both graphically (as a tree) and diagrammatically (as a node-sequence).
+
+
+\paragraph{Visible genealogy process}
+
+
 
 \paragraph{Node color}
+There are at most three kinds of nodes in a visible genealogy, distinguished by the contents of their pockets:
+\begin{inparaenum}[(a)]
+\item \emph{green nodes}, which have two green balls in their pockets;
+\item \emph{blue nodes}, which have one blue and one green ball;
+\item \emph{red nodes}, which have one red and one blue ball.
+\end{inparaenum}
+This distinction allows a compact graphical representation of the visible genealogy (\cref{fig:prune}C) and proves useful in deriving our main results as well.
+Green nodes correspond to \emph{coalescence points} (branch points) in the visible genealogy;
+red nodes, to leaves;
+blue nodes correspond to direct-descent events, i.e., samples which are directly ancestral to other samples.
+Thus, if $\Vis$ is a visible genealogy,
+$\Eset(\Vis)=\Cset(\Vis)\cup\Qset(\Vis)\cup\Lset(\Vis)$, where
+$\Cset(\Vis)$ is the set of times of the green nodes,
+$\Qset(\Vis)$ contains the times of the blue nodes, and
+$\Lset(\Vis)$ holds the times of the red nodes.
+Moreover, $\Tset(\Vis)=\Qset(\Vis)\cup\Lset(\Vis)$ is the set of sample times and $\Masterset(\Vis)=\Qset(\Vis)\cup\Cset(\Vis)$ comprises the \emph{attachment times},
+i.e., those points at which a sampled lineage attaches to the visible genealogy subtended by earlier samples.
+
+\paragraph{Deme proportion and lineage count}
+
+We can further define the deme proportion function $\demefuc(t,\omega)\coloneqq\{\demefuc^j(t,\omega)\}_{j=1}^J$, where $\demefuc^j(t,\omega)\coloneqq\frac{\vert\Inv_t^j(\omega)\vert}{\vert\Inv_t(\omega)\vert}$.
 
 
-\paragraph{Lineage count}
+\QYL{Lineage count function may not be a \cadlag}
+
 
 Given a genealogy, $\Vis$, at each time $t\in\Time$, there are a finite number, $\ell^j(t,\Vis)$, of lineages present for Deme $j$ in the genealogy at that time. Evidently, one has
 \begin{equation}\label{eq:elldef}
