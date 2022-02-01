@@ -82,7 +82,7 @@ and
 
 \begin{figure}
   \resizebox{0.6\linewidth}{!}{
-    \begin{tikzpicture}[scale=1.8]
+    \begin{tikzpicture}[scale=2.5]
       \usetikzlibrary{arrows}
       \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
       \tikzstyle{det}=[color=black, thick, >=stealth]
