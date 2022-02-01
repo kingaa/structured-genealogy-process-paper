@@ -524,7 +524,7 @@ We define $\phi_{qk}\coloneqq\sum_{\omega\in\Omega_q}\auxmeas_{u_k,x_k-u_k}(N_k(
 
 Note that $\ell_{1k}=0$ for all $k$.
 
-All cases can be categorized into four groups based on the occurrence of population event within time $\halfopen{a_q,s_q}$: no population event or simultaneous events, a birth from Deme $j$ to $j'$, a sample of Deme $j'$, and a migration from Deme $j$ to $j'$ where $j\neq j'$. Within each group, we investigate $\phi_{qk}^{j''}$ by considering whether the corresponding population event was presented in the pruned genealogy and involving the $q$-th lineage sample, which was in Deme $j''$. For $q>1$, we then have:
+All cases can be categorized into four groups based on the occurrence of population event within time $\halfopen{a_q,s_q}$: no population event or simultaneous events, a birth from Deme $j$ to $j'$, a sample of Deme $j'$, and a migration from Deme $j$ to $j'$ where $j\neq j'$. Within each group, we investigate $\phi_{qk}^{j''}$ by considering whether the corresponding population event was presented in the pruned genealogy and involving the $q$-th lineage sample, which was in Deme $j''$ at time $t_k$. For $q>1$, we then have:
 
 \begin{enumerate}[(a)]
   \item If $t_k\notin\halfopen{a_q,s_q}$, or if $u_k\notin\Bset\cup\Sset\cup\Mset$, so we have $\phi_{qk}^{j''}=1$.
@@ -567,9 +567,11 @@ To summarize, we have
     1-\frac{\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q)\setminus\Qset(\Och_{q-1})\ \text{and}\ u_k\in\Sset^{j'},\\[12pt]
     \frac{\delta_{j',j''}}{(I_k^j-\ell_{qk}^j)(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Bset^{j,j'},\\[12pt]
     
-    % B2C: either j''=j' or j''=j, the numerator = 1 when j'!=j and =2 when j'=j.
-    \frac{1+\delta_{j,j'}}{I_k^{j}(I_k^{j'}-\delta_{j,j'})-\ell_{qk}^j(\ell_{qk}^{j'}-\delta_{j,j'})}, &\text{if}\ t_k=a_q\in\Cset^{j,j'}(\Och_q),\\[12pt]
-    1-\frac{(1+\delta_{j,j'})\ell_{qk}^{j}}{I_k^{j}(I_k^{j'}-\delta_{j,j'})-\ell_{qk}^j(\ell_{qk}^{j'}-\delta_{j,j'})}-\frac{1}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Bset^{j,j'},\\[12pt]
+    % B2C: either j''=j (in Z_{q-1} or j''=j' (not in Z_{q-1})
+    % the numerator = 1 when j'!=j and =2 when j'=j.
+    \frac{(1+\delta_{j,j'})}{I_k^{j}(I_k^{j'}-\delta_{j,j'})-\ell_{qk}^j(\ell_{qk}^{j'}-\delta_{j,j'})}, &\text{if}\ t_k=a_q\in\Cset^{j,j'}(\Och_q),\\[12pt]
+    1-\frac{(1+\delta_{j,j'})\ \ell_{qk}^{j}\ \delta_{j',j''}}{I_k^{j}(I_k^{j'}-\delta_{j,j'})-\ell_{qk}^j(\ell_{qk}^{j'}-\delta_{j,j'})}-\frac{\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_{q-1})\cup\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Bset^{j,j'},\\[12pt]
+    1-\frac{\delta_{j,j''}}{I_k^{j}I_k^{j'}-\ell_{qk}^j\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_{q-1})\setminus\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Bset^{j,j'},\\[12pt]
     0, &\text{otherwise}.
   \end{cases}
 \end{equation}
