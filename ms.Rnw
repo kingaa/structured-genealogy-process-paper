@@ -82,7 +82,7 @@ and
 
 \begin{figure}
   \resizebox{0.6\linewidth}{!}{
-    \begin{tikzpicture}[scale=2.5]
+    \begin{tikzpicture}[scale=1.8]
       \usetikzlibrary{arrows}
       \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
       \tikzstyle{det}=[color=black, thick, >=stealth]
@@ -125,20 +125,20 @@ and
 
 \paragraph{Births}
 Within a structured infective population, the parent and the child, at a given birth event, can be in different demes.
-That is, an individual in Deme $i$ can give birth to a newborn individual in Deme $j$, where $i,j=1,\dots,J$. 
-We then define the birth function $B_{ij}:\Uspace\to\N$ for any $i,j=1,\dots,J$. 
-The set of birth events where an individual in Deme $i$ gives birth to $n$ individuals in Deme $j$ is $\Bset_{ij}\coloneqq\,B_{ij}^{-1}(\{1\})$. 
-Trivially, the set of birth events in Deme $j$ is $\Bset_j\coloneqq\bigcup_{i}\Bset_{ij}$.
+That is, an individual in Deme $j$ can give birth to a newborn individual in Deme $j'$, where $j,j'=1,\dots,J$. 
+We then define the birth function $B_{j,j'}:\Uspace\to\N$ for any $j,j'=1,\dots,J$. 
+The set of birth events where an individual in Deme $j$ gives birth to $n$ individuals in Deme $j'$ is $\Bset^{j,j'}\coloneqq\,B_{j,j'}^{-1}(\{1\})$. 
+Trivially, the set of birth events in Deme $j'$ is $\Bset^{j'}\coloneqq\bigcup_{j}\Bset^{j,j}$.
 
 
 \paragraph{Migrations}
-Infective demes are interchangeable and we define the migration function from Deme $i$ to $j$ for any $i\neq j$ and $i,j=1,\dots,J$ as $M_{ij}:\Uspace\to\N$ to represent the number of infectives migrating to Deme $j$ from Deme $i$.
-Thus the set of migration is $\Mset_{ij}\coloneqq\,M^{-1}_{ij}(\{1\})$ since we assume single migration at a single migration event. 
+Infective demes are interchangeable and we define the migration function from Deme $j$ to $j'$ for any $j\neq j'$ and $j,j'=1,\dots,J$ as $M_{j,j'}:\Uspace\to\N$ to represent the number of infectives migrating to Deme $j'$ from Deme $j$.
+Thus the set of migration is $\Mset^{j,j'}\coloneqq\,M^{-1}_{j,j'}(\{1\})$ since we assume single migration at a single migration event. 
 Similarly, we disallow coninciding migration events and other events. 
 
 \paragraph{Samples}
 We assume samples are taken serially and no births or deaths are coincided. 
-We then define the sampling function on the probability space of the population process $\sg{X}_t$: $G:\Uspace\to\N_0$ is the number of samples taken at event $u$, then the set of sampling events is $\Sset\coloneqq\,G^{-1}(\{1\})$. 
+We then define the sampling function on the probability space of the population process $\sg{X}_t$: $G_j:\Uspace\to\N_0$ is the number of samples from Deme $j$ taken at event $u$, then the set of sampling events is $\Sset^j\coloneqq\,G_j^{-1}(\{1\})$. 
 Of course, the non-coincidence assumption can be easily relaxed while it's not the focus in this paper.
 
 
@@ -146,15 +146,15 @@ Of course, the non-coincidence assumption can be easily relaxed while it's not t
 The population, the set of infected individuals in the context of epidemiology, is structured, categorized into interchangeable demes. 
 We can then define population size function and death functions in Deme $j$, respectively, as $I^{j}, D_{j}:\Xspace\to\N$ for any $j=1,\cdots,J$. 
 \begin{equation}
-  \jumprate_u(t,x) > 0 \Longrightarrow I^j(x+u)-I^j(x)=\sum_{i}\,B_{ij}(u)+\sum_{i}M_{ij}(u)-D_j(u)-\sum_{i}M_{ji}(u),
+  \jumprate_u(t,x) > 0 \Longrightarrow I^j(x+u)-I^j(x)=\sum_{j'}\,B_{j',j}(u)+\sum_{j'}M_{j',j}(u)-D_j(u)-\sum_{j'}M_{j,j'}(u),
 \end{equation}
 
-for all $x, u\in\Xspace$. We disallow simultaneous death at a single death event at this stage and define the set of death events in Deme $j$ as $\Dset_j\coloneqq\,D^{-1}(\{1\})$. 
-We also insist, birth and death events don't coincide for any demes, $i,j$, that is,  $\Bset_{j}\cap\Dset_{i}=\emptyset$. 
+for all $x, u\in\Xspace$. We disallow simultaneous death at a single death event at this stage and define the set of death events in Deme $j$ as $\Dset^j\coloneqq\,D_j^{-1}(\{1\})$. 
+We also insist, birth and death events don't coincide for any demes, $j,j'$, that is,  $\Bset_{j}\cap\Dset_{j'}=\emptyset$. 
 Eventually, we can have the function for total population size by letting $I(x)\coloneqq\sum_{j=1}^J\,I^j(x)$ and it's trivial that 
 
 \begin{equation}
-  \jumprate_u(t,x) > 0 \Longrightarrow I(x+u)-I(x)=\sum_{i,j}B_{i,j}(u)-\sum_{j}D_j(u),
+  \jumprate_u(t,x) > 0 \Longrightarrow I(x+u)-I(x)=\sum_{j,j'}B_{j,j'}(u)-\sum_{j}D_j(u),
 \end{equation}
 
 
@@ -226,7 +226,7 @@ We then summarize four types of jumps, with rate functions:
 
 The above shows the rates of being infected, progression from exposed to infectious, recovery, and sampling, respectively. 
 As in \citet{King2021}, the transmission $b(t)$ is time-dependent, and the sampling rate $\psi$ is any function, as long as the constraints in Section 2 are satisfied. 
-Therefore, $I_1(\sg{X})=e$, $I_2(\sg{X})=i$, $I(\sg{X})=e+i$, $\Bset_{21}=\{\left(-1,1,0,0\right)\}$, $\Mset_{12}=\{\left(0,-1,1,0\right)\}$, $\Dset_2=\{\left(0,0,-1,0\right)\}$, $\Sset=\{\left(0,0,0,1\right)\}$, and $\Bset_{11}=\Bset_{12}=\Bset_{22}=\Mset_{21}=\Dset_1=\emptyset$.
+Therefore, $I_1(\sg{X})=e$, $I_2(\sg{X})=i$, $I(\sg{X})=e+i$, $\Bset^{2,1}=\{\left(-1,1,0,0\right)\}$, $\Mset^{1,2}=\{\left(0,-1,1,0\right)\}$, $\Dset^2=\{\left(0,0,-1,0\right)\}$, $\Sset^2=\{\left(0,0,0,1\right)\}$, and $\Bset^{1,1}=\Bset^{1,2}=\Bset^{2,2}=\Mset^{2,1}=\Dset^1=\Sset^1=\emptyset$.
 
 \paragraph{SI$^2$R model}
 
@@ -367,19 +367,19 @@ We call this new node $\Node{p}'$ the \emph{Migration Nodes} in the genealogy an
 
 \paragraph{Genealogical event times}
 
-\QYL{the definition for sets of event times is problematic.}
+% \QYL{the definition for sets of event times is problematic.}
 
 Given a genealogy $\Gen$, the set of \emph{genealogical event times}, $\Eset(\Gen)$, is the set of all node times.
 Its subsets, including those for different event types and those for different demes, are of interest.
 In particular, we define
 \begin{equation*}
   \begin{aligned}
-    \Eset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})\ \text{is}\ j\}, \\
-    \Masterset^j(\Gen) &\coloneqq , \\
-    \Cset^{j,j'}(\Gen) &\coloneqq , \\
-    \Lset^j(\Gen) &\coloneqq , \\
-    \Tset^j(\Gen) &\coloneqq , \\
-    \Zset^{j,j'}(\Gen) &\coloneqq , \\
+    \Eset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j\}, \\
+    \Masterset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains one green ball but no purple balls}\}, \\
+    \Cset^{j,j'}(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains two green balls, one from Deme $j$ and the other from $j'$}\}, \\
+    \Lset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains no green balls}\}, \\
+    \Tset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains a blue ball}\}, \\
+    \Zset^{j,j'}(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains a purple ball and a green ball from Deme $j'$}\}, \\
     \Qset^j(\Gen) &\coloneqq \Masterset^j(\Gen) \cap \Tset^j(\Gen).
   \end{aligned}
 \end{equation*}
@@ -480,9 +480,12 @@ We can further define the deme proportion function $\demefuc(t,\omega)\coloneqq\
 
 Given a pruned genealogy, $\Prune$, at each time $t\in\Time$, there are a finite number, $\ell^{j}(t, \Prune)$, of lineages in Deme $j$ present in the genealogy at that time.  Evidently, one has
 
-\begin{equation}
-  \ell^j(t,\Prune)\coloneqq
-\end{equation}
+\begin{align}
+\begin{split}
+  \ell^j(t,\Prune) &\coloneqq \sum_{j'}\sum_{e\in\Cset^{j',j}(\Prune)} \indicator{\halfopen{e,\infty}}(t)\;-\;\sum_{e\in\Lset^j(\Prune)} \indicator{\halfopen{e,\infty}}(t) \\
+  +&\;\sum_{j'}\left(\sum_{e\in\Zset^{j',j}(\Prune)}\indicator{\halfopen{e,\infty}}(t)\;-\;\sum_{e\in\Zset^{j,j'}(\Prune)}\indicator{\halfopen{e,\infty}}(t)\right).
+\end{split}
+\end{align}
 
 
 \paragraph{Embedded chains}
@@ -539,10 +542,9 @@ $\Omega_{qk}\coloneqq N_k(\Omega_q)\subset\N$, for $q\le i$ and $k\le K$.
 
 due to that $\auxmeas$ is uniform within any certain deme.
 
-We define $\phi_{qk}^{j}\coloneqq\sum_{\omega\in\Omega_q}\dfrac{\indicator{\Inv_{t_{k-1}}^j(\omega)}(N_k(\omega))}{I^j(x_k-u_k)}$.
-
-
-Note that $\ell_{1k}=0$ for all $k$.
+We define $\phi_{qk}^{j}\coloneqq\sum_{\omega\in\Omega_q}\dfrac{\indicator{\Inv_{t_{k-1}}^j(\omega)}(N_k(\omega))}{I^j(x_k-u_k)}$, 
+and let $I_k^j=I^j(x_k)$, $\ell_{qk}^{j}=\ell^j(t_k, \Och_{q-1})$.
+Note that $\ell^j_{1k}=0$ for all $k$ and $j$.
 
 All cases can be categorized into four groups based on the occurrence of population event within time $\halfopen{a_q,s_q}$: no population event or simultaneous events, a birth from Deme $j$ to $j'$, a sample of Deme $j'$, and a migration from Deme $j$ to $j'$ where $j\neq j'$. Within each group, we investigate $\phi_{qk}^{j''}$ by considering whether the corresponding population event was presented in the pruned genealogy and involving the $q$-th lineage sample at time $t_k$, given that the $q$-th lineage sample was in Deme $j''$ at time $t_k$. For $q>1$, we then have:
 
@@ -561,8 +563,9 @@ All cases can be categorized into four groups based on the occurrence of populat
   % M
   \item There was a migration event, that is, $u_k\in\Mset^{j,j'}$ within $\halfopen{a_q,s_q}$, given that it was not presented in the pre-existing genealogy $\Och_{q-1}$, \ie $t_k\notin\Zset^{j,j'}(\Och_{q-1})$: 
     \begin{enumerate}
-      \item if this migration event exactly involved the $q$-th sample and was presented as a deme-transition event in $\Och_q$, \ie $t_k\in\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left((I_{k-1}^{j}-\ell_{q,k-1}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
-      \item otherwise, $t_k\notin\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left((I_{k-1}^{j}-\ell_{q,k-1}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$.
+      \item if this migration event had been presented in previous genealogy $\Och_{q-1}$, \ie $t_k\in\Zset^{j,j'}(\Och_{q-1})$, since no simultaneous migration events occurred at the same time and $t_k\in\Zset^{j,j'}{\Och_q}$ for sure, $\phi_{qk}^{j''}=1$;
+      \item if this migration event exactly involved the $q$-th sample and was presented as a deme-transition event in $\Och_q$, \ie $t_k\in\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left((I_{k}^{j}-\ell_{q,k}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
+      \item otherwise, $t_k\notin\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left((I_{k}^{j}-\ell_{q,k}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$.
     \end{enumerate} 
     
   % G
@@ -609,13 +612,14 @@ To summarize, we have
   \phi_{qk}^{j''}=
   \begin{cases}
     1, &\text{if}\ t_k\notin\halfopen{a_q,s_q}\ \text{or}\ u_k\notin\Bset\cup\Sset\cup\Mset,\\
-    
-    % deme-transition time can evolve to coalescent time, when the new sample is the parent of a "cross-deme" birth
     1, &\text{if}\ t_k\in\Cset(\Och_{q-1})\cup\Qset(\Och_{q-1}),\\[12pt]
-    \frac{\delta_{j',j''}}{(I_{k-1}^j-\ell_{q,k-1}^j)(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
-    1-\frac{\delta_{j',j''}}{(I_{k-1}^j-\ell_{q,k-1}^{j})(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
     
-    % sample
+    % M
+    1, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_{q}),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
+    \frac{\delta_{j',j''}}{(I_{k}^j-\ell_{q,k}^j)(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
+    1-\frac{\delta_{j',j''}}{(I_{k}^j-\ell_{q,k}^{j})(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
+    
+    % G
     \frac{\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k=a_q\in\Lset^{j'}(\Och_{q-1})\ \text{and}\ u_k\in\Sset^{j'},\\[12pt]
     1-\frac{\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q)\setminus\Qset(\Och_{q-1})\ \text{and}\ u_k\in\Sset^{j'},\\[12pt]
     
@@ -626,11 +630,11 @@ To summarize, we have
     % B, j!=j'
     % in Z
     \frac{\delta_{j,j''}}{I_k^{j}-\ell_{qk}^{j}}, &\text{if}\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ t_k=a_q\in\Cset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
-    1-\frac{\delta_{j,j''}}{I_k^{j}-\ell_{qk}^{j}}, &\text{if}\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
+    1-\frac{\delta_{j,j''}}{I_k^{j}-\ell_{qk}^{j}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
     % not in Z
-    \frac{\delta_{j',j''}}{I_k^j(I_{k}^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\notin\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
+    \frac{\delta_{j',j''}}{I_k^j(I_{k}^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
     \frac{\delta_{j',j''}}{I_k^j(I_{k}^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\notin\Zset^{j,j'}(\Och_{q-1}),\ t_k=a_q\in\Cset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
-    1-\frac{\delta_{j',j''}}{I_{k}^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\notin\Zset^{j,j'}(\Och_{q-1}),\ t_k\in(a_q,s_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
+    1-\frac{\delta_{j',j''}}{I_{k}^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_{q-1}),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
 
     0, &\text{otherwise}.
   \end{cases}
@@ -664,7 +668,7 @@ To summarize, we have
 We then can establish our first main result:
 
 \begin{thm}\label{thm:prunehthm1}
-  With the definitions as above, $P_{\Och_i|\Hist}(o|h) = \prod_{q=1}^{i}\prod_{k=1}^{K}\left(\sum_{j''=1}^{J}\phi_{qk}^{j''}\right)=\prod_{q=1}^{i}\prod_{k=1}^{K}\phi_{qk}^{j''_q}$, where $j''_q$ is the deme of the $q$-th sample lineage.
+  With the definitions as above, $P_{\Och_i|\Hist}(o|h) = \prod_{q=1}^{i}\prod_{k=1}^{K}\left(\sum_{j''=1}^{J}\phi_{qk}^{j''}\right)=\prod_{q=1}^{i}\prod_{k=1}^{K}\phi_{qk}^{j''_{qk}}$, where $j''_{qk}$ is the deme of the $q$-th sample lineage at time $t_k$.
 \end{thm}
 We now exchange the order of multiplication over $q$ and $k$ then we can derive our \Cref{thm:prunethm2}.
 
@@ -674,11 +678,21 @@ We now exchange the order of multiplication over $q$ and $k$ then we can derive 
   \end{equation*}
 \end{thm}
 \begin{proof}
-  Let $\Prune_t=\Och_i$ for some $i$.
+  Let $\Prune_t=\Och_i$ for some $i$. We define $\Phi_{k}\coloneqq\prod_{q=1}^{i}\phi_{qk}^{j''_{qk}}$ for each $k$ and as above, $I_k^{j}=I_j(x_k)$, $\ell_{qk}^{j}=\ell^j(t,\Och_{q-1})$. For the first two cases in \Cref{eq:qcases}, $\Phi_k=1$.
   
+  Consider $u_k\in\Mset^{j,j'}$. Let $q^*=\{q\;\vert\;t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})\}$ and $\ell^*=\ell_{q^*k}^{j''_{q^*k}}$. We then define $Q_k=\{q\;\vert\;j''_{qk}=j'\ \text{and}\ q<q^*\}$ as an ordered set and denote $[Q_k]_m$ as the $m$-th element in $Q_k$, where, $m=1,\dots, \ell^*$. 
+  \begin{enumerate}[(a)]
+    \item If $q<q^*$, then $t_k\notin\Zset^{j,j'}(\Och_q)$. We will have
+      \begin{equation*}
+        \Phi_k = \prod_{q\in Q_k} \left(1-\frac{1}{(I_k^j-\ell_{qk}^j)(I_k^{j'}-\ell_{qk}^{j'})}\right).
+      \end{equation*}
+      Note that, $\{\ell_{qk}^{j'}\;\vert\;q\in Q_k\}=\{0,1,\dots,\ell^*-1\}$ then the previous equation becomes
+      \begin{equation*}
+        \Phi_k = \prod_{m=1}^{\ell*} \left(1-\frac{1}{\mathcal{Y}_m (I_k^{j'}-m+1)}\right) = \prod_{m=1}^{\ell*} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m)^{-1}}{I_k^{j'}-m+1},
+      \end{equation*}
+      where $\mathcal{Y}_m\coloneqq I_k^{j}-\ell_{[Q_k]_m k}^{j}$.
+  \end{enumerate}
   
-  
-  Last but not least, suppose $u_k\in\Bset^{j,j'}$.
   
 \end{proof}
 
