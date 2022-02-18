@@ -146,12 +146,12 @@ Of course, the non-coincidence assumption can be easily relaxed while it's not t
 The population, the set of infected individuals in the context of epidemiology, is structured, categorized into interchangeable demes. 
 We can then define population size function and death functions in Deme $j$, respectively, as $I^{j}, D_{j}:\Xspace\to\N$ for any $j=1,\cdots,J$. 
 \begin{equation}
-  \jumprate_u(t,x) > 0 \Longrightarrow I^j(x+u)-I^j(x)=\sum_{j'}\,B_{j',j}(u)+\sum_{j'}M_{j',j}(u)-D_j(u)-\sum_{j'}M_{j,j'}(u),
+  \jumprate_u(t,x) > 0 \Longrightarrow I_j(x+u)-I_j(x)=\sum_{j'}\,B_{j',j}(u)+\sum_{j'}M_{j',j}(u)-D_j(u)-\sum_{j'}M_{j,j'}(u),
 \end{equation}
 
 for all $x, u\in\Xspace$. We disallow simultaneous death at a single death event at this stage and define the set of death events in Deme $j$ as $\Dset^j\coloneqq\,D_j^{-1}(\{1\})$. 
 We also insist, birth and death events don't coincide for any demes, $j,j'$, that is,  $\Bset_{j}\cap\Dset_{j'}=\emptyset$. 
-Eventually, we can have the function for total population size by letting $I(x)\coloneqq\sum_{j=1}^J\,I^j(x)$ and it's trivial that 
+Eventually, we can have the function for total population size by letting $I(x)\coloneqq\sum_{j=1}^J\,I_j(x)$ and it's trivial that 
 
 \begin{equation}
   \jumprate_u(t,x) > 0 \Longrightarrow I(x+u)-I(x)=\sum_{j,j'}B_{j,j'}(u)-\sum_{j}D_j(u),
@@ -300,7 +300,7 @@ Now the deterministic and recursive procedure $\mathrm{inven}$ is described as f
 \begin{equation}
   \mathrm{inven}(\omega,j)\coloneqq
   \begin{cases}
-    \mathrm{initialize}(I^j(\sg{X}_0(\omega)), & \text{if }K(\omega)=0; \\
+    \mathrm{initialize}(I_j(\sg{X}_0(\omega)), & \text{if }K(\omega)=0; \\
     \mathrm{add}(\mathrm{inven}(\predec{\omega},j)), & \text{if }K(\omega)>0\text{ and }U_K(\omega)\in\Bset_j;\\
     \mathrm{drop}(\mathrm{inven}(\predec{\omega},j),N_{K(\omega)}(\omega)), & \text{if }K(\omega)>0\text{ and }U_K(\omega)\in\Dset_j; \\
     \mathrm{movein}(\mathrm{inven}(\predec{\omega},j),N_{K(\omega)}(\omega)), & \text{if }K(\omega)>0\text{ and }U_K(\omega)\in\bigcup_i\Mset_{ij}; \\
@@ -476,7 +476,7 @@ Thus, for a visible genealogy $\Vis$ and any deme $j$:
 
 \paragraph{Deme proportion and lineage count}
 
-We can further define the deme proportion function $\demefuc(t,\omega)\coloneqq\{\demefuc^j(t,\omega)\}_{j=1}^J$, where $\demefuc^j(t,\omega)\coloneqq\frac{\vert\Inv_t^j(\omega)\vert}{\vert\Inv_t(\omega)\vert}$.
+We can further define the deme proportion function $\demefunc(t,\omega)\coloneqq\{\demefunc^j(t,\omega)\}_{j=1}^J$, where $\demefunc^j(t,\omega)\coloneqq\frac{\vert\Inv_t^j(\omega)\vert}{\vert\Inv_t(\omega)\vert}$.
 
 Given a pruned genealogy, $\Prune$, at each time $t\in\Time$, there are a finite number, $\ell^{j}(t, \Prune)$, of lineages in Deme $j$ present in the genealogy at that time.  Evidently, one has
 
@@ -508,7 +508,9 @@ Both $\Och_i$ and $\Wch_i$ are Markovian.
       \emptyset, &\textrm{otherwise},
     \end{cases}
   \end{equation*}
-  where $s_i^j=\Tset^j(\Och_i)\setminus\Tset^j(\Och_{i-1})$, $a_i^j=\Masterset^j(\Och_i)\setminus\Masterset^j(\Och_{i-1})$, and $z_i^{j,j'}=\Zset^{j,j'}(\Och_i)\setminus\Zset^{j,j'}(\Och_{i-1})$ are the corresponding sample, attachment times, respectively, of the $i$-th sample lineage in Deme $j$, and the deme-transition times from Deme $j$ to $j'$, respectively.
+  where $s_i^j=\Tset^j(\Och_i)\setminus\Tset^j(\Och_{i-1})$, $a_i^j=\Masterset^j(\Och_i)\setminus\Masterset^j(\Och_{i-1})$, 
+  and $z_i^{j,j'}=\Zset^{j,j'}(\Och_i)\setminus\Zset^{j,j'}(\Och_{i-1})$ are the corresponding sample, attachment times, respectively, 
+  of the $i$-th sample lineage in Deme $j$, and the deme-transition times from Deme $j$ to $j'$, respectively.
   Then, if it is understood that $\ell^j(t,\Och_0)=0$ for all $j$,
   \begin{equation*}
     \ell^j(t,\Och_i)=\ell^j(t,\Och_{i-1})+\indicator{\Delta_{i}^{j}}(t)-\sum_{j'}\left(\indicator{\Delta_{i}^{j,j'}}(t)-\indicator{\Delta_{i}^{j',j}}(t)\right), \qquad \forall i>0.
@@ -536,17 +538,22 @@ $\Omega_{qk}\coloneqq N_k(\Omega_q)\subset\N$, for $q\le i$ and $k\le K$.
 \begin{equation*}
   \begin{aligned}
     % P_{\Och_q|\Och_{q-1},\Hist}(o_q|o_{q-1},h)&=\prod_{k=1}^K\sum_{n_k\in\Omega_{qk}}\auxmeas_{u_k,x_k-u_k}(n_k)=\prod_{k=1}^K\sum_{n_k\in\Omega_{qk}}\left(\sum_{j=1}^J\dfrac{\indicator{\Inv^j_{t_{k-1}}(\Omega_q)}(n_k)}{I_j(x_k-u_k)}\right).
-    P_{\Och_q|\Och_{q-1},\Hist}(o_q|o_{q-1},h) &= \prod_{k=1}^K\sum_{\omega\in\Omega_q}\auxmeas_{u_k,x_k-u_k}(N_k(\omega)) = \prod_{k=1}^K\sum_{\omega\in\Omega_q}\left(\sum_{j=1}^J\dfrac{\indicator{\Inv_{t_{k-1}}^j(\omega)}(N_k(\omega))}{I^j(x_k-u_k)}\right),
+    P_{\Och_q|\Och_{q-1},\Hist}(o_q|o_{q-1},h) &= \prod_{k=1}^K\sum_{\omega\in\Omega_q}\auxmeas_{u_k,x_k-u_k}(N_k(\omega)) = \prod_{k=1}^K\sum_{\omega\in\Omega_q}\left(\sum_{j=1}^J\dfrac{\indicator{\Inv_{t_{k-1}}^j(\omega)}(N_k(\omega))}{I_j(x_k-u_k)}\right),
   \end{aligned}
 \end{equation*}
 
 due to that $\auxmeas$ is uniform within any certain deme.
 
-We define $\phi_{qk}^{j}\coloneqq\sum_{\omega\in\Omega_q}\dfrac{\indicator{\Inv_{t_{k-1}}^j(\omega)}(N_k(\omega))}{I^j(x_k-u_k)}$, 
-and let $I_k^j=I^j(x_k)$, $\ell_{qk}^{j}=\ell^j(t_k, \Och_{q-1})$.
+We define $\phi_{qk}^{j}\coloneqq\sum_{\omega\in\Omega_q}\dfrac{\indicator{\Inv_{t_{k-1}}^j(\omega)}(N_k(\omega))}{I_j(x_k-u_k)}$, 
+and let $I_k^j=I_j(x_k)$, $\ell_{qk}^{j}=\ell^j(t_k, \Och_{q-1})$.
 Note that $\ell^j_{1k}=0$ for all $k$ and $j$.
 
-All cases can be categorized into four groups based on the occurrence of population event within time $\halfopen{a_q,s_q}$: no population event or simultaneous events, a birth from Deme $j$ to $j'$, a sample of Deme $j'$, and a migration from Deme $j$ to $j'$ where $j\neq j'$. Within each group, we investigate $\phi_{qk}^{j''}$ by considering whether the corresponding population event was presented in the pruned genealogy and involving the $q$-th lineage sample at time $t_k$, given that the $q$-th lineage sample was in Deme $j''$ at time $t_k$. For $q>1$, we then have:
+All cases can be categorized into four groups based on the occurrence of population event within time $\halfopen{a_q,s_q}$: 
+no population event or simultaneous events, 
+a birth from Deme $j$ to $j'$, 
+a sample of Deme $j'$, 
+and a migration from Deme $j$ to $j'$ where $j\neq j'$. 
+Within each group, we investigate $\phi_{qk}^{j''}$ by considering whether the corresponding population event was presented in the pruned genealogy and involving the $q$-th lineage sample at time $t_k$, given that the $q$-th lineage sample was in Deme $j''$ at time $t_k$. For $q>1$, we then have:
 
 % 1) No. of total events in the population
 % 2) No. of conditioned event in the population
@@ -561,48 +568,76 @@ All cases can be categorized into four groups based on the occurrence of populat
     \end{enumerate}
     
   % M
-  \item There was a migration event, that is, $u_k\in\Mset^{j,j'}$ within $\halfopen{a_q,s_q}$, given that it was not presented in the pre-existing genealogy $\Och_{q-1}$, \ie $t_k\notin\Zset^{j,j'}(\Och_{q-1})$: 
+  \item There was a migration event, that is, $u_k\in\Mset^{j,j'}$ within $\halfopen{a_q,s_q}$, 
+  given that it was not presented in the pre-existing genealogy $\Och_{q-1}$, 
+  \ie $t_k\notin\Zset^{j,j'}(\Och_{q-1})$: 
     \begin{enumerate}
-      \item if this migration event had been presented in previous genealogy $\Och_{q-1}$, \ie $t_k\in\Zset^{j,j'}(\Och_{q-1})$, since no simultaneous migration events occurred at the same time and $t_k\in\Zset^{j,j'}{\Och_q}$ for sure, $\phi_{qk}^{j''}=1$;
-      \item if this migration event exactly involved the $q$-th sample and was presented as a deme-transition event in $\Och_q$, \ie $t_k\in\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left((I_{k}^{j}-\ell_{q,k}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
-      \item otherwise, $t_k\notin\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left((I_{k}^{j}-\ell_{q,k}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$.
+      \item if this migration event had been presented in previous genealogy $\Och_{q-1}$, 
+      \ie $t_k\in\Zset^{j,j'}(\Och_{q-1})$, 
+      since no simultaneous migration events occurred at the same time and $t_k\in\Zset^{j,j'}{\Och_q}$ for sure, $\phi_{qk}^{j''}=1$;
+      \item if this migration event exactly involved the $q$-th sample and was presented as a deme-transition event in $\Och_q$, 
+      \ie $t_k\in\Zset^{j,j'}(\Och_q)$, 
+      then $\phi_{qk}^{j''}=\delta_{j',j''}/\left((I_{k}^{j}-\ell_{q,k}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
+      \item otherwise, $t_k\notin\Zset^{j,j'}(\Och_q)$, 
+      then $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left((I_{k}^{j}-\ell_{q,k}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$.
     \end{enumerate} 
     
   % G
   \item There was a sample event, that is $u_k\in\Sset^{j'}$ within $\halfopen{a_q,s_q}$:
     \begin{enumerate}
-      \item if the lineage sampled at this event served as a direct ancestor to the $q$-th sample lineage, that is, $t_k=a_q\in\Lset^{j'}(\Och_{q-1})$, this indicates that among $I_k^{j'}-\ell_{qk}^{j'}$ unsampled individuals in deme $j'$ at $t_k$, the $q$-th sample lineage is the exact direct descent, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j'}-\ell_{qk}^{j'}\right)$;
-      \item otherwise, $t_k\in(a_q,s_q)\setminus\Qset(\Och_{q-1})$, and $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left(I_k^{j'}-\ell_{qk}^{j'}\right)$.
+      \item if the lineage sampled at this event served as a direct ancestor to the $q$-th sample lineage, 
+      that is, $t_k=a_q\in\Lset^{j'}(\Och_{q-1})$, 
+      this indicates that among $I_k^{j'}-\ell_{qk}^{j'}$ unsampled individuals in deme $j'$ at $t_k$, 
+      the $q$-th sample lineage is the exact direct descent, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j'}-\ell_{qk}^{j'}\right)$;
+      \item otherwise, $t_k\in(a_q,s_q)\setminus\Qset(\Och_{q-1})$, 
+      and $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left(I_k^{j'}-\ell_{qk}^{j'}\right)$.
     \end{enumerate}
   
   % B, j=j'
-  \item There was a birth event within the same deme, that is $u_k\in\Bset^{j,j'}$ and $\delta_{j,j'}=1$, but it was not shown in the genealogy yet because only one of the pre-existing $\ell_{qk}^{j'}$ lineages involved, \ie $t_k\notin\Cset^{j,j'}(\Och_{q-1})$:
+  \item There was a birth event within the same deme, 
+  that is $u_k\in\Bset^{j,j'}$ and $\delta_{j,j'}=1$, 
+  but it was not shown in the genealogy yet because only one of the pre-existing $\ell_{qk}^{j'}$ lineages involved, 
+  \ie $t_k\notin\Cset^{j,j'}(\Och_{q-1})$:
     \begin{enumerate}
       % there were in total \binom{I}{2} combinations presented as births, while \binom{l}{2} is excluded because the birth was not presented in genealogy.
-      \item if this birth event was presented as a coalescent event in $\Och_q$, \ie $t_k\in\Cset^{j,j'}(\Och_q)$, with probability $\ell_{qk}^{j'}/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$, then the probability that the $q$-th sample attached to \emph{a certain} sample lineage in the genealogy is $1/\ell_{qk}^{j'}$, implying that the $q$-th sample lineage was exactly the other individual involved in the birth event, and eventually, $\phi_{qk}^{j''}=\left(\delta_{j,j'}\delta_{j',j''}\right)/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$;
-      \item otherwise, $t_k\notin\halfopen{a_q,s_q}$,  $\phi_{qk}^{j''}=1-\left(\delta_{j,j'}\delta_{j',j''}\ell_{qk}^{j'}\right)/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$.
+      \item if this birth event was presented as a coalescent event in $\Och_q$, 
+      \ie $t_k\in\Cset^{j,j'}(\Och_q)$,
+      with probability $\ell_{qk}^{j'}/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$, 
+      then the probability that the $q$-th sample attached to \emph{a certain} sample lineage in the genealogy is $1/\ell_{qk}^{j'}$, 
+      implying that the $q$-th sample lineage was exactly the other individual involved in the birth event, 
+      and eventually, $\phi_{qk}^{j''}=\left(\delta_{j,j'}\delta_{j',j''}\right)/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$;
+      \item otherwise, $t_k\notin\halfopen{a_q,s_q}$,  
+      $\phi_{qk}^{j''}=1-\left(\delta_{j,j'}\delta_{j',j''}\ell_{qk}^{j'}\right)/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$.
     \end{enumerate}
     
   % B, j!=j'
-  \item There was a birth event between two different demes, that is $u_k\in\Bset^{j,j'}$ and $\delta_{j,j'}=0$:
+  \item There was a birth event between two different demes, 
+  that is $u_k\in\Bset^{j,j'}$ and $\delta_{j,j'}=0$:
     \begin{enumerate}
       % There were  l'*(I-l) possibilities of transitions
-      \item and given that it was presented as a deme-transition event in the pre-existing genealogy, that is, $t_k\in\Zset^{j,j'}(\Och_{q-1})$:
+      \item and given that it was presented as a deme-transition event in the pre-existing genealogy, 
+      that is, $t_k\in\Zset^{j,j'}(\Och_{q-1})$:
         \begin{enumerate}
           % the genealogy has the exact l' lineage as the child, and the sample is the exact 1 as the parent
           % 1/[l'*(I-l)] * l' * 1/1
-          \item if the $q$-th sample was from deme $j$ and is exactly the parent in the birth, that is, $t_k\in\Cset^{j,j'}(\Och_q)$ and $\delta_{j,j''}=1$, then $\phi_{qk}^{j''}=\delta_{j,j''}/\left(I_k^{j}-\ell_{qk}^{j}\right)$;
-          \item otherwise, $t_k\in\Zset^{j,j'}(\Och_q)$,and $\phi_{qk}^{j''}=1-\delta_{j,j''}/\left(I_k^{j}-\ell_{qk}^{j}\right)$;
+          \item if the $q$-th sample was from deme $j$ and is exactly the parent in the birth, 
+          that is, $t_k\in\Cset^{j,j'}(\Och_q)$ and $\delta_{j,j''}=1$, then $\phi_{qk}^{j''}=\delta_{j,j''}/\left(I_k^{j}-\ell_{qk}^{j}\right)$;
+          \item otherwise, 
+          $t_k\in\Zset^{j,j'}(\Och_q)$,and $\phi_{qk}^{j''}=1-\delta_{j,j''}/\left(I_k^{j}-\ell_{qk}^{j}\right)$;
         \end{enumerate}
       % there were in total I*I' in the birth, while l*l' is excluded since it was not presented as coalescent, and (I-l)*l' are excluded which as presented as transition. == I I' - l l' - (I-l) l' = I (I'-l')
-      \item or given that it was not presented in $\Och_{q-1}$, \ie $t_k\notin\Zset^{j,j'}(\Och_{q-1})\cup\Cset^{j,j'}(\Och_{q-1})$:
+      \item or given that it was not presented in $\Och_{q-1}$, 
+      \ie $t_k\notin\Zset^{j,j'}(\Och_{q-1})\cup\Cset^{j,j'}(\Och_{q-1})$:
         \begin{enumerate}
           % the genealogy has l lineages as parent, and we choose one of them 1/l: 1/[I (I'-l')] * l * 1/l
-          \item if the $q$-th sample was from deme $j'$ and is coalesced at $t_k$, \ie $t_k\in\Cset^{j,j'}(\Och_q)$ and $\delta_{j',j''}$, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j}(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
-          % 
-          \item if the $q$-th sample was from deme $j'$ and is presented as a deme-transition event in $\Och_q$, \ie $t_k\in\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j}(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
-          
-          \item otherwise, $t_k\notin\Cset^{j,j'}(\Och_q)\cup\Zset^{j,j'}(\Och_q)$, and $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left(I_{k}^{j'}-\ell_{qk}^{j'}\right)$;
+          \item if the $q$-th sample was from deme $j'$ and is coalesced at $t_k$, 
+          \ie $t_k\in\Cset^{j,j'}(\Och_q)$ and $\delta_{j',j''}$, 
+          then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j}(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
+          % I - l can be the parent, and we choose one of them 1/(I - l) as the sample: 1/[I (I'-l')] * (I-l) * 1/(I-l)
+          \item if the $q$-th sample was from deme $j'$ and is presented as a deme-transition event in $\Och_q$, 
+          \ie $t_k\in\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j}(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
+          \item otherwise, $t_k\notin\Cset^{j,j'}(\Och_q)\cup\Zset^{j,j'}(\Och_q)$, 
+          and $$\phi_{qk}^{j''}=1-\delta_{j',j''}/(I_{k}^{j'}-\ell_{qk}^{j'});$$
         \end{enumerate}
     \end{enumerate}
 \end{enumerate}
@@ -616,7 +651,7 @@ To summarize, we have
     
     % M
     1, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_{q}),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
-    \frac{\delta_{j',j''}}{(I_{k}^j-\ell_{q,k}^j)(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
+    \frac{\delta_{j',j''}}{(I_{k}^j-\ell_{q,k}^j)(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1}),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
     1-\frac{\delta_{j',j''}}{(I_{k}^j-\ell_{q,k}^{j})(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
     
     % G
@@ -668,7 +703,9 @@ To summarize, we have
 We then can establish our first main result:
 
 \begin{thm}\label{thm:prunehthm1}
-  With the definitions as above, $P_{\Och_i|\Hist}(o|h) = \prod_{q=1}^{i}\prod_{k=1}^{K}\left(\sum_{j''=1}^{J}\phi_{qk}^{j''}\right)=\prod_{q=1}^{i}\prod_{k=1}^{K}\phi_{qk}^{j''_{qk}}$, where $j''_{qk}$ is the deme of the $q$-th sample lineage at time $t_k$.
+  With the definitions as above, 
+  $P_{\Och_i|\Hist}(o|h) = \prod_{q=1}^{i}\prod_{k=1}^{K}\left(\sum_{j''=1}^{J}\phi_{qk}^{j''}\right)=\prod_{q=1}^{i}\prod_{k=1}^{K}\phi_{qk}^{j''_{qk}}$, 
+  where $j''_{qk}$ is the deme of the $q$-th sample lineage at time $t_k$.
 \end{thm}
 We now exchange the order of multiplication over $q$ and $k$ then we can derive our \Cref{thm:prunethm2}.
 
@@ -678,21 +715,64 @@ We now exchange the order of multiplication over $q$ and $k$ then we can derive 
   \end{equation*}
 \end{thm}
 \begin{proof}
-  Let $\Prune_t=\Och_i$ for some $i$. We define $\Phi_{k}\coloneqq\prod_{q=1}^{i}\phi_{qk}^{j''_{qk}}$ for each $k$ and as above, $I_k^{j}=I_j(x_k)$, $\ell_{qk}^{j}=\ell^j(t,\Och_{q-1})$. For the first two cases in \Cref{eq:qcases}, $\Phi_k=1$.
+  Let $\Prune_t=\Och_i$ for some $i$. 
+  We define $\Phi_{k}\coloneqq\prod_{q=1}^{i}\phi_{qk}^{j''_{qk}}$ for each $k$ and as above, 
+  $I_k^{j}=I_j(x_k)$, $\ell_{qk}^{j}=\ell^j(t,\Och_{q-1})$. 
+  For the first two cases in \Cref{eq:qcases}, $\Phi_k=1$.
   
-  Consider $u_k\in\Mset^{j,j'}$. Let $q^*=\{q\;\vert\;t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})\}$ and $\ell^*=\ell_{q^*k}^{j''_{q^*k}}$. We then define $Q_k=\{q\;\vert\;j''_{qk}=j'\ \text{and}\ q<q^*\}$ as an ordered set and denote $[Q_k]_m$ as the $m$-th element in $Q_k$, where, $m=1,\dots, \ell^*$. 
+  Consider $u_k\in\Mset^{j,j'}$. Let $q^*=\{q\;\vert\;t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})\}$ and $\ell^*=\ell_{q^*k}^{j'}$. We then define $Q_k^{j'}=\{q\;\vert\;j''_{qk}=j'\ \text{and}\ q\leq q^*\}$ as an ordered set and denote $[Q_k^{j'}]_m$ as the $m$-th element in $Q_k^j$, where, $m=1,\dots, \ell^*$.
   \begin{enumerate}[(a)]
-    \item If $q<q^*$, then $t_k\notin\Zset^{j,j'}(\Och_q)$. We will have
+    \item \label{scn: notZ} If $q<q^*$, then $t_k\notin\Zset^{j,j'}(\Och_q)$. We will have
       \begin{equation*}
-        \Phi_k = \prod_{q\in Q_k} \left(1-\frac{1}{(I_k^j-\ell_{qk}^j)(I_k^{j'}-\ell_{qk}^{j'})}\right).
+        \Phi_k = \prod_{q\in Q_k^{j'}} \left(1-\frac{1}{(I_k^j-\ell_{qk}^j)(I_k^{j'}-\ell_{qk}^{j'})}\right).
       \end{equation*}
-      Note that, $\{\ell_{qk}^{j'}\;\vert\;q\in Q_k\}=\{0,1,\dots,\ell^*-1\}$ then the previous equation becomes
+      Note that, $\{\ell_{qk}^{j'}\;\vert\;q\in Q_k^{j'}\}=\{0,1,\dots,\ell^*\}$ then the previous equation becomes
       \begin{equation*}
-        \Phi_k = \prod_{m=1}^{\ell*} \left(1-\frac{1}{\mathcal{Y}_m (I_k^{j'}-m+1)}\right) = \prod_{m=1}^{\ell*} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m)^{-1}}{I_k^{j'}-m+1},
+        \Phi_k = \prod_{m=1}^{\ell^*} \left(1-\frac{1}{\mathcal{Y}_m^j (I_k^{j'}-m+1)}\right) = \prod_{m=1}^{\ell^*} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m^j)^{-1}}{I_k^{j'}-m+1},
       \end{equation*}
-      where $\mathcal{Y}_m\coloneqq I_k^{j}-\ell_{[Q_k]_m k}^{j}$.
+    where $\mathcal{Y}_m^j\coloneqq I_k^{j}-\ell_{[Q_k^{j'}]_m k}^{j}\in\Z$.
+
+    \item If $q\geq q^*$, then $t_k\in\Zset^{j,j'}$, and obviously, with $\mathcal{Y}_m^j$ defined as before,
+      \begin{equation*}
+        \Phi_k = \frac{1}{\mathcal{Y}_{\ell^*}^j (I_k^{j'}-\ell^*)}\, \prod_{m=1}^{\ell^*} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m^j)^{-1}}{I_k^{j'}-m+1}.
+      \end{equation*}
   \end{enumerate}
   
+  Consider $u_k\in\Bset^{j,j'}$ and $j\neq j'$. Let $q^*=\{q\;\vert\;t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})\}$ and $q'=\{q\;\vert\;t_k=\Cset^{j,j'}(\Och_q)\setminus\Cset^{j,j'}(\Och_{q-1})\}$.
+  % first, get q* as the sample of deme-transition
+  % q' as the sample of coalescent
+  \begin{enumerate}[(a)]
+    % if not exists q* and q'
+    \item If $q^*=\emptyset$ and $q'=\emptyset$, then $t_k\notin\Zset^{j,j'}(\Och_i)\cup\Cset^{j,j'}(\Och_{i})$. So for any $q\leq i$, we have
+      \begin{equation*}
+        \Phi_k=\prod_{m=0}^{\ell_{ik}^{j'}}\left(1-\frac{1}{I_k^{j'}-m}\right)=1-\frac{\ell_{ik}^{j'}+1}{I_k^{j'}}.
+      \end{equation*}
+    % if not exists q* but q'
+    \item If $q^*\neq\emptyset$ but $q'=\emptyset$, then $t_k\in\Zset^{j,j'}(\Och_{i})$. Let $\ell^*=\ell_{q^*k}^{j'}$ and for $q^*<q\leq i$, we have
+      \begin{equation*}
+      \begin{split}
+        \Phi_k &= \prod_{m=0}^{\ell^*}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell^*)}\,\prod_{m=\ell_{q^*k}^{j}}^{\ell_{ik}^{j}}\left(1-\frac{1}{I_k^{j}-m}\right) \\
+        &= \frac{I_k^{j'}-\ell^*-1}{I_k^{j'}}\frac{1}{I_k^j(I_k^{j'}-\ell^*)}\frac{I_k^j-\ell_{ik}^{j}-1}{I_k^j-\ell_{q^*k}^{j}}\\
+        &= \frac{1}{\mathcal{Y}^{j}_{\ell^*}(I_k^{j'}-\ell^*)}\left(1-\frac{\ell_{ik}^{j}+1}{I_k^j}\right)\left(1-\frac{\ell^*+1}{I_k^{j'}}\right),
+      \end{split}
+      \end{equation*}
+      where $\mathcal{Y}^{j}_{\ell^*}$ is as defined in \ref{scn: notZ} when $u_k\in\Mset^{j,j'}$.
+    % if not exists q' but q*
+    \item If $q'\neq\emptyset$ but $q^*=\emptyset$, then $t_k\notin\Zset^{j,j'}(\Och_{q'-1})$ and $t_k\in\Cset^{j,j'}(\Och_i)$. Let $\ell'=\ell_{q'k}^{j'}$ and for $q'<q\leq i$, we have
+      \begin{equation*}
+        \begin{split}
+          \Phi_k &= \prod_{m=0}^{\ell'}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell')}=\left(1-\frac{\ell'+1}{I_{k}^{j'}}\right)\frac{1}{I_k^{j}(I_k^{j'}-\ell')}.
+        \end{split}
+      \end{equation*}
+    % if exists q* and q', and q' > q*
+    \item If $q^*\neq\emptyset$, $q'\neq\emptyset$, and obviously, $q^*<q'$, then $t_k\in\Zset^{j,j'}(\Och_{q^*})$, $t_k\notin\Zset^{j,j'}(\Och_{q'})$, and $t_k\in\Cset^{j,j'}(\Och_{q'})$. Let $\ell^*=\ell_{q^*k}^{j'}$ and $\hat{\ell}=\ell_{q'k}^{j}$. We have
+      \begin{equation*}
+      \begin{split}
+        \Phi_k &= \prod_{m=0}^{\ell^*}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell^*)}\prod_{m=\ell_{q^*k}^{j}}^{\hat{\ell}}\left(1-\frac{1}{I_k^{j}-m}\right)\,\frac{1}{I_k^{j}-\hat{\ell}} \\
+        &= \frac{1}{\mathcal{Y}_{\ell^*}^{j}(I_k^{j}-\hat{\ell})(I_k^{j'}-\ell^*)}\left(1-\frac{\hat{\ell}+1}{I_k^{j}}\right)\left(1-\frac{\ell^*+1}{I_k^{j'}}\right)
+      \end{split}
+      \end{equation*}
+  \end{enumerate}
   
 \end{proof}
 
