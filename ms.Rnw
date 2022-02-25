@@ -720,56 +720,88 @@ We now exchange the order of multiplication over $q$ and $k$ then we can derive 
   $I_k^{j}=I_j(x_k)$, $\ell_{qk}^{j}=\ell^j(t,\Och_{q-1})$. 
   For the first two cases in \Cref{eq:qcases}, $\Phi_k=1$.
   
-  Consider $u_k\in\Mset^{j,j'}$. Let $q^*=\{q\;\vert\;t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})\}$ and $\ell^*=\ell_{q^*k}^{j'}$. We then define $Q_k^{j'}=\{q\;\vert\;j''_{qk}=j'\ \text{and}\ q\leq q^*\}$ as an ordered set and denote $[Q_k^{j'}]_m$ as the $m$-th element in $Q_k^j$, where, $m=1,\dots, \ell^*$.
+  Consider $u_k\in\Mset^{j,j'}$. 
+  Let $q^*$ be the sample satisfying $t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})$ for $q=1,\dots, i$.
+  If $\exists q^*$, we then define $Q_k^{j'}=\{q\;\vert\;j''_{qk}=j'\ \text{and}\ q\leq q^*\}$ as an ordered set; 
+  otherwise, $Q_k^{j'}=\{q\;\vert\;j''_{qk}=j'\}$.
+  We denote $[Q_k^{j'}]_m$ as the $m$-th element in $Q_k^j$ and $m=1,\dots, \ell^*+1$. 
+  Note that, $\ell^{*}=\ell^{j'}_{q^*k}$ if $\exists q^*$, otherwise, $\ell^*=\ell_{ik}^{j'}$.
   \begin{enumerate}[(a)]
-    \item \label{scn: notZ} If $q<q^*$, then $t_k\notin\Zset^{j,j'}(\Och_q)$. We will have
+    \item \label{scn: notZ} If $\nexists q^*$, then $t_k\notin\Zset^{j,j'}(\Och_i)$. We will have
       \begin{equation*}
         \Phi_k = \prod_{q\in Q_k^{j'}} \left(1-\frac{1}{(I_k^j-\ell_{qk}^j)(I_k^{j'}-\ell_{qk}^{j'})}\right).
       \end{equation*}
       Note that, $\{\ell_{qk}^{j'}\;\vert\;q\in Q_k^{j'}\}=\{0,1,\dots,\ell^*\}$ then the previous equation becomes
       \begin{equation*}
-        \Phi_k = \prod_{m=1}^{\ell^*} \left(1-\frac{1}{\mathcal{Y}_m^j (I_k^{j'}-m+1)}\right) = \prod_{m=1}^{\ell^*} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m^j)^{-1}}{I_k^{j'}-m+1},
+        \Phi_k = \prod_{m=1}^{\ell^*+1} \left(1-\frac{1}{\mathcal{Y}_m^j (I_k^{j'}-m+1)}\right) = \prod_{m=1}^{\ell_{ik}^{j'}+1} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m^j)^{-1}}{I_k^{j'}-m+1},
       \end{equation*}
     where $\mathcal{Y}_m^j\coloneqq I_k^{j}-\ell_{[Q_k^{j'}]_m k}^{j}\in\Z$.
 
-    \item If $q\geq q^*$, then $t_k\in\Zset^{j,j'}$, and obviously, with $\mathcal{Y}_m^j$ defined as before,
+    \item If $\exists q^*$ and $i\geq q^*$, then $t_k\in\Zset^{j,j'}(\Och_i)$, and obviously, with $\mathcal{Y}_m^j$ defined as before,
       \begin{equation*}
-        \Phi_k = \frac{1}{\mathcal{Y}_{\ell^*}^j (I_k^{j'}-\ell^*)}\, \prod_{m=1}^{\ell^*} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m^j)^{-1}}{I_k^{j'}-m+1}.
+        \Phi_k = \frac{1}{\mathcal{Y}_{\ell^*+1}^j (I_k^{j'}-\ell^*)}\, \prod_{m=1}^{\ell^*} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m^j)^{-1}}{I_k^{j'}-m+1}.
       \end{equation*}
   \end{enumerate}
   
-  Consider $u_k\in\Bset^{j,j'}$ and $j\neq j'$. Let $q^*=\{q\;\vert\;t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})\}$ and $q'=\{q\;\vert\;t_k=\Cset^{j,j'}(\Och_q)\setminus\Cset^{j,j'}(\Och_{q-1})\}$.
+  Consider $u_k\in\Sset^{j'}$. The results are similar to those in \citet{King2021}, that is
+  \begin{enumerate}[(a)]
+    \item If $t_k\in\Lset^{j'}(\Och_i)$, we have
+      \begin{equation*}
+        \Phi_k=1-\frac{\ell_{ik}^{j'}+1}{I_k^{j'}};
+      \end{equation*}
+    \item otherwise, if $t_k\in\Qset^{j'}(\Och_i)$,
+      \begin{equation*}
+        \Phi_k=\frac{1}{I_k^{j'}}.
+      \end{equation*}
+  \end{enumerate}
+  
+  Consider $u_k\in\Bset^{j,j'}$ and $j=j'$. The results can be also referenced from \citet{King2021} as follows:
+  \begin{enumerate}[(a)]
+    \item If $t_k\notin\Cset^{j,j'}(\Och_i)$,
+      \begin{equation*}
+        \Phi_k=1-\frac{\binom{\ell_{ik}^{j'}+1}{2}}{\binom{I_k^{j'}}{2}};
+      \end{equation*}
+    \item otherwise, if $t_k\in\Cset^{j,j'}(\Och_i)$,
+      \begin{equation*}
+        \Phi_k=\frac{1}{\binom{I_k^{j'}}{2}}.
+      \end{equation*}
+  \end{enumerate}
+  
+  
+  Consider $u_k\in\Bset^{j,j'}$ and $j\neq j'$. 
+  Again, let $q^*$ be the sample satisfying $t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})\}$ and further, 
+  $q'$ be the sample satisfying $t_k=\Cset^{j,j'}(\Och_q)\setminus\Cset^{j,j'}(\Och_{q-1})$,
+  for $q=1,\dots, i$.
   % first, get q* as the sample of deme-transition
   % q' as the sample of coalescent
   \begin{enumerate}[(a)]
     % if not exists q* and q'
-    \item If $q^*=\emptyset$ and $q'=\emptyset$, then $t_k\notin\Zset^{j,j'}(\Och_i)\cup\Cset^{j,j'}(\Och_{i})$. So for any $q\leq i$, we have
+    \item If $\nexists q^*$ and $\nexists q'$, then $t_k\notin\Zset^{j,j'}(\Och_i)\cup\Cset^{j,j'}(\Och_{i})$. We have
       \begin{equation*}
         \Phi_k=\prod_{m=0}^{\ell_{ik}^{j'}}\left(1-\frac{1}{I_k^{j'}-m}\right)=1-\frac{\ell_{ik}^{j'}+1}{I_k^{j'}}.
       \end{equation*}
     % if not exists q* but q'
-    \item If $q^*\neq\emptyset$ but $q'=\emptyset$, then $t_k\in\Zset^{j,j'}(\Och_{i})$. Let $\ell^*=\ell_{q^*k}^{j'}$ and for $q^*<q\leq i$, we have
+    \item If $\exists q^*$ but $\nexists q'$, then $t_k\in\Zset^{j,j'}(\Och_{i})$ and $\ell^*=\ell_{q^*k}^{j'}$. With the same definitions of $Q_k^{j'}$ and $\mathcal{Y}^{j}_{m}$ as before, we have
       \begin{equation*}
       \begin{split}
-        \Phi_k &= \prod_{m=0}^{\ell^*}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell^*)}\,\prod_{m=\ell_{q^*k}^{j}}^{\ell_{ik}^{j}}\left(1-\frac{1}{I_k^{j}-m}\right) \\
-        &= \frac{I_k^{j'}-\ell^*-1}{I_k^{j'}}\frac{1}{I_k^j(I_k^{j'}-\ell^*)}\frac{I_k^j-\ell_{ik}^{j}-1}{I_k^j-\ell_{q^*k}^{j}}\\
-        &= \frac{1}{\mathcal{Y}^{j}_{\ell^*}(I_k^{j'}-\ell^*)}\left(1-\frac{\ell_{ik}^{j}+1}{I_k^j}\right)\left(1-\frac{\ell^*+1}{I_k^{j'}}\right),
+        \Phi_k &= \prod_{m=0}^{\ell^*-1}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell^*)}\,\prod_{m=\ell_{q^*k}^{j}}^{\ell_{ik}^{j}}\left(1-\frac{1}{I_k^{j}-m}\right) \\
+        &= \frac{I_k^{j'}-\ell^*}{I_k^{j'}}\frac{1}{I_k^j(I_k^{j'}-\ell^*)}\frac{I_k^j-\ell_{ik}^{j}-1}{I_k^j-\ell_{q^*k}^{j}}\\
+        &= \frac{1}{\mathcal{Y}^{j}_{\ell^*+1}I_k^{j'}}\left(1-\frac{\ell_{ik}^{j}+1}{I_k^j}\right).
       \end{split}
       \end{equation*}
-      where $\mathcal{Y}^{j}_{\ell^*}$ is as defined in \ref{scn: notZ} when $u_k\in\Mset^{j,j'}$.
     % if not exists q' but q*
-    \item If $q'\neq\emptyset$ but $q^*=\emptyset$, then $t_k\notin\Zset^{j,j'}(\Och_{q'-1})$ and $t_k\in\Cset^{j,j'}(\Och_i)$. Let $\ell'=\ell_{q'k}^{j'}$ and for $q'<q\leq i$, we have
+    \item If $\nexists q^*$ but $\exists q'$, then $t_k\notin\Zset^{j,j'}(\Och_{q'-1})$ and $t_k\in\Cset^{j,j'}(\Och_i)$. Let $\ell'=\ell_{q'k}^{j'}$, we have
       \begin{equation*}
         \begin{split}
-          \Phi_k &= \prod_{m=0}^{\ell'}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell')}=\left(1-\frac{\ell'+1}{I_{k}^{j'}}\right)\frac{1}{I_k^{j}(I_k^{j'}-\ell')}.
+          \Phi_k &= \prod_{m=0}^{\ell'-1}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell')}=\frac{1}{I_k^{j}I_k^{j'}}.
         \end{split}
       \end{equation*}
     % if exists q* and q', and q' > q*
-    \item If $q^*\neq\emptyset$, $q'\neq\emptyset$, and obviously, $q^*<q'$, then $t_k\in\Zset^{j,j'}(\Och_{q^*})$, $t_k\notin\Zset^{j,j'}(\Och_{q'})$, and $t_k\in\Cset^{j,j'}(\Och_{q'})$. Let $\ell^*=\ell_{q^*k}^{j'}$ and $\hat{\ell}=\ell_{q'k}^{j}$. We have
+    \item If $\exists q^*$ and $\exists q'$, and obviously, $q^*<q'\leq i$, then $t_k\in\Zset^{j,j'}(\Och_{q^*})$, $t_k\notin\Zset^{j,j'}(\Och_{q'})$, and $t_k\in\Cset^{j,j'}(\Och_{q'})$. Let $\ell^*=\ell_{q^*k}^{j'}$ and $\hat{\ell}=\ell_{q'k}^{j}$. We have
       \begin{equation*}
       \begin{split}
-        \Phi_k &= \prod_{m=0}^{\ell^*}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell^*)}\prod_{m=\ell_{q^*k}^{j}}^{\hat{\ell}}\left(1-\frac{1}{I_k^{j}-m}\right)\,\frac{1}{I_k^{j}-\hat{\ell}} \\
-        &= \frac{1}{\mathcal{Y}_{\ell^*}^{j}(I_k^{j}-\hat{\ell})(I_k^{j'}-\ell^*)}\left(1-\frac{\hat{\ell}+1}{I_k^{j}}\right)\left(1-\frac{\ell^*+1}{I_k^{j'}}\right)
+        \Phi_k &= \prod_{m=0}^{\ell^*-1}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell^*)}\prod_{m=\ell_{q^*k}^{j}}^{\hat{\ell}-1}\left(1-\frac{1}{I_k^{j}-m}\right)\,\frac{1}{I_k^{j}-\hat{\ell}} \\
+        &= \frac{1}{\mathcal{Y}_{\ell^*+1}^{j}I_k^{j}I_k^{j'}}.
       \end{split}
       \end{equation*}
   \end{enumerate}
@@ -779,7 +811,7 @@ We now exchange the order of multiplication over $q$ and $k$ then we can derive 
 \section{Discussion}
 
 
-\bibliographystyle{../preprint}
+\bibliographystyle{preprint}
 \bibliography{phylopomp}
 
 \end{document}
