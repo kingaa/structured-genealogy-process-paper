@@ -1,12 +1,14 @@
+\usepackage{amsmath,amssymb,mathrsfs,eucal,bbm,mathabx}
+
 \newcommand\eps{\varepsilon}
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 \newcommand\indicator[1]{\mathbbm{1}_{{#1}}}
+\newcommand\Indicator[1]{\mathbbm{1}\{{#1}\}}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\lik{\mathcal{L}}
-\newcommand\loglik{\ell}
+\newcommand\loglik{\log{\lik}}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\pkg}[1]{\textsf{#1}}
 \newcommand{\dd}[1]{\mathrm{d}{#1}}
@@ -14,69 +16,58 @@
 \newcommand{\halfclosed}[1]{({#1}]}
 \newcommand{\transpose}{\mathrm{T}}
 \newcommand{\scinot}[2]{#1{\times}10^{#2}}
-\newcommand{\pd}[3][]{%
-  \def\ord{#1} \ifx\ord\empty%
-  \frac{\partial{#2}}{\partial{#3}}%
-  \else \frac{\partial^{#1}{#2}}{\partial{#3}^{#1}}%
-  \fi
+\newcommand{\restrict}[2]{{#1}\vert_{#2}}
+\newcommand{\opnorm}[1]{%
+  {\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert{#1}%
+    \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}%
 }
-\newcommand{\deriv}[3][]{%
-  \def\ord{#1} \ifx\ord\empty%
-  \frac{\dd{#2}}{\dd{#3}}%
-  \else \frac{\dd^{#1}{#2}}{\dd{#3}^{#1}}%
-  \fi
-}
-\newcommand{\opnorm}[1]{{\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert{#1}
-        \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}}
 
-\newcommand\sv[1]{\mathbf{#1}}
-\newcommand\sg[1]{\mathcal{#1}}
-\newcommand\Sp[1]{\mathbb{#1}}
-
-\newcommand\predec[1]{{#1}\mbox{-}}
-\newcommand\prev[1]{{#1}\mbox{-}}
-\newcommand\restrict[2]{{#1}\vert_{#2}}
 \newcommand{\green}{\mathrm{green}}
 \newcommand{\black}{\mathrm{black}}
 \newcommand{\blue}{\mathrm{blue}}
-\newcommand{\red}{\mathrm{red}}
-\newcommand{\purple}{\mathrm{purple}}
+
 \newcommand\Node[1]{\mathsf{#1}}
 \newcommand\Ball[1]{\mathsf{#1}}
 
-\def\Xspace{\mathbb{Z}^d}
-\def\Uspace{\mathbb{Z}^d}
-\def\Z{\mathbb{Z}}
-\def\N{\mathbb{N}}
-\def\X{\mathcal{X}}
-\def\Master{\mathcal{A}}
-\def\Hist{\mathcal{H}}
-\def\Gen{\mathcal{G}}
-\def\Prune{\mathcal{U}}
-\def\Vis{\mathcal{V}}
-\def\Wch{\mathcal{W}}
-\def\Och{\mathcal{O}}
-\def\Inv{\mathcal{I}}
-\def\Names{\mathcal{Q}}
-\def\jumprate{\alpha}
-\def\auxmeas{\beta}
-\def\demefunc{\mathcal{D}}
+\def\emptyset{\varnothing}
+\def\preceq{\preccurlyeq}
+\def\prec2{\llcurly}
+\def\auxmeas{\nu}
 \def\Borel{\mathcal{B}}
-\def\Time{\mathbb{R}_{+}}
-\def\rate{\mathbb{R}_{+}}
-\def\cadlag{c\`adl\`ag\xspace}
-\def\Bset{\mathbf{B}}
-\def\Dset{\mathbf{D}}
-\def\Sset{\mathbf{G}}
-\def\Mset{\mathbf{M}}
-\def\Colors{\mathsf{F}}
-\def\Eset{\mathsf{E}}
-\def\Cset{\mathsf{C}}
-\def\Lset{\mathsf{L}}
-\def\Qset{\mathsf{D}}
-\def\Zset{\mathsf{Z}}
-\def\Masterset{\mathsf{A}}
-\def\Tset{\mathsf{S}}
-\def\Uset{\mathsf{U}}
+\def\cadlag{{c\`adl\`ag}}
+\def\caglad{{c\`agl\`ad}}
+\def\Xspace{\mathbb{X}}
+\def\Jumps{\mathbb{U}}
+\def\Demes{\mathbb{D}}
+\def\Demesplus{\overline{\mathbb{D}}}
+\def\Yspace{\mathbb{Y}}
+\def\Z{\mathbb{Z}}
+\def\Zp{\mathbb{Z}_{+}}
+\def\R{\mathbb{R}}
+\def\Rp{\mathbb{R}_{+}}
+\def\Master{\mathcal{A}}
+\def\X{\mathcal{X}}
+\def\Hist{\mathcal{H}}
+\def\Inv{\mathcal{I}}
+\def\Gen{\mathcal{G}}
+\def\Prune{\mathcal{P}}
+\def\Vis{\mathcal{V}}
+\def\Lin{\mathsf{L}}
+\def\st{\text{s.t.}}
+\def\ext{\mathop{\mathsf{ext}}}
+\def\prune{\mathop{\mathsf{prune}}}
+\def\obs{\mathop{\mathsf{obs}}}
 
-\newcommand\seq[1]{\Node{P}({#1})}
+\newcommand\predec[1]{\widetilde{#1}}
+\def\xt{\predec{x}}
+\def\yt{\predec{y}}
+\def\zt{\predec{z}}
+\def\wt{\predec{w}}
+\def\Xt{\predec{\X}}
+\def\ct{\mathsf{ct}}
+\def\deme{\mathsf{deme}}
+\def\anc{\mathsf{anc}}
+\def\event{\mathsf{event}}
+
+\renewcommand\binom[2]{{\scriptscriptstyle\begin{pmatrix}{#1}\\{#2}\end{pmatrix}}}
+\newcommand\BoxProb[4]{{\scriptscriptstyle\begin{pmatrix}{#1}&{#2}\\{#3}&{#4}\end{pmatrix}}}

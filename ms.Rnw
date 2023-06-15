@@ -1,812 +1,526 @@
 \documentclass[11pt,reqno,final]{amsart}
-\usepackage{tikz}
-\input{defs}
 \usepackage[round,elide]{natbib}
 \input{header}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,decorations,calc,math}
 
-
-\title{Structured Genealogy Processes}
-\author[Lin]{Qianying Lin}
+\title[Exact Phylodynamics]{Exact Phylodynamics via Structured Markov Genealogy Processes}
 \author[King]{Aaron~A.~King}
+\address{
+  A.~A.~King,
+  Department of Ecology \& Evolutionary Biology,
+  Center for the Study of Complex Systems, and
+  Department of Mathematics,
+  University of Michigan,
+  Ann Arbor, MI 48109 USA
+}
+\email{kingaa@umich.edu}
+\urladdr{\href{https://kinglab.eeb.lsa.umich.edu/}{https://kinglab.eeb.lsa.umich.edu/}}
+\author[Lin]{Qianying Lin}
+\address{
+  Q.-Y. Lin,
+  Theoretical Biology and Biophysics,
+  Los Alamos National Laboratory,
+  Los Alamos, NM XXXXX USA
+}
 \author[Ionides]{Edward~L.~Ionides}
-
+\address{
+  E.~L.~Ionides,
+  Department of Statistics
+  University of Michigan,
+  Ann Arbor, MI 48109 USA
+}
 \date{\today}
 
-\hypersetup{pdftitle={Structured Genealogy Processes}}
-\hypersetup{pdfauthor={Q.-Y. Lin, A.A. King, E.L. Ionides}}
+\hypersetup{pdftitle={Exact Phylodynamics via Structured Markov Genealogy Processes}}
+\hypersetup{pdfauthor={A.A. King, Q.-Y. Lin, E.L. Ionides}}
 \hypersetup{urlcolor=blue,citecolor=blue,linkcolor=blue,filecolor=blue}
 
-
 <<prefix,include=FALSE,cache=FALSE,purl=FALSE>>=
-library(knitr)
-prefix <- "strgp"
-read_chunk("setup.R")
-@
-<<setup,include=FALSE,cache=FALSE,purl=FALSE>>=
+prefix <- "smgp"
+source("setup.R")
 @
 <<packages,include=FALSE,cache=FALSE>>=
 library(tidyverse)
 library(ggtree)
 library(pomp)
-library(phylopomp)
 library(cowplot)
-stopifnot(getRversion() >= "4.0")
-stopifnot(packageVersion("pomp")>="3.2")
-stopifnot(packageVersion("phylopomp")>="0.0.14")
+library(phylopomp)
+stopifnot(getRversion() >= "4.3")
+stopifnot(packageVersion("pomp")>="5.1")
+stopifnot(packageVersion("phylopomp")>="0.9.2")
 theme_set(theme_bw(base_family="serif"))
 set.seed(1159254136)
 @
 
 \begin{document}
-% \SweaveOpts{concordance=TRUE}
+
 \maketitle
 
 \begin{abstract}
-This is a followup paper on Markov Genealogy Process. 
-We construct a continuous time Markov Process, called Structure Genealogy Process, to include structures in the focal population with a moderate adjustments in the setting of individuals, genealogies, and genealogy processes. 
-We derive the exact expression of likelihood of a structured genealogy and develop simulation-based algorithms to conduct statistical inferences. 
-Numerical simulation and real-world examples are included.
+
 \end{abstract}
 
 \section{Introduction}
 
-\section{Mathematical settings}
-\label{sec:settings}
-\paragraph{Markov genealogy process}
-A population process $\sg{X}_t\in\Xspace$ as a non-explosive Markov jump process is defined, where $t\in\Time$ indicates the time and the population is divided into $J\in\N$ demes, with initial-state distribution $p_0(x)$. 
-We then define the jump rate functions $\jumprate_u(t,x)\in\rate$, where $u, x\in\Xspace$ are the jump event and states, respectively. 
-Thus, the population process $\sg{X}_t$ is a stochastic process by defining a sequence of jumps, $\omega=\left(t_k, u_k, n_k\right)_{k=1}^K$, where $K\in\N\cup\{\infty\}$ is the total number of jumps and for the $k$-th jump, $t_k\in\Time$ is the time, $u_k\in\Uspace$ is the event type, and $n_{k}\in\N$ is the label of the individual who conducts $u_k$. 
-The full construction can be referred to \citet{King2021}. We define the following functions on $\omega\in\Omega$:
+Problem of phylodynamics.
+Factorization of problem into two subproblems.
 
-\begin{equation}
-  T_k(\omega)\coloneqq t_k,\qquad U_k(\omega)\coloneqq u_k,\qquad N_k(\omega)\coloneqq n_k,\qquad K(\omega)\coloneqq K
-\end{equation}
+Relation to previous work.
+Existing methods \citep{Volz2009a,Stadler2010}.
+Large-population, small sample-size approximations.
 
-and 
+Extension of previous results \citep{King2022}.
+Broader class of state-spaces.
+Accommodating discrete structure.
 
-\begin{equation}
-  T(\omega)\coloneqq\left(T_k(\omega)\right)^{K(\omega)}_{k=0},\qquad U(\omega)\coloneqq\left(U_k(\omega)\right)^{K(\omega)}_{k=0},\qquad N(\omega,j)\coloneqq\left(N_k(\omega)\right)^{K(\omega)}_{k=0}.
-\end{equation}
+Classes of Markov processes.
+Utility and flexibility of Markov assumptions.
 
-% \QYL{May not be necessary to repeat the GP paper.}
-% 
-% Obviously, there's a unique mapping from $\omega$ to the population process up to time $t\in\Time$. For $\omega\in\Omega$, we then can define the $t$-\emph{restriction} $\omega\vert_t$ and the sample path $\sg{X}_t(\omega)$ of $\omega$:
-% 
-% \begin{equation}
-%   \omega\vert_t\coloneqq\max\{\omega'\in\Omega\,\vert\,\omega'\preceq\omega\text{ and }T_K(\omega')\le t\}
-%   \quad\text{and}\quad
-%   \sg{X}_t(\omega)=\sum_{k=0}^{K(\omega)}U_k(\omega)\indicator{\left[T_k(\omega),\infty\right)}(t),
-% \end{equation}
-% 
-% where $\omega'\preceq\omega$ implies that $\omega$ is an extension of $\omega'$ and $\indicator{}$ is an indicator function.
+Population process induces Markov history and genealogy processes.
+Using these, we derive equations for the likelihood of a genealogy conditional on the history.
+We then integrate out the history to obtain nonlinear filtering equations, the solution of which yields the likelihood.
+These readily lend themselves to a family of sequential Monte Carlo algorithms for computing the likellihood.
+We demonstrate with several examples.
+
+\section{Population processes}
+
+Motivating examples: compartmental models.
+Wide variety of models.
+Linear chain trick.
+Migration, superspreading, competition between strains.
+
+Figure: example compartmental model with multiple demes.
 
 \begin{figure}
-  \resizebox{0.6\linewidth}{!}{
-    \begin{tikzpicture}[scale=1.8]
-      \usetikzlibrary{arrows}
-      \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
-      \tikzstyle{det}=[color=black, thick, >=stealth]
-      \tikzstyle{stoch}=[color=black, dashed, thick, >=stealth]
-      \node (A) at (0,0) {$\Master_t$};
-      \node (H) at (30:1) {$\Hist_t$};
-      \node (X) at (30:2) {$\X_t$};
-      \node (G) at (-30:1) {$\Gen_t$};
-      \node (I) at (-30:2) {$\Inv_t$};
-      \node (P) at (0:1.732) {$\Prune_t$};
-      \node (O) at (1.732,.5) {$\Och_i$};
-      \node (V) at (0:2.732) {$\Vis_t$};
-      \node (W) at (2.732,.5) {$\Wch_i$};
-      \draw [det,->] (A) -- (H);
-      \draw [det,->] (H) -- (X);
-      \draw [det,->] (A) -- (G);
-      \draw [det,->] (G) -- (I) node[midway,below,sloped] {$\mathrm{ext}$};
-      \draw [det,->] (G) -- (P) node[midway,below,sloped] {$\mathrm{prune}$};
-      \draw [det,->] (P) -- (V) node[midway,below,sloped] {$\mathrm{obs}$};
-      \draw [det,->] (P) -- (O);
-      \draw [det,->] (V) -- (W);
-      \draw [stoch,->] (H) -- (G);
-    \end{tikzpicture}
-  }
+  \begin{center}
+    \resizebox{0.9\linewidth}{!}{\input{figs/model_diagrams}}
+  \end{center}
   \caption{
-    \label{fig:constellation}
-    Relations among the various Markov processes discussed in the paper.
-    Deterministic maps are indicated with solid arrows;
-    random maps are shown as dashed arrows.
-    All the maps shown commute.
-    $\X_t$ is the \emph{population process}, a model of the dynamics of some system, which we take as a starting point.
-    $\Hist_t$ is the \emph{history process}, which records the full history of $\X_t$.
-    $\Inv_t$ is the \emph{inventory process}: at each time $t$, $\Inv_t$ is an inventory of all extant individuals in the population, each of which has a globally unique name.
-    $\Gen_t$ is the \emph{genealogy process}, which captures the precise genealogical relationships among all individuals in $\Inv_t$, as well as among any samples that have been taken from the population.
-    $\Vis_t$ is the \emph{visible genealogy process}, which is $\Gen_t$ pruned so that only relationships among samples remain.
-    Finally $\Wch_i$ is the \emph{embedded chain of the visible genealogy process}, which is $\Vis_{s_i}$, $s_i$ being the time of the $i$-th sample.
-    All of these processes can be obtained via deterministic procedures applied to the \emph{master process} $\Master_t$, as described in the text.
+    Examples of compartmental models.
+    Demes are shaded.
+    \label{fig:examples}
   }
 \end{figure}
 
-\paragraph{Births}
-Within a structured infective population, the parent and the child, at a given birth event, can be in different demes.
-That is, an individual in Deme $j$ can give birth to a newborn individual in Deme $j'$, where $j,j'=1,\dots,J$. 
-We then define the birth function $B_{j,j'}:\Uspace\to\N$ for any $j,j'=1,\dots,J$. 
-The set of birth events where an individual in Deme $j$ gives birth to $n$ individuals in Deme $j'$ is $\Bset^{j,j'}\coloneqq\,B_{j,j'}^{-1}(\{1\})$. 
-Trivially, the set of birth events in Deme $j'$ is $\Bset^{j'}\coloneqq\bigcup_{j}\Bset^{j,j}$.
+\begin{figure}
+  \begin{center}
+    \resizebox{0.9\linewidth}{!}{\input{figs/markov_state}}
+  \end{center}
+  \caption{
+    Markov state transition diagram for an SEIR model.
+    The state is characterized by four numbers, $S$, $E$, $I$, and $R$.
+    From a given state $x$, there are four possible jumps $x\mapsto{x'}$.
+    From the point of view of the induced genealogy process,
+    transmission is of birth type,
+    progression is of migration type,
+    and recovery is of death type, while loss of immunity is of neutral type.
+    In this example, when a sampling event occurs, the state does not change.
+    \label{fig:markov_state}
+  }
+\end{figure}
+
+\paragraph{Mathematical formalism}
+
+Definition of state space.
+Jumps and jump rates.
+Demes.
+
+Kolmogorov equations.
+
+\subsection{Examples}
+
+\paragraph{SEIRS model}
+
+\paragraph{SIIR model}
+
+\paragraph{Linear birth-death model}
+
+\paragraph{Moran model and the Kingman coalescent}
+
+\section{History and genealogy processes}
+
+\subsection{Mathematical preliminaries}
+
+State space.
+Definition of $\Omega$ as space of \cadlag\ functions of time.
+Define everything in terms of \cadlag\ functions rather than sequences.
+Then the topology comes directly from the Skorokhod metric.
+Explain we use a base measure coming from unit-rate Poisson processes.
+
+Restrictions.
+Metric, Borel $\sigma$-algebra, base measure.
+
+Probability density.
+Master process.
+
+\paragraph{Markov jump processes}
+
+We will assume that our population process is a non-explosive Markov jump process $\X_t$ parameterized by time $t\in\Rp$, and taking values in some space $\Xspace$.
+In earlier work \citep{King2022}, we limited ourselves to the case $\Xspace=\Z^d$, but we dispense with that restriction here.
+The population process is completely specified by its initial-state distribution and its generator.
+In particular, we suppose that
+\begin{equation}\label{eq:ic}
+  \prob{\X_0=x}=p_0(x),
+\end{equation}
+for some choice of initial distribution, $p_0$.
+We suppose there are countably many types of jumps and denote the set of jump types by $\Jumps$.
+For each $u\in\Jumps$, there is a corresponding jump rate or hazard $\alpha_u$.
+We impose the further requirement that $\sum_{ux'}\alpha_u(t,x,x')<\infty$ for all $t,x$.
+We will always use a version of $\X_t$ in which the sample paths are right-continuous with left limits (\cadlag).
+
+The above may be compactly summarized by means of the corresponding Kolmogorov equations, as follows.
+Given $f\in L^{\infty}(\Xspace)$, let $F(s,x)\coloneq\expect{f(\X_t)\;|\;\X_s=x}$.
+It then follows that, for $s<t$ and $x\in\Xspace$,
+\begin{equation}\label{eq:gen}
+  \begin{gathered}
+    \frac{\partial{F}}{\partial{s}}(s,x)=-\int\alpha(s,x,x')\,\left[F(s,x')-F(s,x)\right]\,\dd{x'},
+    \qquad
+    F(t,x)=f(x).
+  \end{gathered}
+\end{equation}
+\Cref{eq:gen} is the so-called Kolmogorov backward equation.
+Its adjoint is the Kolmogorov forward equation (KFE, also called the \emph{master equation} in this context), which states that for $t\ge{0}$, $x\in\Xspace$,
+\begin{equation}\label[pluralequation]{eq:kfe}
+  \begin{gathered}
+    \frac{\partial{w}}{\partial{t}}(t,x)=\int\!w(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'},
+    \qquad
+    w(0,x) = p_0(x).
+  \end{gathered}
+\end{equation}
+If $w(t,x)$ satisfies \cref{eq:kfe}, then $w(t,x)=\prob{\X_t=x}$.
+
+\paragraph{Definitions}
+
+Our goal in this paper is to introduce a family of Markov processes induced by the jump process just described (\cref{fig:constellation}).
+While population processes of the kind described above can be constructed in a variety of time-honored ways \citep[\eg][]{Andersen1993,Kallenberg1997}, these classical approaches are not entirely sufficient for the tree-valued Markov processes we will erect on top of the population process.
+We therefore explicitly construct the probability space that underlies the stochastic processes we subsequently describe.
+Unavoidably, this leads to technicalities that are necessary for the firm establishment of the properties of these processes but that may distract from the overarching goals.
+Readers willing to stipulate these properties may skim the remainder of this section, in which we formally construct the probability space and make some definitions that will be needed in the sequel.
+
+Let us define a \emph{jump} to be an ordered quadruple $(t,u,x,n)\in\Rp\times\Jumps\times\Xspace\times\Zp$.
+We refer to $t$ as the \emph{time} of the jump;
+$u$ is the \emph{type} of the jump;
+$x$ is the state achieved at the end of the jump;
+$n$ is an \emph{auxiliary number} whose use will be made clear below.
+A \emph{jump sequence} is a countable sequence of jumps at increasing times.
+That is,
+\begin{equation*}
+  \omega=\left(t_k,u_k,x_k,n_k\right)_{k=0}^{K}
+\end{equation*}
+is a jump sequence if and only if $K\in\Zp\cup\{\infty\}$, $u_k\in\Jumps$, $x_k\in\Xspace$, $n_k\in\Zp$ for all $k$, and $0=t_0<t_1<t_2<\dots$.
+We will take our sample space, $\Omega$, to be the set of all jump sequences.
+For $\omega\in\Omega$ as above, we write
+\begin{equation}\label{eq:components1}
+  \begin{gathered}
+    T_k(\omega)\coloneq t_k, \qquad
+    U_k(\omega)\coloneq u_k, \qquad
+    X_k(\omega)\coloneq x_k, \qquad
+    N_k(\omega)\coloneq n_k, \qquad
+    K(\omega)\coloneq K
+  \end{gathered}
+\end{equation}
+and also
+\begin{equation}\label{eq:components2}
+  \begin{gathered}
+    T(\omega)\coloneq\left(T_k(\omega)\right)_{k=0}^{K(\omega)}, \qquad
+    U(\omega)\coloneq\left(U_k(\omega)\right)_{k=0}^{K(\omega)}, \\
+    X(\omega)\coloneq\left(X_k(\omega)\right)_{k=0}^{K(\omega)}, \qquad
+    N(\omega)\coloneq\left(N_k(\omega)\right)_{k=0}^{K(\omega)}.
+  \end{gathered}
+\end{equation}
+We will denote by $\mathring{\Omega}$ the set of all finite jump sequences, \ie $\mathring{\Omega}\coloneq\{\omega\in\Omega\;|\;K(\omega)<\infty\}$.
+
+Note that every element of $\Omega$ corresponds to a unique sample path of $\X_t$.
+In particular,
+\begin{equation}\label{eq:Xdef}
+  \X_t(\omega)=\sum_{k=0}^{K(\omega)}\!X_k(\omega)\,\indicator{\halfopen{T_k(\omega),\infty}}(t).
+\end{equation}
+Note that, for every $\omega\in\Omega$, the function $\X(\omega):\Rp\to\Xspace$ is thus \cadlag.
+It will be useful to define $\Xt$ to be the left-limit function of $\X$:
+\begin{equation*}
+  \Xt(\omega,t)\coloneq
+  \begin{cases}
+    \lim_{s\uparrow{t}}\X(\omega,t), & t>0,\\
+    \X(0), & t=0.\\
+  \end{cases}
+\end{equation*}
+
+The sample space $\Omega$ has a natural partial order.
+We write $\omega\preceq\omega'$ if $\omega'$ is an extension of $\omega$;
+that is, if $K(\omega)\le K(\omega')$, and $\left(T_k(\omega),U_k(\omega),X_k(\omega),N_k(\omega)\right)=\left(T_k(\omega'),U_k(\omega'),X_k(\omega'),N_k(\omega')\right)$ for $k=0,\dots,K(\omega)$.
+For $\omega\in\Omega$, the set
+$\left\{\omega'\in\Omega\;\vert\;\omega'\preceq\omega\right\}$
+is totally ordered.
+Moreover, for each $\omega\in\mathring{\Omega}$, there is a unique \emph{predecessor}, $\predec{\omega}$, such that $\predec{\omega}\preceq\omega$, $\predec{\omega}\ne\omega$, and, for all $\omega'$, $\predec{\omega}\preceq\omega'\preceq\omega$ implies that either $\omega'=\predec{\omega}$ or $\omega'=\omega$.
+
+In order to define probabilistic \emph{events}, it is necessary to define the $\sigma$-algebra of measurable subsets of $\Omega$.
+We first impose the condition that $\Xspace$ be a complete, separable, measurable metric space.
+We then follow \citet{King2022}, extending the Skorokhod metric \citep{Kallenberg1997,Ethier2009} to make $\Omega$ a complete, separable metric space (\ie a Polish space) and take our event space, $\Borel$, to be its Borel $\sigma$-algebra.
+
+We now turn to the probability measure, $\mathbb{P}$, on $\Omega\cong T(\Omega){\times}U(\Omega){\times}X(\Omega){\times}N(\Omega)$.
+We will specify this by giving its density.
+%% We will specify this by giving its density with respect to a base measure.
+%% A natural base measure on $T(\Omega)$ is the probability measure of the unit-rate Poisson point process \citep{Andersen1993,Kallenberg1997};
+%% the measure on $\Xspace$ extends naturally to a product measure on $X(\Omega)$;
+%% the counting measure serves for the discrete component $U(\Omega){\times}N(\Omega)$.
+%% Let $\pi$ denote the product of these three measures.
+%% We define a probability measure on $\Omega$ by specifying its density with respect to $\pi$.
+In particular, for each $u\in\Jumps$, $x,x'\in\Xspace$, we suppose $\auxmeas_{u,x,x'}$ is a given probability measure on $\Zp$;
+these will take specific forms below.
+For $t\in\Rp$ and $\omega\in\restrict{\Omega}{t}$, define the probability density function
+\begin{equation}\label{eq:probmeas}
+  P_t(\omega)\:\coloneq\:p_0(\X_0)\,\prod_{k=1}^{K}\left(\alpha_{U_k}(T_k,\Xt_{T_k},\X_{T_k})\,\auxmeas_{U_k,\Xt_{T_k},X_{T_k}}(N_k)\right)\exp{\left(-\int_0^t\sum_{ux'}{\alpha_u(s,\X_s,x')}\,\dd{s}\right)},
+\end{equation}
+\normalsize
+the latter sum being taken over $u\in\Jumps$, $x'\in\Xspace$.
+Here, for the sake of readability, we have suppressed the dependence of the random variables $\X_t$, $K$, $T_k$, $U_k$ and $N_k$ on $\omega$.
+%% It is readily verified that, for all $t$, $P_t$ is a probability density with respect to $\pi$.
+
+\paragraph{History process}
+
+Next among our constellation of related processes (\cref{fig:constellation}) is the \emph{history process}, which encapsulates the entire history of $\X$ up to time $t$.
+Specifically, for $\omega\in\Omega$, we define
+\begin{equation*}
+  \Hist_t(\omega) \coloneq \left(t,\left(T_k(\omega),U_k(\omega),X_k(\omega)\right)_{k=0}^{K(\restrict{\omega}{t})}\right),
+\end{equation*}
+where $T_k$, $U_k$, $X_k$, and $K$ are as in \cref{eq:components1}.
+Thus $\Hist_t$ contains exactly those elements of $\omega$ that are relevant to the history of the population process $\X_t$.
+It is trivial to verify that $\Hist_t$ is Markov and to compute its probability density.
+In particular, given any history $h_t=\left(t,\left(t_k,u_k,x_k\right)_{j=0}^{K}\right)$,
+the marginal density at $h_t$ is readily seen to be
+\begin{equation*}
+  \begin{aligned}
+    P_{\Hist_t}(h_t)\coloneq &p_0(x_0)\,\prod_{k=1}^{K}\left\{\alpha_{u_k}(t_k,x_{k-1},x_k)\,\exp{\left(-\int_{t_{k-1}}^{t_k}\sum_{ux'}{\alpha_u(s,x_{k-1},x')}\,\dd{s}\right)}\right\}\\
+    &\qquad\times\,\exp{\left(-\int_{t_{K}}^{t}\sum_{ux'}{\alpha_u(s,x_{K},x')}\,\dd{s}\right)}.
+  \end{aligned}
+\end{equation*}
+
+\paragraph{Inventory process}
+
+Our main interest is in tracking the genealogical relationships among the lineages in our demes.
+Accordingly, we will assign each individual lineage a unique number.
+let $\Inv_t:\Rp\to\Demesplus^{\Zp}$ be such that $\Inv_t(n)=i$ if and only if lineage $n$ is in deme $i$ at time $t$.
+If $t$ is before the birth or after the death of $n$, $\Inv_t(n)=\eth$.
+Note that $n_i(\X_t)=\left\vert\left\{n\;\vert\;\Inv_t(n)=i\right\}\right\vert$ for all $t\in\Rp$ and $i\in\Demes$.
 
 
-\paragraph{Migrations}
-Infective demes are interchangeable and we define the migration function from Deme $j$ to $j'$ for any $j\neq j'$ and $j,j'=1,\dots,J$ as $M_{j,j'}:\Uspace\to\N$ to represent the number of infectives migrating to Deme $j'$ from Deme $j$.
-Thus the set of migration is $\Mset^{j,j'}\coloneqq\,M^{-1}_{j,j'}(\{1\})$ since we assume single migration at a single migration event. 
-Similarly, we disallow coninciding migration events and other events. 
+\paragraph{Genealogy process}
 
-\paragraph{Samples}
-We assume samples are taken serially and no births or deaths are coincided. 
-We then define the sampling function on the probability space of the population process $\sg{X}_t$: $G_j:\Uspace\to\N_0$ is the number of samples from Deme $j$ taken at event $u$, then the set of sampling events is $\Sset^j\coloneqq\,G_j^{-1}(\{1\})$. 
-Of course, the non-coincidence assumption can be easily relaxed while it's not the focus in this paper.
+\paragraph{Pruning}
 
+\paragraph{Filter equations}
 
-\paragraph{Deaths and population size}
-The population, the set of infected individuals in the context of epidemiology, is structured, categorized into interchangeable demes. 
-We can then define population size function and death functions in Deme $j$, respectively, as $I^{j}, D_{j}:\Xspace\to\N$ for any $j=1,\cdots,J$. 
+\begin{defn}
+  Suppose $X_t$ is a Markov process with Kolmogorov forward equation (KFE)
+  \begin{equation}\label{eq:kfe2}
+    \begin{gathered}
+      \frac{\partial{w}}{\partial{t}}=\int\!w(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'},
+      \qquad
+      w(0,x)=p_0(x).
+    \end{gathered}
+  \end{equation}
+  Suppose that $B(x,x')>0$ and $\lambda(t,x)>0$ are given functions, and $t_1<t_2<{\dots}<t_K$ is a given sequence of times.
+  We say that the equations
+  \begin{gather}
+    \frac{\partial{w}}{\partial{t}}=\int\!w(t,x')\,\alpha(t,x',x)\,B(x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'}-\lambda(t,x)\,w(t,x),\label{eq:filtereq1}\\
+    w(t_k,x)=\int\!\wt(t_k,x')\,\frac{\alpha(t,x',x)}{\mu}\,B(x',x)\,\dd{x'},\quad k=1,\dots,K,\label{eq:filtereq2}\\
+    w(0,x)=p_0(x).
+  \end{gather}
+  are the \emph{filter equations} for $X_t$ with \emph{boost} $B$, \emph{decay} $\lambda$, \emph{initial density} $p_0$, and \emph{observation times} $t_k$.
+\end{defn}
+
+The useful fact about filter equations is that they afford a means of computing the likelihood of a given sequence of events.
+This is facilitated by the following
+\begin{lemma}\label{lemma:filtereq}
+  \Cref{eq:filtereq1} is satisfied by $w(t,x)=\int{v\,U(t,x,v)\,\dd{v}}$, where $U$ satisfies the KFE
+  \begin{equation}\label{eq:filterlemma}
+    \begin{aligned}
+      \frac{\partial{U}}{\partial{t}}=&\int{U(t,x',v')\,\alpha(t,x',x)\,\delta(v,B(x',x)\,v')\,\dd{x'}\,\dd{v'}}\\
+      &\qquad-\int{U(t,x,v)\,\alpha(t,x,x')\,\delta(v',B(x,x')\,v)\,\dd{x'}\,\dd{v'}}
+      +\tfrac{\partial}{\partial{v}}\left[\lambda(t,x)\,v\,U(t,x,v)\right].
+    \end{aligned}
+  \end{equation}
+  Here, $\delta(v,v')$ is the familiar Dirac $\delta$.
+\end{lemma}
+\begin{proof}
+  \begin{equation*}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}
+      =&\int{v\,\frac{\partial{U}}{\partial{t}}(t,x,v)\,\dd{v}}\\
+      =&\int{v\,U(t,x',v')\,\alpha(t,x',x)\,\delta(v,B(x',x)v')\,\dd{v}\,\dd{x'}\,\dd{v'}}\\
+      &\qquad-\int{v\,U(t,x,v)\,\alpha(t,x,x')\,\delta(v',B(x,x')v)\,\dd{v}\,\dd{x'}\,\dd{v'}}\\
+      &\qquad+\int{v\,\tfrac{\partial}{\partial{v}}\left[\lambda(t,x)\,v\,U(t,x,v)\right]\,\dd{v}}.\\
+    \end{aligned}
+  \end{equation*}
+  Evaluating the first integral with respect to $v$, the second with respect to $v'$, and the third by parts, we obtain
+  \begin{equation*}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}
+      =&\int{v'\,U(t,x',v')\,\alpha(t,x',x)\,B(x',x)\,\dd{v'}\,\dd{x'}}
+      -\int{v\,U(t,x,v)\,\alpha(t,x,x')\,\dd{v}\,\dd{x'}}\\
+      &\qquad-\lambda(t,x)\,\int{v\,U(t,x,v)\,\dd{v}},
+    \end{aligned}
+  \end{equation*}
+  which is simplified to obtain \cref{eq:filtereq1}.
+\end{proof}
+
+We recognize in \cref{eq:filterlemma} the KFE of a certain process $(X_t,V_t)$.
+In particular, $X_t$ is a jump process with KF \cref{eq:kfe2}.
+The $V_t$ process has jumps wherever $X_t$ does, such that when $X_t$ jumps $x\mapsto{x'}$, $V_t$ jumps by a factor of $B(x,x')$.
+Between jumps, $V_t$ decays deterministically and exponentially at rate $\lambda(t,x)$.
+If we view $V_t$ as a weight, then \cref{lemma:filtereq} says that the weighted average of $X_t$ evolves according to \cref{eq:filtereq1}.
+
+\paragraph{Lineages, event-counter, deme-residence}
+
+Let $\Lin=\Lin(\Gen)$ denote the finite set of all samples represented in genealogy $\Gen$.
+Let $\prec2$ be any ordering of $\Lin$ that is compatible with ancestry.
+That is, if $j,j'\in\Lin$ are such that $j$ is ancestral to $j'$, then we must have $j\prec2{j'}$.
+Using this ordering, we can uniquely associate each point on a genealogical tree with the least of those lineages that descend from that point.
+In particular, any lineage $j\in\Lin$, corresponding to a sample taken at time $t^s_j$, can be traced backward from node to node until either it coalesces with some lesser lineage at some time $t^o_j>0$ or a root is reached (in which case, we define $t^o_j=0$).
+Each node encountered along the way represents a genealogical event from which $j$ emerges.
+Moreover, at each time $t\in\halfopen{t^o_j,t^s_j}$, lineage $j$ is in precisely one of the demes $D$.
+However, for $t\notin\halfopen{t^o_j,t^s_j}$, lineage $j$ does not exist.
+To express this, we say that lineage $j$ is in the \emph{undeme}, which we denote using the symbol $\eth$.
+We define $\Demesplus\coloneq\Demes\cup\{\eth\}$.
+
+It will be useful to define a function that captures all the relevant features of a pruned genealogy.
+Accordingly, let $\Yspace=(\Zp\times\Demesplus\times\Lin)^{\Lin}$ and define $y:\Rp\to\Yspace$ so that, for $j\in\Lin$ and $t\in\Rp$:
+\begin{compactenum}[(a)]
+\item $\ct(y_j(t))\in\Zp$ is a counting process which increases by 1 at each event along lineage $j$.
+\item $\deme(y_j(t))\in\Demesplus$ indicates in which deme lineage $j$ lies at time $t$.
+  In particular $\deme(y_j(t))=\eth$ if $t\notin\halfopen{t^o_j,t^s_j}$.
+\item $\anc(y_j(t))\in\Lin$ indicates the lineage in which the ancestors of lineage $j$ are found.
+  In particular, $\anc(y_j(t))=j$ for $t\ge{t^o_j}$, but $\anc(y_j(t))$ is well defined for all $j$ and $t$.
+\end{compactenum}
+One can verify that $y$ is \cadlag.
+Define $\yt(t)=\lim_{s\uparrow{t}}y(s)$.
+
+To visualize these functions, one can make a correspondence between demes and colors.
+Then a pruned genealogy is visualized as a tree with colored branches.
+Knowing the function $\deme(y)$ is equivalent to knowing the coloring, while $\ct(y)$ determines the locations of events in the genealogy and $\anc(y)$ determines the topology.
+Note in particular that $y_j(t)\ne\yt_j(t)$ if and only if $t$ is the time of an event from which lineage $j$ emerges.
+
+\paragraph{Lineage count, saturation}
+
+In the following, we will find that we need to count the deme-specific numbers of lineages present at a given time.
+Accordingly, for any $\Lin'\subseteq{\Lin}$, $\eta\in(\Zp\times\Demesplus\times\Lin')^{\Lin'}$, and $i\in\Demes$, let us define
+\begin{equation*}
+  \ell_i(\eta)\coloneq{\left\vert\left\{j\in\Lin'\;\vert\;\deme(\eta_j)=i\right\}\right\vert}\in\Zp, \qquad \ell(\eta)\coloneq(\ell_i(\eta))_{i\in\Demes}\in{\Zp^\Demes}.
+\end{equation*}
+Note that lineages $j$ for which $\eta_j=\eth$ are not counted.
+With this definition, it follows that $\ell_i(y(t))$ is the number of lineages in deme $i$ at time $t$.
+
+We will also have occasion to refer to the deme-specific number of lineages emerging from a given event.
+Accordingly, for $\Lin'\subseteq{\Lin}$, $\eta,\eta'\in(\Zp\times\Demesplus\times\Lin')^{\Lin'}$, and $i\in\Demes$, let us define
+\begin{equation*}
+  s_i(\eta,\eta')\coloneq{\left\vert\left\{j\in{\Lin'}\;\vert\;\deme(\eta_j)=i\ \ \&\ \ \ct(\eta'_j)=\ct(\eta_j)+1\right\}\right\vert}, \qquad s(\eta,\eta')\coloneq(s_i(\eta,\eta'))_{i\in\Demes}\in{\Zp^\Demes}.
+\end{equation*}
+With this definition, $s_i(\yt(t),y(t))$ is the number of lineages in deme $i$ that emerge from an event at time $t$ and that, if $t$ is not an event time, then $s(\yt(t),y(t))=0$.
+
+\subsection{Obscuration}
+
+\section{Results}
+
+\begin{defn}
+  For $n,r,\ell,n\in{\Zp^\Demes}$, define the multivariable binomial coefficient by
+  \begin{equation*}
+    \binom{n}{r}\coloneq\prod_{i\in\Demes}\binom{n_i}{r_i}.
+  \end{equation*}
+  Using this, we define the \emph{binomial ratio}
+  \begin{equation*}
+    \BoxProb{n}{\ell}{r}{s}\coloneq\frac{\binom{n-\ell}{r-s}}{\binom{n}{r}}\in{[0,1]}.
+  \end{equation*}
+\end{defn}
+
+In consequence of the Chu-Vandermonde identity, we have
 \begin{equation}
-  \jumprate_u(t,x) > 0 \Longrightarrow I_j(x+u)-I_j(x)=\sum_{j'}\,B_{j',j}(u)+\sum_{j'}M_{j',j}(u)-D_j(u)-\sum_{j'}M_{j,j'}(u),
+  \sum_{s\in\Zp^{\Demes}}\BoxProb{n}{\ell}{r}{s}\binom{\ell}{s}=1
 \end{equation}
 
-for all $x, u\in\Xspace$. We disallow simultaneous death at a single death event at this stage and define the set of death events in Deme $j$ as $\Dset^j\coloneqq\,D_j^{-1}(\{1\})$. 
-We also insist, birth and death events don't coincide for any demes, $j,j'$, that is,  $\Bset_{j}\cap\Dset_{j'}=\emptyset$. 
-Eventually, we can have the function for total population size by letting $I(x)\coloneqq\sum_{j=1}^J\,I_j(x)$ and it's trivial that 
+\paragraph{Likelihood of a pruned genealogy}
 
+Now certain population-process events at certain times are incompatible with any given pruned genealogy.
+Example: a sample event where no sample is seen, or a migration event involving a change of deme not observed in the pruned genealogy.
+Define the function $Q_u(\eta,\eta')=1$ if a change $\eta\to\eta'$ at time $t$ is compatible with an event of type $u$ at that time, and $Q_u=0$ otherwise.
+In other words, $Q_u$ is the indicator function for the condition that there exist $\omega\in\Omega$, $t\in\Rp$, and $k\in\Zp$ such that $t=T_k(\omega)$, $u=U_k(\omega)$, $\yt(t,\omega)=\eta$, and $y(t,\omega)=\eta'$.
+Using this, we define
+\begin{equation*}
+  \phi_u(\xi,\eta,\eta')\coloneq\BoxProb{n(\xi)}{\ell(\eta')}{r_u}{s(\eta,\eta')}\,Q_u(\eta,\eta').
+\end{equation*}
+
+\begin{thm}
+  \begin{equation*}
+    \prob{\Gen\vert\Hist}=\prod_{(u,t,x)\in\Hist}\phi_u(x,\yt(t),y(t)).
+  \end{equation*}
+\end{thm}
+
+\begin{figure}
+  \begin{center}
+    \input{figs/thm1diag}
+  \end{center}
+  \caption{\label{fig:thm1diag}}
+\end{figure}
+
+\begin{center}
+  \input{figs/triangle1}
+\end{center}
+
+\begin{equation*}
+  \frac{r!}{(r-s)!}\cdot\frac{(n-\ell)!}{n!}\cdot\frac{(n-r)!}{(n-r-\ell+s)!}
+  =\frac{r!(n-r)!}{n!}\cdot\frac{(n-\ell)!}{(n-\ell-r+s)!(r-s)!}
+  =\BoxProb{n}{\ell}{r}{s}
+\end{equation*}
+
+Suppose we have a pruned genealogy $\Prune^*$, defined on the time-interval $[0,T]$, with event times $0=t_0<t_1<\cdots<t_n=T$.
+From the theorem, we have, for $t\notin\event(\Prune^*)$,
 \begin{equation}
-  \jumprate_u(t,x) > 0 \Longrightarrow I(x+u)-I(x)=\sum_{j,j'}B_{j,j'}(u)-\sum_{j}D_j(u),
+  \frac{\partial{w}}{\partial{t}}=\sum_{u}\int\!w(t,x')\,\alpha_u(t,x',x)\,\phi_u\big(x,y(t),y(t)\big)\,\dd{x'}
+  -\sum_{u}\int\!w(t,x)\,\alpha_u(t,x,x')\,\dd{x'}.
+\end{equation}
+At event times, $t\in\event(\Prune^*)$, one has
+\begin{equation}\label{eq:prune_filt_disc}
+  w(t,x)=\sum_{u}\int\!\wt(t,x')\,\frac{\alpha_u(t_k,x',x)}{\mu}\,\phi_u\big(x,\yt(t),y(t)\big)\,\dd{x'}\\,
+\end{equation}
+In addition, there are the initial and boundary conditions
+\begin{equation}
+  \begin{gathered}
+    w(0,x)=p_0(x), \qquad w(t,x)=0\quad\text{whenever}\quad n(x)<\ell(y(t)).
+  \end{gathered}
 \end{equation}
 
+\paragraph{Likelihood of an obscured genealogy}
+
+Let $\kappa^{\Vis}$ be the indicator function for the condition that a pruned genealogy is compatible with a given obscured genealogy.
+In particular, given an obscured genealogy $\Vis$, set $\kappa^{\Vis}_u(t,x,x',\eta,\eta')=\Indicator{\exists\Prune\ \st\ \kappa^{\Prune}_u(t,x,x',y,y')=1\ \&\ \obs(\Prune)=\Vis}$.
 
 \section{Examples}
 
-Some commonly used compartmental models in epidemiology are in fact structured, either explicitly or implicitly. 
-Here, we demonstrate below how these representatives fit within the population processes we described previously.
-
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-    \begin{tikzpicture}[scale=1.5]
-      \usetikzlibrary{arrows}
-      \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
-      \tikzstyle{det}=[color=black, thick, >=stealth]
-      \tikzstyle{stoch}=[color=black, dashed, thick, >=stealth]
-      \node (S) at (-2,0) {$S$};
-      \node (E) at (-1,0) {$E$};
-      \node (I) at (0,0) {$I$};
-      \node (R) at (1,0) {$R$};
-      \draw [det,->] (S) -- (E);
-      \draw [det,->] (E) -- (I);
-      \draw [det,->] (I) -- (R);
-      \draw [det,->] (I) -- (0,.5) -- (-1.5,.5) -- (-1.5,0);
-    \end{tikzpicture}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-    \begin{tikzpicture}[scale=1.5]
-      \usetikzlibrary{arrows}
-      \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
-      \tikzstyle{det}=[color=black, thick, >=stealth]
-      \tikzstyle{stoch}=[color=black, dashed, thick, >=stealth]
-      \node (S) at (-2,0) {$S$};
-      \node (I1) at (-.5,.7) {$I_1$};
-      \node (I2) at (-.5,-.7) {$I_2$};
-      \node (R) at (1,0) {$R$};
-      \draw [det,->] (S) -- (I1);
-      \draw [det,->] (S) -- (I2);
-      \draw [det,->] (I1) -- (R);
-      \draw [det,->] (I2) -- (R);
-      \draw [det,->] (-.4,.5) -- (-.4,-.5);
-      \draw [det,->] (-.6,-.5) -- (-.6,.5);
-    \end{tikzpicture}
-\end{minipage}
-\caption{
-  \label{fig:diagram}
-}
-\end{figure}
-
-\paragraph{SEIR model}
-The SEIR model is a simple extension of the most basic SIR model, by adding the latent infected compartment ``E'' into the system, where susceptible individual first become ``exposed'' when being infected, then turn into being infectious and eventually recover or get removed from the system. 
-The infected population, which we are mostly interested in, is divided into two demes:
-\begin{inparaenum}
-  \item ``E'' represents those that are not able to spread the disease though infected and 
-  \item ``I'' are those that are infectious. 
-\end{inparaenum}
-To fit within the aforementioned population process, we take $d=4$ so that the state vector is $\sg{X}=\left(s,e,i,g\right)$, where $s,e,i,g$ are the number of susceptibles, exposeds, infectives, and the cumulative number of genomic samples collected, respectively. 
-We then summarize four types of jumps, with rate functions:
-
-\begin{equation*}
-  \jumprate_u =
-  \begin{cases}
-     b(t)\,s\,i, & u=\left(-1,1,0,0\right),\,s>0,\,i>0 \\
-    \sigma\,e, & u=\left(0,-1,1,0\right),\,e>0,\\
-    \gamma\,i, & u=\left(0,0,-1,0\right),\,i>0\\
-    \psi(t,s,e,i,g), & u=\left(0,0,0,1\right),\, e+i>0\\
-    0, & \text{otherwise.}
-  \end{cases}
-\end{equation*}
-
-The above shows the rates of being infected, progression from exposed to infectious, recovery, and sampling, respectively. 
-As in \citet{King2021}, the transmission $b(t)$ is time-dependent, and the sampling rate $\psi$ is any function, as long as the constraints in Section 2 are satisfied. 
-Therefore, $I_1(\sg{X})=e$, $I_2(\sg{X})=i$, $I(\sg{X})=e+i$, $\Bset^{2,1}=\{\left(-1,1,0,0\right)\}$, $\Mset^{1,2}=\{\left(0,-1,1,0\right)\}$, $\Dset^2=\{\left(0,0,-1,0\right)\}$, $\Sset^2=\{\left(0,0,0,1\right)\}$, and $\Bset^{1,1}=\Bset^{1,2}=\Bset^{2,2}=\Mset^{2,1}=\Dset^1=\Sset^1=\emptyset$.
-
-\paragraph{SI$^2$R model}
-
-We can customize the state and event vector to fit a complex system. 
-In SI$^2$R model, we have two different while interchangeable demes of infectious individuals, the \emph{per capita} transmissibility therefore in the first deme is $b_1(t)$ whilst in the second deme is $b_2(t)$. 
-Migration rates between Deme $i$ and $j$ are also defined: Deme $i$ infection turns into Deme $j$ at rate $r_{ij}$ for $i,j=1,2$ and $i\neq j$. Furthermore, we also suppose that, once being infected, a susceptible individual becomes Deme 1 infectious with probability $\rho$ while Deme 2 infectious with probability $1-\rho$. 
-To specify each event and the number of individuals involved, we define a relatively complex state vector by setting $d=10$ and $\sg{X}=\left(s,i_1,i_2,b_{11},b_{12},b_{21},b_{22},m_{12},m_{21},g\right)$, for $s$, $i_1$, and $i_2$ being the population size of the susceptible, the infectives in Deme 1, and those in Deme 2, respectively, and $b_{11}$, $b_{12}$, $b_{21}$, $b_{22}$, $m_{12}$, and $m_{21}$ being the cumulative number of events of parents in Deme 1 giving to children in Deme 1 and 2, parents in Deme 2 giving birth to children in Deme 1 and 2, individuals migrating from Deme 1 to Deme 2, and vice versa, and sampling, respectively. 
-In this case, we can summarize the event rates as:
-
-\begin{equation*}
-  \jumprate_u =
-  \begin{cases}
-                                          %s,i1,i2,b11,b12,b21,b22,m12,m21,g
-     b_1(t)\,s\,i_1\,\rho,        & u=\left(-1,1,0,1,0,0,0,0,0,0\right), s>0, i_1>0 \\
-     b_1(t)\,s\,i_1\,(1-\rho),    & u=\left(-1,0,1,0,1,0,0,0,0,0\right), s>0, i_1>0 \\
-     b_2(t)\,s\,i_2\,\rho,        & u=\left(-1,1,0,0,0,1,0,0,0,0\right), s>0, i_2>0 \\
-     b_2(t)\,s\,i_2\,(1-\rho),    & u=\left(-1,0,1,0,0,0,1,0,0,0\right), s>0, i_2>0 \\
-     r_{12}\,i_1,                 & u=\left(0,-1,1,0,0,0,0,1,0,0\right), i_1>0 \\
-     r_{21}\,i_2,                 & u=\left(0,1,-1,0,0,0,0,0,1,0\right), i_2>0 \\
-     \gamma\,i_1,                 & u=\left(0,-1,0,0,0,0,0,0,0,0\right), i_1>0 \\
-     \gamma\,i_2,                 & u=\left(0,0,-1,0,0,0,0,0,0,0\right), i_2>0 \\
-     \psi(t,s,i_1,i_2,g),         & u=\left(0,0, 0,0,0,0,0,0,0,1\right), i_1+i_2>0\\
-    0, & \text{otherwise.}
-  \end{cases}
-\end{equation*}
-
-The nine non-zero rates above represent those of infection into Deme 1 infected by individuals in Deme 1, infection into Deme 2 infected by individuals in Deme 1, infection in Deme 1 infected by individuals in Deme 2, infection into Deme 2 infected by individuals in Deme 1, migration from Deme 1 to Deme 2, migration from Deme 2 to Deme 1, recovery from Deme 1, recovery from Deme 2, and sampling, respectively. 
-We then summarize the population functions and sets as follows:
-
-\begin{align*}
-\begin{array}{lll}
-  I_1(\sg{X})=i_1,                                  & I_2(\sg{X})=i_2,                              & I(\sg{X})=i_1+i_2, \\
-  \Bset_{11}=\{\left(-1,1,0,1,0,0,0,0,0,0\right)\}, & \Bset_{12}=\{\left(-1,0,1,0,1,0,0,0,0,0\right)\}, & \\
-  \Bset_{21}=\{\left(-1,1,0,0,0,1,0,0,0,0\right)\}, & \Bset_{22}=\{\left(-1,0,1,0,0,0,1,0,0,0\right)\}, & \\
-  \Mset_{21}=\{\left(0,-1,1,0,0,0,0,1,0,0\right)\}, & \Mset_{12}=\{\left(0,1,-1,0,0,0,0,0,1,0\right)\}, & \\
-  \Dset_1=\{\left(0,-1,0,0,0,0,0,0,0,0\right)\},    & \Dset_2=\{\left(0,0,-1,0,0,0,0,0,0,0\right)\},    & \\
-  \Sset=\{\left(0,0, 0,0,0,0,0,0,0,1\right)\}. & &
-\end{array}
-\end{align*}
-
-\paragraph{Migration}
-One special case of the SI$^2$R model is that with one-time migration or introduction. 
-In other words, an infectious individual from another population join our interested population at a certain point of time $\tau$ and then stay and spread the disease. 
-In this case, if this specific individual is defined as Deme 1 while other infectious individuals as Deme 2, the migration rate $r_{12}$ is a Dirac delta function $\delta(t)$, where $\delta(t)=\infty$ for $t=\tau$ and $\delta(t)=0$ for $t\neq\tau$, and $r_{21}=0$ all the time.
-
-\paragraph{Superspreading}
-The definition of superspreading is ambiguous in epidemiology. 
-Some researchers view it as a certain individual who has extremely strong transmissibility with high reproduction rate and call this individual \emph{superspreader}; 
-others avoid to invidualize this phenomenon and consider it as an event where a cluster of infections appears in a single event within a small amount of time and define it as a \emph{superspreading event}. 
-The first definition can be represented by the SI$^2$R model with two demes of infectious individuals: one with extremely strong transmissibility and the other with weak transmissibility. 
-That is, $b_1(t)\ggg b_2(t)$ if Deme 1 is the set of highly infective individuals and Deme 2 is the set of ordinary infective. 
-In terms of the second definition, the involvement of polytomies and multifurcating trees adds an extra layer of complexity in the population model, along with the issues of measurement error and model robustness, such that we would like to postpone the development of a new framework to a future study.
-
-\section{Structure genealogy processes}
-
-\paragraph{Inventory process}
-First, we define a global set $\Names\coloneqq\N$, which is a collection of infinite unique names. 
-For any Deme $j$ of infective population, we define an inventory $\Inv_t^j(\omega)=\mathrm{inven}\left(\omega\vert_t,j\right)$, a list to document all the extant infected individuals in Deme $j$ at time $t$, by their names, where $\omega\vert_t$ is the sequence of jumps up to time $t$. 
-On top of the global set $\Names$ and the $\mathrm{inven}$ procedure, we can then define six operators: 
-\begin{enumerate}[(1)]
-  \item $\mathrm{next}(\Names)$ returns the minimum integer in $\Names$, call it $n$, and update the global set $\Names=\Names\setminus\{n\}$;
-  \item $\mathrm{initialize}(I)\coloneqq\bigcup_{i=1}^I\{\mathrm{next}(\Names)\}$;
-  \item $\mathrm{add}(\sg{I})=\sg{I}\cup\{\mathrm{next}(\Names)\}$;
-  \item $\mathrm{drop}(\sg{I},n)=\sg{I}\setminus\{n\}$; and
-  \item $\mathrm{movein}(\sg{I},n)=\sg{I}\cup\{n\}$.
-\end{enumerate}
-
-
-Now the deterministic and recursive procedure $\mathrm{inven}$ is described as follows, for $\omega$ is a finite jump sequence:
-
-\begin{equation}
-  \mathrm{inven}(\omega,j)\coloneqq
-  \begin{cases}
-    \mathrm{initialize}(I_j(\sg{X}_0(\omega)), & \text{if }K(\omega)=0; \\
-    \mathrm{add}(\mathrm{inven}(\predec{\omega},j)), & \text{if }K(\omega)>0\text{ and }U_K(\omega)\in\Bset_j;\\
-    \mathrm{drop}(\mathrm{inven}(\predec{\omega},j),N_{K(\omega)}(\omega)), & \text{if }K(\omega)>0\text{ and }U_K(\omega)\in\Dset_j; \\
-    \mathrm{movein}(\mathrm{inven}(\predec{\omega},j),N_{K(\omega)}(\omega)), & \text{if }K(\omega)>0\text{ and }U_K(\omega)\in\bigcup_i\Mset_{ij}; \\
-    \mathrm{drop}(\mathrm{inven}(\predec{\omega},j),N_{K(\omega)}(\omega)), & \text{if }K(\omega)>0\text{ and }U_K(\omega)\in\bigcup_i\Mset_{ji}; \\
-    \mathrm{inven}(\predec{\omega},j), & \text{otherwise}.
-  \end{cases}
-\end{equation}
-
-Eventually, we can define $\mathrm{inven}(\omega)\coloneqq\{\mathrm{inven}(\omega,j)\}_{j=1}^J$ as a list of inventories, such that $\Inv_t(\omega)\coloneqq\{\Inv_t^j(\omega)\}_{j=1}^J$.
-
-\paragraph{Structured genealogies}
-Types of nodes are defined in a structured genealogy: \emph{Leaves} are the extant members at current time and \emph{Internal Nodes} represent ancestors to a certain subset of extant members, which we further define \emph{Sampling Nodes} and \emph{Migration Nodes}, whose differences will be clear in a moment.
-
-For the sake of distinction and visualization, we define a set of \emph{colored ball}s, $(f,n)\in\Colors\times\N$, where $n$ is the label and $f$ is the color of the ball, and $\Colors\coloneqq\{\green,\black,\blue,\red,\purple\}$.
-Therefore, we can define a genealogy \emph{node} as a quadruple $(n,t,w,z)$, where $n\in\N$ is the node's \emph{name}, $t\in\Time$ is its time, $w$ is the node's \emph{pocket} (\ie unordered pair of colored balls), and $z\in\N$ is the node's \emph{deme}. 
-For a node $\Node{p}$, we will use $n(\Node{p})$, $t(\Node{p})$, $w(\Node{p})$, and $z(\Node{p})$ to denote the name, time, pocket, and deme of $\Node{p}$, respectively. 
-We then assign black, green, blue, and purple balls to serve as pointers to the extant population at time $t$, to the internal nodes, to the samples, and to the migrations between demes, respectively.
-
-Eventually, the current time $t$ and the sequence of nodes, $\Gen=\left(t,\left(\Node{p}_k\right)_{k=0}^{K-1}\right)$, explicitly define a structured genealogy $\Gen$, where $t\in\Time$, $K\in\N$, and node $\Node{p}_k$ are subjected to conditions described in \citet{King2021}. 
-We then use $t(\Gen)$, $K(\Gen)$, and $\Node{p}_k(\Gen)$ to represent the time, the length (\ie the number of nodes), and the $k$-th node of the genealogy $\Gen$, respectively. 
-We define $\seq{\Gen}$ as the node sequence of genealogy $\Gen$, where $\Node{p}\in\Gen$ when $\Node{p}$ is one node in $\seq{\Gen}$.
-
-
-\paragraph{Effect of births, death, sampling and migration}
-Births, deaths, samples, and migrations change the topology of a structured genealogy. 
-A death at time $t$ indicates the removal of a leaf in the genealogy and the dismiss of a node. The detailed definition can be found in \citet{King2021}.
-
-A birth at time $t$ in a structured genealogy is similar to that in a unstructured one \citep{King2021}: a black ball is selected as the parent and a new node introduced as the child, who is in the same deme as the parent. Let $\Ball{b}$ be randomly selected black ball, named \emph{n}, which is the parent, and there exists a node $\Node{p}\in\Gen$ holding $\Ball{b}\in w(\Node{p})=\{\Ball{b},\Ball{b}'\}$ where $\Ball{b}'$ is the other ball held by $\Node{p}$. 
-Here, we assume the parent is from Deme $i$ (\ie $n\in\Inv_i$) and the child is born into Deme $j$. 
-We then can produce a new node $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},i)$, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, $\Ball{b}''=(\black,c)$.
-By swapping balls between $\Node{p}$ and $\Node{p}'$, it ends up that $w(\Node{p})=\{\Ball{g},\Ball{b}'\}$ and $w(\Node{p}')=\{\Ball{b},\Ball{b}''\}$. 
-We denote the resulting sequence of nodes as $\mathrm{add}(\seq{\Gen},n)$.
-
-% A death at time $t$ is defined in the same way as that in \citet{King2021} and we continue to use the notation $\mathrm{drop}(\seq{\Gen},n)$ to denote the resulting sequence of nodes for a death, where an individual with name \emph{n} is selected randomly to be removed from the population.
-
-A death at time $t$ is quite different from that defined in \citet{King2021}, while we continue to use the notation $\mathrm{drop}(\seq{\Gen},n)$ to denote the resulting sequence of nodes for a death, where an individual with name \emph{n} is selected randomly to be removed from the current population. 
-When a death occurs, a black ball $\Ball{b}$ with name \emph{n} is selected arbitrarily, whose holder is node $\Node{p}$, \ie $\Ball{b}\in w(\Node{p})=\{\Ball{b},\Ball{b}'\}$. 
-There exists an unique $\green$ ball and an unique node $\Node{p}'$ such that $\Ball{g}=(\green, n(p))$ and $\Ball{g}\in w(\Node{p}')=\{\Ball{g},\Ball{b}''\}$. 
-The $\mathrm{drop}(\seq{\Gen},n)$ operation then proceeds differently, conditioned on the color and the deme of the other ball, $\Ball{b}'$, held by $\Node{p}$: 
-\begin{inparaenum}[(1)]
-  \item if $\Ball{b}'$ is $\green$, swap $\Ball{g}$ and $\Ball{b}'$ between $\Node{p}$ and $\Node{p}'$ then remove $\Node{p}$ from the sequence of nodes;
-  \item if $\Ball{b}'$ is $\black$, the above procedure is conducted when $\Ball{b}'$ and $\Node{p}$ are in the same deme, otherwise, replace $\Ball{b}$ by a new purple ball $\Ball{c}=\{\purple, q\}$ where $q=|\{\Ball{b}\in w(\Gen)\;|\;\Ball{b}\ \text{is purple}\}|$;
-  \item if $\Ball{b}'$ is $\blue$, replace $\Ball{b}$ by a new red ball with the name of $\Ball{b}'$;
-  \item if $\Ball{b}'$ is $\purple$, change the deme of $\Ball{b}$ to that of $\Node{p}$, swap $\Ball{g}$ and $\Ball{b}$, and delete $\Node{p}$.
-\end{inparaenum}
-By doing aforementioned steps, we can keep track of the sampled individuals and the migration at a birth.
-
-A sample at time $t$ results in the participation of a new node with a new blue ball. 
-The procedure is similar to the previous sampling in \citet{King2021} and the birth mentioned above: a black ball, named \emph{n}, where $n\in\Inv_j$, and held by $\Node{p}$ (\ie $w(\Node{p})=\{\Ball{b},\Ball{b}'\}$), is selected at random. 
-Then a new node $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},j)$ is generated, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, and $\Ball{b}''=(\blue,q)$. 
-At the end, $\Node{p}$ exchanges $\Ball{b}$ for $\Ball{g}$ with $\Node{p}'$. 
-Here, $q$ is the name of the new blue ball, which is the ordinal number of the migration, $q=|\{\Ball{b}\in w(\Gen)\;|\;\Ball{b}\ \text{is blue}\}|$. 
-We use the notation $\mathrm{sample}(\seq{\Gen},n)$ as the resulting sequence of nodes.
-
-A migration at time $t$ leads to the inclusion of a new node with a new purple ball. 
-Let $\Ball{b}$ denote the
-black ball with name \emph{n} and selected to indicate an extant in the population migrates from his/her current
-deme to a new one. 
-Assuming this selected individual is from Deme $i$ (\ie $i\in\Inv_i$) and migrating to Deme $j$ ($j\neq i$), we then initialize a new node by taking $\Node{p}'=(c,t,\{\Ball{g},\Ball{b}''\},i)$, where $c=\mathrm{next}(\Names)$, $\Ball{g}=(\green,c)$, and $\Ball{b}''=(\purple,q)$. 
-Note that, we update $\Inv_i=\Inv_i\setminus\{n\}$ and $\Inv_j=\Inv_j\cup\{n\}$. 
-Similar to other events, we therefore swap $\Ball{b}$ for $\Ball{g}$ between nodes $\Node{p}$ and $\Node{p}'$ and insert $\Node{p}'$ at the last position of the node-sequence. 
-Here, \emph{q} is the name of the new purple ball, which is the ordinal number of the migration,  $q=|\{\Ball{b}\in w(\Gen)\;|\;\Ball{b}\ \text{is purple}\}|$. 
-We call this new node $\Node{p}'$ the \emph{Migration Nodes} in the genealogy and denote the resulting sequence of nodes by $\mathrm{migrate}(\seq{\Gen},n)$.
-
-\paragraph{Genealogical event times}
-
-% \QYL{the definition for sets of event times is problematic.}
-
-Given a genealogy $\Gen$, the set of \emph{genealogical event times}, $\Eset(\Gen)$, is the set of all node times.
-Its subsets, including those for different event types and those for different demes, are of interest.
-In particular, we define
-\begin{equation*}
-  \begin{aligned}
-    \Eset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j\}, \\
-    \Masterset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains one green ball but no purple balls}\}, \\
-    \Cset^{j,j'}(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains two green balls, one from Deme $j$ and the other from $j'$}\}, \\
-    \Lset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains no green balls}\}, \\
-    \Tset^j(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains a blue ball}\}, \\
-    \Zset^{j,j'}(\Gen) &\coloneqq \{t(\Node{p})\;|\;\Node{p}\in\Gen, z(\Node{p})=j, w(\Node{p})\ \text{contains a purple ball and a green ball from Deme $j'$}\}, \\
-    \Qset^j(\Gen) &\coloneqq \Masterset^j(\Gen) \cap \Tset^j(\Gen).
-  \end{aligned}
-\end{equation*}
-With these definitions,
-$\Masterset^j(\Gen)$ comprises the internal node times of nodes that are derived from nodes in Deme $j$,
-$\Cset^{j,j'}(\Gen)$ is the set of coalescent times of nodes in Deme $j$ and containing a ball in Deme $j'$,
-$\Lset^j(\Gen)$ contains the leaf times where the tips are in Deme $j$,
-$\Tset^j(\Gen)$ holds the sample times for samples in Deme $j$,
-$\Zset^{j,j'}(\Gen)$ holds the deme-transition times derived from nodes in Deme $j$ and containing a ball in Deme $j'$,
-and $\Qset^j(\Gen)$ is the set of \emph{direct-descent times} derived from samples in Deme $j$. 
-
-\paragraph{Structured genealogy process}
-The structured genealogy evolves over time, so we can proceed to define the \emph{structured genealogy process} $\Gen_t$ now. 
-We define $\Gen_t(\omega) = \left(t,\mathrm{geneal}(\restrict{\omega}{t})\right)$, for the end time $t\in\Time$ and the sequence of jumps $\omega\in\Omega$. 
-We first initialize the global set of names by letting $\Names=\N\setminus\{1,2,\dots,I(\X_0(\omega))\}$, then the operation $\mathrm{geneal}$ is defined recursively as follows for $\omega\in\mathring\Omega$: 
-
-\fontsize{10pt}{12pt}\selectfont
-\begin{equation}\label{eq:Gdef}
-  \mathrm{geneal}(\omega)\coloneqq
-  \begin{cases}
-    \left(k,0,\{(\green,k),(\black,k)\},0\right)_{k=0}^{I(\X_0(\omega))}, &\text{if}\ K(\omega)=0;\\
-    \mathrm{add}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega)), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Bset;\\
-    \mathrm{drop}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega)), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Dset;\\
-    \mathrm{sample}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega)), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Sset;\\
-    \mathrm{migrate}(\mathrm{geneal}(\predec{\omega}),N_{K(\omega)}(\omega)), &\text{if}\ K(\omega)>0\ \text{and}\ U_{K(\omega)}\in\Mset;\\
-    \mathrm{geneal}(\predec{\omega}), &\text{otherwise};
-  \end{cases}
-\end{equation}
-\normalsize
-
-where $\Bset\coloneqq\bigcup_{i,j}\Bset_{ij}$, $\Dset\coloneqq\bigcup_j\Dset_j$, and $\Mset\coloneqq\bigcup_{i,j}\Mset_{ij}$. 
-A deterministic map, $\mathrm{ext}$, can be defined, such that $\Inv_t(\omega)=\mathrm{ext}(\Gen_t(\omega))$ for all $\omega\in\Omega$. 
-
-\paragraph{Visible genealogy process}
-The sampled genealogy contains only relations among genomic samples. 
-In other words, information in a full genealogy about unsampled individuals and deme-transitions are unobserved in a sampled genealogy, which we call it a visible genealogy. 
-We divide the procedure of deriving a visible genealogy from a full genealogy into two separate steps: \emph{pruning} and \emph{obscuring}. 
-The former drops all unsampled individuals (\ie black balls) in a genealogy and remains the relationship between samples and deme-transition records of samples, and the latter further erases all deme-transition records of samples and obtains an obscured genealogy.
-
-Given a genealogy $\Gen$, we define $\Inv=\mathrm{ext}(\Gen)$.
-%% Then. by definition, for each $c\in\Inv$, $(\black,c)\in w(\Gen)$.
-Let $\mathrm{prune}(\Gen)$ be the pruned genealogy derived by applying iterative $\mathrm{drop}$ operation to $\Gen$ for each name $c\in\Inv$.
-Specifically, suppose $\Inv^j=\{n_0^j,\dots,n_{m_j-1}^j\}$ is the inventory for Deme $j$ and $\Inv=\{\Inv^j\}_{j=1}^{J}$, where $J$ is the total number of demes. 
-Then we can define the set of all names in $\Inv$ as $\mathcal{N}\coloneqq\bigcup_{j=1}^J \Inv^j=\{c_0,\dots,c_{m-1}\}$, where $m=\sum_j m_j$.
-Let $\Node{P}_0=\seq\Gen$ and $\Node{P}_{k}=\mathrm{drop}(\Node{P}_{k-1},c_{k-1})$, for $k=1,\dots,m$.
-Then $\mathrm{prune}(\Gen)\coloneqq(t(\Gen),\Node{P}_{m})$.
-\Cref{fig:prune} illustrates the pruning procedure.
-
-For $\omega\in\Omega$, we define the \emph{pruned genealogy process},
-\begin{equation}
-  \Prune_t(\omega)\coloneqq\textrm{prune}(\Gen_t(\omega)).
-\end{equation}
-Note that $\Prune_t$ so defined is a itself a genealogy.
-\Cref{fig:prune}B depicts one example of $\Prune_t$ both graphically (as a tree) and diagrammatically (as a node-sequence).
-
-Before we proceed to produce the visible genealogy, we first define an operation $\mathrm{reverse}$ on the sequence of nodes of a genealogy as follows: 
-\begin{inparaenum}[(1)]
-  \item a random purple ball $\Ball{b}$ with name $q$ is selected such that there exists a node $\Node{p}$, where $\Ball{b}\in w(\Node{p})=\{\Ball{b}, \Ball{b}'\}$ and $\Ball{b}'$ is the other ball held by $\Node{p}$;
-  \item there also exists a node $\Node{p}'$ such that $\Ball{g}=\left(\green,n(\Node{p})\right)\in w(\Node{p}')=\{\Ball{g},\Ball{b}''\}$ where $\Ball{b}''$ is the other ball held by $\Node{p}'$;
-  \item swapping balls between $\Node{p}$ and $\Node{p}'$ results in $w(\Node{p}')=\{\Ball{b}',\Ball{b}''\}$ and $w(\Node{p})=\{\Ball{g},\Ball{b}\}$;
-  \item we delete $\Node{p}$ from the node sequence.
-\end{inparaenum}
-The resulting sequence of nodes is denoted as $\mathrm{reverse}(\seq{\Gen},q)$.
-
-Suppose for a pruned genealogy $\Gen'$, the set of the serial number of the purple balls is $\{0,1,\dots,q\}$ and the list of inventories is $\Inv=\{\Inv^j\}_{j=1}^J$. $\mathrm{obs}(\Gen')$ applies the following steps on $\Gen'$: 
-\begin{inparaenum}[(a)]
-  \item let $\Node{P}_0=\seq{\Gen'}$ and $\Node{P}_{k}=\mathrm{reverse}(\Node{P}_{k-1},k)$, for $k=1,\dots,q$; and
-  \item for $\Node{P}_q$, we update $\Inv=\bigcup_{j}\Inv^j$ and for each node $\Node{p}\in\seq{\Gen}$, $z(\Node{p})=0$.
-\end{inparaenum}
-
-For $\omega\in\Omega$, we define the \emph{visible genealogy process},
-\begin{equation}
-  \Vis_t(\omega)\coloneqq\textrm{obs}(\textrm{prune}(\Gen_t(\omega))).
-\end{equation}
-Note that $\Vis_t$ so defined is a itself a genealogy.
-\Cref{fig:obs}B depicts one example of $\Vis_t$ both graphically (as a tree) and diagrammatically (as a node-sequence).
-
-
-
-\paragraph{Node color}
-In a visible genealogy, we can define four kinds of nodes based on the colors of balls in the pockets:
-\begin{inparaenum}[(a)]
-  \item \emph{green nodes}, which have more than one green balls in their pockets;
-  \item \emph{blue nodes}, which have one blue;
-  \item \emph{red nodes}, which have one red;
-  \item \emph{purple nodes}, which have one purple ball.
-\end{inparaenum}
-In a \emph{compact} visible genealogy, green, blue, red, and purple nodes correspond to \emph{coalescent points}, leaves, direct-descent events, and deme-transition events, respectively.
-Thus, for a visible genealogy $\Vis$ and any deme $j$:
-
-
-\paragraph{Branch linetype}
-
-
-\paragraph{Deme proportion and lineage count}
-
-We can further define the deme proportion function $\demefunc(t,\omega)\coloneqq\{\demefunc^j(t,\omega)\}_{j=1}^J$, where $\demefunc^j(t,\omega)\coloneqq\frac{\vert\Inv_t^j(\omega)\vert}{\vert\Inv_t(\omega)\vert}$.
-
-Given a pruned genealogy, $\Prune$, at each time $t\in\Time$, there are a finite number, $\ell^{j}(t, \Prune)$, of lineages in Deme $j$ present in the genealogy at that time.  Evidently, one has
-
-\begin{align}
-\begin{split}
-  \ell^j(t,\Prune) &\coloneqq \sum_{j'}\sum_{e\in\Cset^{j',j}(\Prune)} \indicator{\halfopen{e,\infty}}(t)\;-\;\sum_{e\in\Lset^j(\Prune)} \indicator{\halfopen{e,\infty}}(t) \\
-  +&\;\sum_{j'}\left(\sum_{e\in\Zset^{j',j}(\Prune)}\indicator{\halfopen{e,\infty}}(t)\;-\;\sum_{e\in\Zset^{j,j'}(\Prune)}\indicator{\halfopen{e,\infty}}(t)\right).
-\end{split}
-\end{align}
-
-
-\paragraph{Embedded chains}
-Due to discrete sample times, defined as $S_i$, we now proceed to consider the embedded chain for pruned genealogy process $\Prune_t$ and then for visible genealogy process $\Vis_t$. 
-For $\omega\in\Omega$, let $\Och_i(\omega)\coloneqq\Prune_{S_i(\omega)}(\omega)$ be the embedded chain of the pruned genealogy process, and $\Wch_i(\omega)\coloneqq\Vis_{S_i(\omega)}(\omega)$ be that of the visible genealogy process. 
-At each sample time $S_i$, one extra lineage (\ie the $i$-th sample) is to be attached to the previous existing genealogy (\ie $\Och_i$ or $\Wch_i$) at a random attachment time, denoted by $A_i$. 
-Both $\Och_i$ and $\Wch_i$ are Markovian.
-
-
-\begin{lemma}\label{lemma:ell}
-  Define time intervals $\Delta_{i}^{j}$ and $\Delta_{i}^{j,j'}$ as follows:
-  \begin{equation*}
-    \Delta_{i}^{j}\coloneqq\begin{cases}
-      \halfopen{a_i^j,s_i^j}, & \Tset^j(\Och_i)\setminus\Tset^j(\Och_{i-1})\neq\emptyset, \\
-      \emptyset, &\textrm{otherwise},
-    \end{cases}
-    \quad\textrm{and}\quad
-    \Delta_{i}^{j,j'}\coloneqq\begin{cases}
-      \halfopen{z_i^{j,j'},s_i^j}, & \Zset^{j,j'}(\Och_i)\setminus\Zset^{j,j'}(\Och_{i-1})\neq\emptyset, \\
-      \emptyset, &\textrm{otherwise},
-    \end{cases}
-  \end{equation*}
-  where $s_i^j=\Tset^j(\Och_i)\setminus\Tset^j(\Och_{i-1})$, $a_i^j=\Masterset^j(\Och_i)\setminus\Masterset^j(\Och_{i-1})$, 
-  and $z_i^{j,j'}=\Zset^{j,j'}(\Och_i)\setminus\Zset^{j,j'}(\Och_{i-1})$ are the corresponding sample, attachment times, respectively, 
-  of the $i$-th sample lineage in Deme $j$, and the deme-transition times from Deme $j$ to $j'$, respectively.
-  Then, if it is understood that $\ell^j(t,\Och_0)=0$ for all $j$,
-  \begin{equation*}
-    \ell^j(t,\Och_i)=\ell^j(t,\Och_{i-1})+\indicator{\Delta_{i}^{j}}(t)-\sum_{j'}\left(\indicator{\Delta_{i}^{j,j'}}(t)-\indicator{\Delta_{i}^{j',j}}(t)\right), \qquad \forall i>0.
-  \end{equation*}
-  Trivially, $\ell(t,\Och_i)=\sum_j\ell^j(t,\Och_i)$.
-\end{lemma}
-
-
-\section{Results}
-\label{sec:results}
-The derivation of the probability density of $\Wch_i$ given $\Hist_{S_i}$ can be divided into two steps:
-\begin{align}
-\begin{split}
-  P_{\Wch_i|\Hist}&=\sum_{\Och_i}\,P_{\Wch_i|\Och_i}P_{\Och_i|\Hist} \\
-                  &=\sum_{\Och_i}\,P_{\Wch_i|\Och_i}\left(P_{\Och_1|\Hist}\prod_{q=2}^{i}P_{\Och_q|\Och_{q-1}}\right) 
-\end{split}
-\end{align}
-% Trivially, $P_{\Och_1|\Hist}=1$ and $P_{\Wch_1|\Och_1}=1$ such that $P_{\Wch_1|\Hist}=1$.
-
-We first compute $P_{\Och_q|\Och_{q-1},\Hist}$ by fixing $A_q=a_q$, $\Och_q=o_q$, $S_q=s_q$, and $\Hist_{s_q}=h=\left(s_q,\left(t_k,u_k\right)_{k=0}^K\right)$.
-For convenience, we write $x_k=\X(t_k)$, and define the sets
-$\Omega_q\coloneqq\{\omega\in\Omega\;|\;\Wch_{q}(\omega)=w_q,\Hist_{s_i}(\omega)=h\}\subset\Omega$ and
-$\Omega_{qk}\coloneqq N_k(\Omega_q)\subset\N$, for $q\le i$ and $k\le K$.
-
-\begin{equation*}
-  \begin{aligned}
-    % P_{\Och_q|\Och_{q-1},\Hist}(o_q|o_{q-1},h)&=\prod_{k=1}^K\sum_{n_k\in\Omega_{qk}}\auxmeas_{u_k,x_k-u_k}(n_k)=\prod_{k=1}^K\sum_{n_k\in\Omega_{qk}}\left(\sum_{j=1}^J\dfrac{\indicator{\Inv^j_{t_{k-1}}(\Omega_q)}(n_k)}{I_j(x_k-u_k)}\right).
-    P_{\Och_q|\Och_{q-1},\Hist}(o_q|o_{q-1},h) &= \prod_{k=1}^K\sum_{\omega\in\Omega_q}\auxmeas_{u_k,x_k-u_k}(N_k(\omega)) = \prod_{k=1}^K\sum_{\omega\in\Omega_q}\left(\sum_{j=1}^J\dfrac{\indicator{\Inv_{t_{k-1}}^j(\omega)}(N_k(\omega))}{I_j(x_k-u_k)}\right),
-  \end{aligned}
-\end{equation*}
-
-due to that $\auxmeas$ is uniform within any certain deme.
-
-We define $\phi_{qk}^{j}\coloneqq\sum_{\omega\in\Omega_q}\dfrac{\indicator{\Inv_{t_{k-1}}^j(\omega)}(N_k(\omega))}{I_j(x_k-u_k)}$, 
-and let $I_k^j=I_j(x_k)$, $\ell_{qk}^{j}=\ell^j(t_k, \Och_{q-1})$.
-Note that $\ell^j_{1k}=0$ for all $k$ and $j$.
-
-All cases can be categorized into four groups based on the occurrence of population event within time $\halfopen{a_q,s_q}$: 
-no population event or simultaneous events, 
-a birth from Deme $j$ to $j'$, 
-a sample of Deme $j'$, 
-and a migration from Deme $j$ to $j'$ where $j\neq j'$. 
-Within each group, we investigate $\phi_{qk}^{j''}$ by considering whether the corresponding population event was presented in the pruned genealogy and involving the $q$-th lineage sample at time $t_k$, given that the $q$-th lineage sample was in Deme $j''$ at time $t_k$. For $q>1$, we then have:
-
-% 1) No. of total events in the population
-% 2) No. of conditioned event in the population
-% 3) possibilities that presented in the genealogy
-% 4) probability of the exact sample involved
-
-\begin{enumerate}[(a)]
-  \item There was no population event within $\halfopen{a_q,s_q}$ or more than one population events occurring that involved the $q$-th sample:
-    \begin{enumerate}
-      \item if $t_k\notin\halfopen{a_q,s_q}$, or if $u_k\notin\Bset\cup\Sset\cup\Mset$, $\phi_{qk}^{j''}=1$;
-      \item if $t_k\in\Cset(\Och_{q-1})\cup\Qset(\Och_{q-1})$, $\phi_{qk}^{j''}=1$.
-    \end{enumerate}
-    
-  % M
-  \item There was a migration event, that is, $u_k\in\Mset^{j,j'}$ within $\halfopen{a_q,s_q}$, 
-  given that it was not presented in the pre-existing genealogy $\Och_{q-1}$, 
-  \ie $t_k\notin\Zset^{j,j'}(\Och_{q-1})$: 
-    \begin{enumerate}
-      \item if this migration event had been presented in previous genealogy $\Och_{q-1}$, 
-      \ie $t_k\in\Zset^{j,j'}(\Och_{q-1})$, 
-      since no simultaneous migration events occurred at the same time and $t_k\in\Zset^{j,j'}{\Och_q}$ for sure, $\phi_{qk}^{j''}=1$;
-      \item if this migration event exactly involved the $q$-th sample and was presented as a deme-transition event in $\Och_q$, 
-      \ie $t_k\in\Zset^{j,j'}(\Och_q)$, 
-      then $\phi_{qk}^{j''}=\delta_{j',j''}/\left((I_{k}^{j}-\ell_{q,k}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
-      \item otherwise, $t_k\notin\Zset^{j,j'}(\Och_q)$, 
-      then $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left((I_{k}^{j}-\ell_{q,k}^{j})(I_{k}^{j'}-\ell_{qk}^{j'})\right)$.
-    \end{enumerate} 
-    
-  % G
-  \item There was a sample event, that is $u_k\in\Sset^{j'}$ within $\halfopen{a_q,s_q}$:
-    \begin{enumerate}
-      \item if the lineage sampled at this event served as a direct ancestor to the $q$-th sample lineage, 
-      that is, $t_k=a_q\in\Lset^{j'}(\Och_{q-1})$, 
-      this indicates that among $I_k^{j'}-\ell_{qk}^{j'}$ unsampled individuals in deme $j'$ at $t_k$, 
-      the $q$-th sample lineage is the exact direct descent, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j'}-\ell_{qk}^{j'}\right)$;
-      \item otherwise, $t_k\in(a_q,s_q)\setminus\Qset(\Och_{q-1})$, 
-      and $\phi_{qk}^{j''}=1-\delta_{j',j''}/\left(I_k^{j'}-\ell_{qk}^{j'}\right)$.
-    \end{enumerate}
-  
-  % B, j=j'
-  \item There was a birth event within the same deme, 
-  that is $u_k\in\Bset^{j,j'}$ and $\delta_{j,j'}=1$, 
-  but it was not shown in the genealogy yet because only one of the pre-existing $\ell_{qk}^{j'}$ lineages involved, 
-  \ie $t_k\notin\Cset^{j,j'}(\Och_{q-1})$:
-    \begin{enumerate}
-      % there were in total \binom{I}{2} combinations presented as births, while \binom{l}{2} is excluded because the birth was not presented in genealogy.
-      \item if this birth event was presented as a coalescent event in $\Och_q$, 
-      \ie $t_k\in\Cset^{j,j'}(\Och_q)$,
-      with probability $\ell_{qk}^{j'}/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$, 
-      then the probability that the $q$-th sample attached to \emph{a certain} sample lineage in the genealogy is $1/\ell_{qk}^{j'}$, 
-      implying that the $q$-th sample lineage was exactly the other individual involved in the birth event, 
-      and eventually, $\phi_{qk}^{j''}=\left(\delta_{j,j'}\delta_{j',j''}\right)/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$;
-      \item otherwise, $t_k\notin\halfopen{a_q,s_q}$,  
-      $\phi_{qk}^{j''}=1-\left(\delta_{j,j'}\delta_{j',j''}\ell_{qk}^{j'}\right)/\left(\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}\right)$.
-    \end{enumerate}
-    
-  % B, j!=j'
-  \item There was a birth event between two different demes, 
-  that is $u_k\in\Bset^{j,j'}$ and $\delta_{j,j'}=0$:
-    \begin{enumerate}
-      % There were  l'*(I-l) possibilities of transitions
-      \item and given that it was presented as a deme-transition event in the pre-existing genealogy, 
-      that is, $t_k\in\Zset^{j,j'}(\Och_{q-1})$:
-        \begin{enumerate}
-          % the genealogy has the exact l' lineage as the child, and the sample is the exact 1 as the parent
-          % 1/[l'*(I-l)] * l' * 1/1
-          \item if the $q$-th sample was from deme $j$ and is exactly the parent in the birth, 
-          that is, $t_k\in\Cset^{j,j'}(\Och_q)$ and $\delta_{j,j''}=1$, then $\phi_{qk}^{j''}=\delta_{j,j''}/\left(I_k^{j}-\ell_{qk}^{j}\right)$;
-          \item otherwise, 
-          $t_k\in\Zset^{j,j'}(\Och_q)$,and $\phi_{qk}^{j''}=1-\delta_{j,j''}/\left(I_k^{j}-\ell_{qk}^{j}\right)$;
-        \end{enumerate}
-      % there were in total I*I' in the birth, while l*l' is excluded since it was not presented as coalescent, and (I-l)*l' are excluded which as presented as transition. == I I' - l l' - (I-l) l' = I (I'-l')
-      \item or given that it was not presented in $\Och_{q-1}$, 
-      \ie $t_k\notin\Zset^{j,j'}(\Och_{q-1})\cup\Cset^{j,j'}(\Och_{q-1})$:
-        \begin{enumerate}
-          % the genealogy has l lineages as parent, and we choose one of them 1/l: 1/[I (I'-l')] * l * 1/l
-          \item if the $q$-th sample was from deme $j'$ and is coalesced at $t_k$, 
-          \ie $t_k\in\Cset^{j,j'}(\Och_q)$ and $\delta_{j',j''}$, 
-          then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j}(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
-          % I - l can be the parent, and we choose one of them 1/(I - l) as the sample: 1/[I (I'-l')] * (I-l) * 1/(I-l)
-          \item if the $q$-th sample was from deme $j'$ and is presented as a deme-transition event in $\Och_q$, 
-          \ie $t_k\in\Zset^{j,j'}(\Och_q)$, then $\phi_{qk}^{j''}=\delta_{j',j''}/\left(I_k^{j}(I_{k}^{j'}-\ell_{qk}^{j'})\right)$;
-          \item otherwise, $t_k\notin\Cset^{j,j'}(\Och_q)\cup\Zset^{j,j'}(\Och_q)$, 
-          and $$\phi_{qk}^{j''}=1-\delta_{j',j''}/(I_{k}^{j'}-\ell_{qk}^{j'});$$
-        \end{enumerate}
-    \end{enumerate}
-\end{enumerate}
-
-To summarize, we have
-\begin{equation}\label{eq:qcases}
-  \phi_{qk}^{j''}=
-  \begin{cases}
-    1, &\text{if}\ t_k\notin\halfopen{a_q,s_q}\ \text{or}\ u_k\notin\Bset\cup\Sset\cup\Mset,\\
-    1, &\text{if}\ t_k\in\Cset(\Och_{q-1})\cup\Qset(\Och_{q-1}),\\[12pt]
-    
-    % M
-    1, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_{q}),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
-    \frac{\delta_{j',j''}}{(I_{k}^j-\ell_{q,k}^j)(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1}),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
-    1-\frac{\delta_{j',j''}}{(I_{k}^j-\ell_{q,k}^{j})(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
-    
-    % G
-    \frac{\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k=a_q\in\Lset^{j'}(\Och_{q-1})\ \text{and}\ u_k\in\Sset^{j'},\\[12pt]
-    1-\frac{\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q)\setminus\Qset(\Och_{q-1})\ \text{and}\ u_k\in\Sset^{j'},\\[12pt]
-    
-    % B, j=j'
-    \frac{\delta_{j,j'}\delta_{j',j''}}{\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}}, &\text{if}\ t_k=a_q\in\Cset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j=j',\\[12pt]
-    1-\frac{\delta_{j,j'}\delta_{j',j''}\ell_{qk}^{j'}}{\binom{I_k^{j'}}{2}-\binom{\ell_{qk}^{j'}}{2}}, &\text{if}\ t_k\in(a_q,s_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j=j',\\[12pt]
-    
-    % B, j!=j'
-    % in Z
-    \frac{\delta_{j,j''}}{I_k^{j}-\ell_{qk}^{j}}, &\text{if}\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ t_k=a_q\in\Cset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
-    1-\frac{\delta_{j,j''}}{I_k^{j}-\ell_{qk}^{j}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
-    % not in Z
-    \frac{\delta_{j',j''}}{I_k^j(I_{k}^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_{q-1}),\ t_k\in\Zset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
-    \frac{\delta_{j',j''}}{I_k^j(I_{k}^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\notin\Zset^{j,j'}(\Och_{q-1}),\ t_k=a_q\in\Cset^{j,j'}(\Och_q),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
-    1-\frac{\delta_{j',j''}}{I_{k}^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_{q-1}),\ u_k\in\Bset^{j,j'},\ \text{and}\ j\neq j',\\[12pt]
-
-    0, &\text{otherwise}.
-  \end{cases}
-\end{equation}
-
-% To summarize, we have
-% \begin{equation}\label{eq:qcases}
-%   \phi_{qk}^{j''}=
-%   \begin{cases}
-%     1, &\text{if}\ t_k\notin\halfopen{a_q,s_q}\ \text{or}\ u_k\notin\Bset\cup\Sset\cup\Mset,\\
-%     
-%     % deme-transition time can evolve to coalescent time, when the new sample is the parent of a "cross-deme" birth
-%     1, &\text{if}\ t_k\in\Cset(\Och_{q-1})\cup\Qset(\Och_{q-1}),\\[12pt]
-%     \frac{\delta_{j',j''}}{(I_{k-1}^j-\ell_{q,k-1}^j)(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
-%     1-\frac{\delta_{j',j''}}{(I_{k-1}^j-\ell_{q,k-1}^{j})(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Mset^{j,j'},\\[12pt]
-%     
-%     % sample
-%     \frac{\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k=a_q\in\Lset^{j'}(\Och_{q-1}),\\[12pt]
-%     1-\frac{\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q)\setminus\Qset(\Och_{q-1})\ \text{and}\ u_k\in\Sset^{j'},\\[12pt]
-%     \frac{\delta_{j',j''}}{(I_k^j-\ell_{qk}^j)(I_k^{j'}-\ell_{qk}^{j'})}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1}),\ \text{and}\ u_k\in\Bset^{j,j'},\\[12pt]
-%     
-%     % B2C: either j''=j (in Z_{q-1} or j''=j' (not in Z_{q-1})
-%     % the numerator = 1 when j'!=j and =2 when j'=j.
-%     \frac{\delta_{j,j''}+\delta_{j',j''}}{I_k^{j}(I_k^{j'}-\delta_{j,j'})-\ell_{qk}^j(\ell_{qk}^{j'}-\delta_{j,j'})}, &\text{if}\ t_k=a_q\in\Cset^{j,j'}(\Och_q),\\[12pt]
-%     1-\frac{(\delta_{j,j''}+\delta_{j',j''})\ \ell_{qk}^{j}\ \delta_{j',j''}}{I_k^{j}(I_k^{j'}-\delta_{j,j'})-\ell_{qk}^j(\ell_{qk}^{j'}-\delta_{j,j'})}-\frac{(1-\delta_{j,j'})\delta_{j',j''}}{I_k^{j'}-\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\notin\Zset^{j,j'}(\Och_{q-1})\cup\Zset^{j,j'}(\Och_q),\ \text{and}\ u_k\in\Bset^{j,j'},\\[12pt]
-%     1-\frac{\delta_{j,j''}}{I_k^{j}I_k^{j'}-\ell_{qk}^j\ell_{qk}^{j'}}, &\text{if}\ t_k\in(a_q,s_q),\ t_k\in\Zset^{j,j'}(\Och_{q-1}),\ \text{and}\ u_k\in\Bset^{j,j'},\\[12pt]
-%     0, &\text{otherwise}.
-%   \end{cases}
-% \end{equation}
-
-We then can establish our first main result:
-
-\begin{thm}\label{thm:prunehthm1}
-  With the definitions as above, 
-  $P_{\Och_i|\Hist}(o|h) = \prod_{q=1}^{i}\prod_{k=1}^{K}\left(\sum_{j''=1}^{J}\phi_{qk}^{j''}\right)=\prod_{q=1}^{i}\prod_{k=1}^{K}\phi_{qk}^{j''_{qk}}$, 
-  where $j''_{qk}$ is the deme of the $q$-th sample lineage at time $t_k$.
-\end{thm}
-We now exchange the order of multiplication over $q$ and $k$ then we can derive our \Cref{thm:prunethm2}.
-
-\begin{thm}\label{thm:prunethm2}
-  \begin{equation*}
-    P_{\Prune_t|\Hist_t}(\Prune_t|h)=.
-  \end{equation*}
-\end{thm}
-\begin{proof}
-  Let $\Prune_t=\Och_i$ for some $i$. 
-  We define $\Phi_{k}\coloneqq\prod_{q=1}^{i}\phi_{qk}^{j''_{qk}}$ for each $k$ and as above, 
-  $I_k^{j}=I_j(x_k)$, $\ell_{qk}^{j}=\ell^j(t,\Och_{q-1})$. 
-  For the first two cases in \Cref{eq:qcases}, $\Phi_k=1$.
-  
-  Consider $u_k\in\Mset^{j,j'}$. 
-  Let $q^*$ be the sample satisfying $t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})$ for $q=1,\dots, i$.
-  If $\exists q^*$, we then define $Q_k^{j'}=\{q\;\vert\;j''_{qk}=j'\ \text{and}\ q\leq q^*\}$ as an ordered set; 
-  otherwise, $Q_k^{j'}=\{q\;\vert\;j''_{qk}=j'\}$.
-  We denote $[Q_k^{j'}]_m$ as the $m$-th element in $Q_k^j$ and $m=1,\dots, \ell^*+1$. 
-  Note that, $\ell^{*}=\ell^{j'}_{q^*k}$ if $\exists q^*$, otherwise, $\ell^*=\ell_{ik}^{j'}$.
-  \begin{enumerate}[(a)]
-    \item \label{scn: notZ} If $\nexists q^*$, then $t_k\notin\Zset^{j,j'}(\Och_i)$. We will have
-      \begin{equation*}
-        \Phi_k = \prod_{q\in Q_k^{j'}} \left(1-\frac{1}{(I_k^j-\ell_{qk}^j)(I_k^{j'}-\ell_{qk}^{j'})}\right).
-      \end{equation*}
-      Note that, $\{\ell_{qk}^{j'}\;\vert\;q\in Q_k^{j'}\}=\{0,1,\dots,\ell^*\}$ then the previous equation becomes
-      \begin{equation*}
-        \Phi_k = \prod_{m=1}^{\ell^*+1} \left(1-\frac{1}{\mathcal{Y}_m^j (I_k^{j'}-m+1)}\right) = \prod_{m=1}^{\ell_{ik}^{j'}+1} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m^j)^{-1}}{I_k^{j'}-m+1},
-      \end{equation*}
-    where $\mathcal{Y}_m^j\coloneqq I_k^{j}-\ell_{[Q_k^{j'}]_m k}^{j}\in\Z$.
-
-    \item If $\exists q^*$ and $i\geq q^*$, then $t_k\in\Zset^{j,j'}(\Och_i)$, and obviously, with $\mathcal{Y}_m^j$ defined as before,
-      \begin{equation*}
-        \Phi_k = \frac{1}{\mathcal{Y}_{\ell^*+1}^j (I_k^{j'}-\ell^*)}\, \prod_{m=1}^{\ell^*} \frac{I_k^{j'}-m+1-(\mathcal{Y}_m^j)^{-1}}{I_k^{j'}-m+1}.
-      \end{equation*}
-  \end{enumerate}
-  
-  Consider $u_k\in\Sset^{j'}$. The results are similar to those in \citet{King2021}, that is
-  \begin{enumerate}[(a)]
-    \item If $t_k\in\Lset^{j'}(\Och_i)$, we have
-      \begin{equation*}
-        \Phi_k=1-\frac{\ell_{ik}^{j'}+1}{I_k^{j'}};
-      \end{equation*}
-    \item otherwise, if $t_k\in\Qset^{j'}(\Och_i)$,
-      \begin{equation*}
-        \Phi_k=\frac{1}{I_k^{j'}}.
-      \end{equation*}
-  \end{enumerate}
-  
-  Consider $u_k\in\Bset^{j,j'}$ and $j=j'$. The results can be also referenced from \citet{King2021} as follows:
-  \begin{enumerate}[(a)]
-    \item If $t_k\notin\Cset^{j,j'}(\Och_i)$,
-      \begin{equation*}
-        \Phi_k=1-\frac{\binom{\ell_{ik}^{j'}+1}{2}}{\binom{I_k^{j'}}{2}};
-      \end{equation*}
-    \item otherwise, if $t_k\in\Cset^{j,j'}(\Och_i)$,
-      \begin{equation*}
-        \Phi_k=\frac{1}{\binom{I_k^{j'}}{2}}.
-      \end{equation*}
-  \end{enumerate}
-  
-  
-  Consider $u_k\in\Bset^{j,j'}$ and $j\neq j'$. 
-  Again, let $q^*$ be the sample satisfying $t_k=\Zset^{j,j'}(\Och_q)\setminus\Zset^{j,j'}(\Och_{q-1})\}$ and further, 
-  $q'$ be the sample satisfying $t_k=\Cset^{j,j'}(\Och_q)\setminus\Cset^{j,j'}(\Och_{q-1})$,
-  for $q=1,\dots, i$.
-  % first, get q* as the sample of deme-transition
-  % q' as the sample of coalescent
-  \begin{enumerate}[(a)]
-    % if not exists q* and q'
-    \item If $\nexists q^*$ and $\nexists q'$, then $t_k\notin\Zset^{j,j'}(\Och_i)\cup\Cset^{j,j'}(\Och_{i})$. We have
-      \begin{equation*}
-        \Phi_k=\prod_{m=0}^{\ell_{ik}^{j'}}\left(1-\frac{1}{I_k^{j'}-m}\right)=1-\frac{\ell_{ik}^{j'}+1}{I_k^{j'}}.
-      \end{equation*}
-    % if not exists q* but q'
-    \item If $\exists q^*$ but $\nexists q'$, then $t_k\in\Zset^{j,j'}(\Och_{i})$ and $\ell^*=\ell_{q^*k}^{j'}$. With the same definitions of $Q_k^{j'}$ and $\mathcal{Y}^{j}_{m}$ as before, we have
-      \begin{equation*}
-      \begin{split}
-        \Phi_k &= \prod_{m=0}^{\ell^*-1}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell^*)}\,\prod_{m=\ell_{q^*k}^{j}}^{\ell_{ik}^{j}}\left(1-\frac{1}{I_k^{j}-m}\right) \\
-        &= \frac{I_k^{j'}-\ell^*}{I_k^{j'}}\frac{1}{I_k^j(I_k^{j'}-\ell^*)}\frac{I_k^j-\ell_{ik}^{j}-1}{I_k^j-\ell_{q^*k}^{j}}\\
-        &= \frac{1}{\mathcal{Y}^{j}_{\ell^*+1}I_k^{j'}}\left(1-\frac{\ell_{ik}^{j}+1}{I_k^j}\right).
-      \end{split}
-      \end{equation*}
-    % if not exists q' but q*
-    \item If $\nexists q^*$ but $\exists q'$, then $t_k\notin\Zset^{j,j'}(\Och_{q'-1})$ and $t_k\in\Cset^{j,j'}(\Och_i)$. Let $\ell'=\ell_{q'k}^{j'}$, we have
-      \begin{equation*}
-        \begin{split}
-          \Phi_k &= \prod_{m=0}^{\ell'-1}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell')}=\frac{1}{I_k^{j}I_k^{j'}}.
-        \end{split}
-      \end{equation*}
-    % if exists q* and q', and q' > q*
-    \item If $\exists q^*$ and $\exists q'$, and obviously, $q^*<q'\leq i$, then $t_k\in\Zset^{j,j'}(\Och_{q^*})$, $t_k\notin\Zset^{j,j'}(\Och_{q'})$, and $t_k\in\Cset^{j,j'}(\Och_{q'})$. Let $\ell^*=\ell_{q^*k}^{j'}$ and $\hat{\ell}=\ell_{q'k}^{j}$. We have
-      \begin{equation*}
-      \begin{split}
-        \Phi_k &= \prod_{m=0}^{\ell^*-1}\left(1-\frac{1}{I_k^{j'}-m}\right)\,\frac{1}{I_k^{j}(I_k^{j'}-\ell^*)}\prod_{m=\ell_{q^*k}^{j}}^{\hat{\ell}-1}\left(1-\frac{1}{I_k^{j}-m}\right)\,\frac{1}{I_k^{j}-\hat{\ell}} \\
-        &= \frac{1}{\mathcal{Y}_{\ell^*+1}^{j}I_k^{j}I_k^{j'}}.
-      \end{split}
-      \end{equation*}
-  \end{enumerate}
-  
-\end{proof}
+\subsection{SEIRS}
+
+Jumps: $\Jumps=\{\mathrm{Inf},\mathrm{Prog},\mathrm{Recov},\mathrm{Wane},\mathrm{Birth},\mathrm{Death_S},\mathrm{Death_E},\mathrm{Death_I},\mathrm{Death_R},\mathrm{Sample}\}$.
+
+Demes: $\Demes=\{\mathrm{E},\mathrm{I}\}$.
+
+Jump rates:
+\begin{itemize}
+\item $\alpha_{\mathrm{Inf}}(t,x,x')=\beta(t)\,\frac{x^{\mathrm{S}}x^{\mathrm{I}}}{N(t)}\,\Indicator{x'=x+(-1,1,0,0)}$
+\item $\alpha_{\mathrm{Prog}}(x,x')=\rho\,x^{\mathrm{E}}\,\Indicator{x'=x+(0,-1,1,0)}$
+\item $\alpha_{\mathrm{Recov}}(x,x')=\gamma\,x^{\mathrm{I}}\,\Indicator{x'=x+(0,0,-1,1)}$
+\item $\alpha_{\mathrm{Wane}}(x,x')=\upsilon\,x^{\mathrm{R}}\,\Indicator{x'=x+(1,0,0,-1)}$
+\item $\alpha_{\mathrm{Sample}}(t,x,x')=\psi\,x^I\,\Indicator{x'=x}$
+\item $\alpha_{\mathrm{Birth}}(t,x,x')=B(t)\,\Indicator{x'=x+(1,0,0,0)}$
+\item $\alpha_{\mathrm{Death}_k}(x,x')=\mu\,x^k\,\Indicator{x'^j=x^j-\delta_{jk}}$, $k\in\{\mathrm{S},\mathrm{E},\mathrm{I},\mathrm{R}\}$
+\end{itemize}
+
+%% Nonlinear filtering equation:
+%% \begin{equation}
+%%   \begin{aligned}
+%%     \frac{\partial{w}}{\partial{t}}(t,x,y,z)=&B(t)\,\left[\sum_{y'z'}w\big(t,x-(1,0,0,0),y',z'\big)-w\big(t,x,y,z\big)\right]\\
+%%     &\qquad+\sum_{k\in\{\mathrm{S},\mathrm{E},\mathrm{I},\mathrm{R}\}}\mu\,(x^k+1)\,w(t,x+\delta_{k})-\mu\,x^k\,w(t,x)\\
+%%     &\qquad+\upsilon\,x^{\mathrm{R}}\,w(t,x-(1,0,0,-1))\\
+%%   \end{aligned}
+%% \end{equation}
 
 \section{Discussion}
 

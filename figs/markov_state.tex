@@ -1,0 +1,21 @@
+%% \documentclass[crop,tikz]{standalone}
+%% \input{defs}
+%% \begin{document}
+\begin{tikzpicture}[scale=1]
+  \usetikzlibrary{shapes,arrows,positioning}
+  \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
+  \tikzstyle{state}=[shape=ellipse, color=black, draw, font=\large, fill=white, thick, minimum size=5em]
+  \tikzstyle{trans}=[color=black, thick, >=stealth]
+  \node[state] (s0) at (0,0) {$x=(S,E,I,R)$};
+  \node[state] (s1) at (165:7.8) {$x'=(S-1,E+1,I,R)$};
+  \node[state] (s2) at (195:7.1) {$x'=(S,E-1,I+1,R+1)$};
+  \node[state] (s3) at (295:4) {$x'=(S,E,I-1,R+1)$};
+  \node[state] (s4) at (355:9) {$x'=(S+1,E,I,R-1)$};
+  \node[state] (s5) at (18:6) {$x'=(S,E,I,R)$};
+  \draw[trans,->] (s0) -- (s1) node[midway,above,sloped] {transmission};
+  \draw[trans,->] (s0) -- (s2) node[midway,above,sloped] {progression};
+  \draw[trans,->] (s0) -- (s3) node[midway,above,sloped] {recovery};
+  \draw[trans,->] (s0) -- (s4) node[midway,above,sloped] {loss of immunity};
+  \draw[trans,->] (s0) -- (s5) node[midway,above,sloped] {sampling};
+\end{tikzpicture}
+%% \end{document}
