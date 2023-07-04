@@ -1,11 +1,11 @@
 \usepackage{amsmath,amssymb,mathrsfs,eucal,bbm,mathabx}
 
 \newcommand\eps{\varepsilon}
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\Prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\Expect[1]{\mathbb{E}\left[{#1}\right]}
 \newcommand\indicator[1]{\mathbbm{1}_{{#1}}}
 \newcommand\Indicator[1]{\mathbbm{1}\{{#1}\}}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\Var[1]{\mathrm{Var}\left[{#1}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\log{\lik}}
@@ -26,8 +26,14 @@
 \newcommand{\black}{\mathrm{black}}
 \newcommand{\blue}{\mathrm{blue}}
 
+\newcommand\predec[1]{\widetilde{#1}}
+
 \newcommand\Node[1]{\mathsf{#1}}
 \newcommand\Ball[1]{\mathsf{#1}}
+\def\deme{\mathsf{deme}}
+\def\uniq{\mathsf{uniq}}
+\newcommand\pocket[1]{\mathsf{pocket}(\Node{#1})}
+\newcommand\greenball[1]{\mathsf{green}(\Node{#1})}
 
 \def\emptyset{\varnothing}
 \def\preceq{\preccurlyeq}
@@ -47,6 +53,8 @@
 \def\Rp{\mathbb{R}_{+}}
 \def\Master{\mathcal{A}}
 \def\X{\mathcal{X}}
+\def\U{\mathcal{U}}
+\def\N{\mathcal{N}}
 \def\Hist{\mathcal{H}}
 \def\Inv{\mathcal{I}}
 \def\Gen{\mathcal{G}}
@@ -57,15 +65,17 @@
 \def\ext{\mathop{\mathsf{ext}}}
 \def\prune{\mathop{\mathsf{prune}}}
 \def\obs{\mathop{\mathsf{obs}}}
+\def\Anc{\mathsf{Anc}}
 
-\newcommand\predec[1]{\widetilde{#1}}
+\def\ut{\predec{u}}
 \def\xt{\predec{x}}
 \def\yt{\predec{y}}
 \def\zt{\predec{z}}
 \def\wt{\predec{w}}
+\def\Ut{\predec{\U}}
+\def\Wt{\predec{W}}
 \def\Xt{\predec{\X}}
 \def\ct{\mathsf{ct}}
-\def\deme{\mathsf{deme}}
 \def\anc{\mathsf{anc}}
 \def\event{\mathsf{event}}
 
