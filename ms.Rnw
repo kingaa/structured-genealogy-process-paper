@@ -86,7 +86,7 @@ We demonstrate with several examples.
 In the following, we show a Markov population process of the kind that is a staple in epidemiology induces a Markov process on the space of genealogies.
 We then show how one can comput the likelihood of a given genealogy.
 
-\section{From population processes to genealogy processes}
+\section{Mathematical definitions}
 
 \subsection{Population processes}
 
@@ -148,6 +148,9 @@ Another perspective on the Markov processes is to be had from its Markov state t
 \end{figure}
 
 \paragraph{Mathematical notation}
+
+We use bold-face to mark random elements and the corresponding regular-face symbol to denote specific values of such elements.
+Given any \cadlag\ process $f_t$, the set of jump-times is denoted $\event(f_t)=\{e\in[0,t]\;\vert\;\leftlim{f}_e\ne{f_e}\}$.
 
 Denote the underlying probability space by $(\Omega,\Borel,\mathrm{Prob})$.
 We will assume that our population process is a time-inhomogeneous Markov jump process, $\X_t$, parameterized by time $t\in\Rp\colonequals\{t\in\mathbb{R}\;\vert\;t\ge{0}\}$ and taking values in some space $\Xspace$.
@@ -387,7 +390,7 @@ In general, at an event of mark $u$, there are $r^u_i$ emergent lineages in deme
   }
 \end{figure}
 
-\paragraph{Pruning}
+\subsection{The pruned and obscured genealogies}
 
 Although the process just described yields a genealogy that relates all extant members of the population, and all samples, the data we ultimately wish to analyze will contain only the samples.
 We therefore describe how the genealogy process is \emph{pruned} to yield the sample-only genealogy.
@@ -422,7 +425,8 @@ Accordingly, given a pruned genealogy, $P$, we make the following definitions.
 \end{compactenum}
 For $j>|\Lin(P)|$, we adopt the convention that $t^o_j=t^s_j=\infty$, so that $\ct^P_j(t)=0$, $\anc^{P}_j(t)=0$, and $\deme^P_j(t)=\eth$ for all $t\in\Rp$.
 It is easy to see that $Y^{P}$ is well defined, piecewise constant, and \cadlag, and that the map $P\mapsto{Y^{P}}$ is one-to-one.
-However, not every piecewise constant, \cadlag\ map $Y:\Rp\to\Yspace$ defines a pruned genealogy.
+However, not every piecewise constant, \cadlag\ map $y:\Rp\to\Yspace$ defines a pruned genealogy.
+If $y$ does define a pruned genealogy, we denote that pruned genealogy by $P(y)$.
 
 Given $\eta\in\Yspace$, we will use the notation $\ct(\eta)$, $\anc(\eta)$, and $\deme(\eta)$ to refer to the coordinates of $\eta$.
 
@@ -437,7 +441,7 @@ Note in particular that, if $y=Y^{\Prune_t}$, then $y_j(t')\ne\yt_j(t')$ if and 
 Note also that, there can be events on a pruned genealogy where the color does not change.
 That is, where $\ct_j$ increments, but neither $\anc_j$ nor $\deme_j$ change.
 
-\paragraph{Lineage count, saturation}
+\paragraph{Lineage count and saturation}
 
 In the following, we will find that we need to count the deme-specific numbers of lineages present at a given time.
 Accordingly, for any $\eta\in\Yspace$, and $i\in\Demes$, let us define
@@ -457,7 +461,7 @@ With this definition, for any $P$, if $y=Y^P$, then $s_i(\yt(t),y(t))$ is the nu
 In particular, $s(\eta,\eta)=0$ so that if $t\notin\event(P)$, then $s(\yt(t),y(t))=0$.
 We refer to $s\left(\yt(t),y(t)\right)$ as the \emph{saturation} at time $t$.
 
-\subsection{Obscured genealogy}
+\paragraph{Obscured genealogy}
 
 As we have just seen, a pruned genealogy contains information about the full history of each sample lineage, including the times at which it entered or exited any deme, sired offspring, or was sampled.
 The data we seek to analyze will typically lack much of this information.
@@ -501,46 +505,48 @@ Recall that $n:\Xspace\to\Zp$ denotes the deme-occupancy function, $r^u$, the pr
   Let $P^*$ be a given pruned genealogy, $t=T(P^*)$, and $y^*=Y^{P^*}$.
   Then
   \begin{equation*}
-    \Prob{P^*\vert\Hist_t}=\Indicator{\event(P^*)\subseteq{\event(\Hist_t)}}\,\times\,\prod_{e\in\event(\Hist_t)}{\BinRatio{n(X_e)}{\ell(y(e))}{r^{U_e}}{s(\yt(e),y(e))}\,Q_{U_e}(\yt(e),y(e))}.
+    \begin{aligned}
+      \Prob{P^*\vert\Hist_t}=&\prod_{e\in\event(\Hist_t)}{\BinRatio{n(X_e)}{\ell(y^*(e))}{r^{U_e}}{s(\yt^*(e),y^*(e))}\,Q_{U_e}(\yt^*(e),y^*(e))}\\
+      &\qquad\times\Indicator{\event(P^*)\subseteq{\event(\Hist_t)}}.
+    \end{aligned}
   \end{equation*}
 \end{thm}
 \begin{proof}
-  As we have already observed, if $\event(P^*)\nsubseteq\event(\Hist_t)$, then $\Prob{P^*}=0$.
-  Similarly, if there is any event of $P^*$ which is incompatible with the population process, $\Prob{P^*}=0$.
+  As we have already observed, if $\event(P^*)\nsubseteq\event(\Hist_t)$, then $\Prob{P^*\vert\Hist_t}=0$.
+  Similarly, if there is any event of $P^*$ which is incompatible with the population process, $\Prob{P^*\vert\Hist_t}=0$.
   Let us therefore suppose that neither of these conditions hold.
   Recall that, conditional on $\Hist_t$, each jump of the inventory process is independent of the others.
-  Moreover, at each event $e\in\event(\Hist_t)$, a jump of mark $\U_e$ occured, with a production of $r^{U_e}=(r_i)_{i\in\Demes}$, resulting in a new deme-occupancy of $n(X_e)=(n_i)_{i\in\Demes}$.
+  Moreover, at each event $e\in\event(\Hist_t)$, a jump of mark $U_e$ occured, with a production of $r^{U_e}=(r_i)_{i\in\Demes}$, resulting in a new deme-occupancy of $n(X_e)=(n_i)_{i\in\Demes}$.
   In $P^*$, at time $e$, there are $\ell_i=\ell_i(y^*(t))$ lineages in deme $i$, of which $s_i=s_i(\yt^*(t),y^*(t))$ are emergent.
   The exchangeability of lineages within demes implies that each lineage present in a deme at time $e$ was equally likely to have been one of the emergent lineages.
-  In particular, at time $e$, the probability that $s_i$ of the $\ell_i$ deme-$i$ lineages were among the $r_i$ of $n_i$ lineages emergent in the inventory process is the same as the probability that, drawing $\ell_i$ balls without replacement from an urn containing $r_i$ black balls and $n_i-r_i$ white balls, one ends up with $s_i$ black balls, namely
+  In particular, at time $e$, the probability that $s_i$ of the $\ell_i$ deme-$i$ lineages were among the $r_i$ of $n_i$ lineages emergent in the inventory process is the same as the probability that, upon drawing $\ell_i$ balls without replacement from an urn containing $r_i$ black balls and $n_i-r_i$ white balls, exactly $s_i$ of the drawn balls are black, namely
   \begin{equation*}
     \frac{\binom{n_i-\ell_i}{r_i-s_i}\,\binom{\ell_i}{s_i}}{\binom{n_i}{r_i}}.
   \end{equation*}
-  Since our genealogies are labelled, we are interested in the probability that the specific lineages are involved.
-  We therefore divide by $\binom{\ell_i}{s_i}$.
-  Since, again conditional on $\Hist_t$, the inventory process within each deme is independent of the others, we have established that
+  Because our lineages are labelled, each of the $\binom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct; just one of these is the one present in $P^*$.
+  Moreover, since, again conditional on $\Hist_t$, the inventory process within each deme is independent of the others, we have established that
   \begin{equation*}
     \Prob{P^*\vert\Hist_t}=\prod_{e\in\event(\Hist_t)}{\BinRatio{n(X_e)}{\ell(y^*(e))}{r^{U_e}}{s(\yt^*(e),y^*(e))}}.
   \end{equation*}
   Returning to the possibility that $P^*$ is incompatible with $\Hist_t$, since $\Prob{P^*}=0$ if either any $Q_u=0$ or of any event of $P^*$ is not an event of $\Hist_t$, we obtain the result.
 \end{proof}
 
-\begin{equation*}
-  \phi_u(\xi,\eta,\eta')\colonequals\BinRatio{n(\xi)}{\ell(\eta')}{r^u}{s(\eta,\eta')}\,Q_u(\eta,\eta').
-\end{equation*}
+%% \begin{equation*}
+%%   \phi_u(\xi,\eta,\eta')\colonequals\BinRatio{n(\xi)}{\ell(\eta')}{r^u}{s(\eta,\eta')}\,Q_u(\eta,\eta').
+%% \end{equation*}
 
 Our second result concerns the likelihood of a given obscured genealogy conditional on the history.
 
 \begin{thm}\label{thm:obsc_lik}
   Let $V^*$ be a given obscured genealogy and $t=T(V^*)$.
-  Let $\pi:\Jumps\times\Rp\times\Xspace^2\times\Yspace^2\to\Rp$ be a probability kernel, \ie $\pi_u(t,\xi,\xi',\eta,\eta')\ge{0}$ and $\sum_{\eta'}{\pi_u(t,\xi,\xi',\eta,\eta')}=1$ for all $u\in\Jumps$, $t\in\Rp$, $\xi,\xi'\in\Xspace$, and $\eta\in\Yspace$.
+  Let $\pi:\Jumps\times\Rp\times\Xspace^2\times\Yspace^2\to\Rp$ be a probability kernel, \ie $\pi_u(t,\xi,\xi',\eta,\eta')\ge{0}$ and $\sum_{\eta'}{\pi_u(t,\xi,\xi',\eta,\eta')}=1$.
   Suppose moreover that $\pi_u(t,\xi,\xi',\eta,\eta')>0$ if and only if $Q_u(\eta,\eta')=1$.
-  Let $\rdm{y}_t$ be the Markov jump process generated by the kernel $\pi$, with jump times fixed at $\event(\Hist_t)$.
+  Let $\rdm{y}_t$ be the Markov jump process on $\Yspace$ generated by the kernel $\pi$, with $\event(\rdm{y})=\event(\Hist_t)$.
   Then
   \begin{equation*}
-    \Prob{V^*\vert\Hist_t}=\Expect{\prod_{e\in\event(\Hist_t)}{\frac{\scriptsize\BinRatio{n(X_e)}{\ell(\rdm{y}_e)}{r^{U_e}}{s(\leftlim{\rdm{y}}_t,\rdm{y}_t)}}{\pi_{U_e}(e,\leftlim{X}_e,X_e,\leftlim{\rdm{y}}_e,\rdm{y}_e)}}},
+    \Prob{V^*\vert\Hist_t}=\Expect{\left.\prod_{e\in\event(\Hist_t)}{\frac{\scriptsize\BinRatio{n(X_e)}{\ell(\rdm{y}_e)}{r^{U_e}}{s(\leftlim{\rdm{y}}_e,\rdm{y}_e)}}{\scriptsize\pi_{U_e}(e,\leftlim{X}_e,X_e,\leftlim{\rdm{y}}_e,\rdm{y}_e)}}\times\Indicator{\obs(P(\rdm{y}))=V^*}\;\right\vert\;\Hist_t},
   \end{equation*}
-  the expectation being taken over $\rdm{y}_t$.
+  the expectation being taken over $\rdm{y}$.
 \end{thm}
 \begin{proof}
   First, observe that, since $\obs$ is a deterministic operator,
@@ -555,35 +561,37 @@ Our second result concerns the likelihood of a given obscured genealogy conditio
   \begin{equation*}
     \Prob{\rdm{\hat{y}}_k=\hat{y}_k\vert\rdm{\hat{y}}_{k-1}=\hat{y}_{k-1}}=\pi_{U_{t_k}}(t_k,\leftlim{X}_{t_k},X_{t_k},\hat{y}_{k-1},\hat{y}_k).
   \end{equation*}
+  Now let $\event(\Hist_t)=\{t_1,t_2,\dots,t_K\}$.
   $\rdm{\hat{y}}_k$ is the embedded chain of a unique, piecewise-constant, \cadlag\ process $\rdm{y}_t$, with jump times at $t_k$.
-  The conditions on $\pi$ guarantee that for every $P$ such that $\obs(P)=V^*$, then $Y^P$ is a sample path of this process and, conversely, that for every sample path $y$, there is a pruned genealogy $P=P(y)$ such that $\obs(P)=V^*$ and $Y^P(t)=y_t$.
-  In particular, they guarantee that $\pi_u(\xi,\xi',\eta,\eta')\propto{Q_u(\eta,\eta')}$.
+  The conditions on $\pi$ guarantee that, for every pruned genealogy $P$, $Y^P$ is a sample path of this process.
+  In particular, they guarantee that $\pi_u(t,\xi,\xi',\eta,\eta')\;\propto\;{Q_u(\eta,\eta')}$.
+  Clearly, the construction of $\rdm{y}_t$ guarantees that $\event(P(\rdm{y}))\subseteq\event(\Hist_t)$.
 
-  We can therefore write
+  We therefore have that
   \begin{equation*}
-    \Prob{V^*\vert\Hist_t}=\Expect{\frac{\Prob{P(\rdm{y})\vert\Hist_t}}{\pi(\rdm{y}\vert\Hist_t)}},
+    \Prob{V^*\vert\Hist_t}=\Expect{\frac{\Prob{P(\rdm{y})\vert\Hist_t}}{\pi(\rdm{y}\vert\Hist_t)}\cdot\Indicator{\obs(P(\rdm{y}))=V^*}},
   \end{equation*}
   the expectation being taken with respect to the random process $\rdm{y}_t$.
   Here, by definition,
   \begin{equation*}
     \pi(\rdm{y}\vert\Hist_t)=\prod_{e\in\event(\Hist_t)}{\pi_{U_{e}}(e,\leftlim{X}_{e},X_{e},\leftlim{\rdm{y}}_{e},\rdm{y}_{e})}.
   \end{equation*}
-  The result follows from \cref{thm:pruned_lik}.
+  The result then follows from \cref{thm:pruned_lik}.
 \end{proof}
 
-\AAK{Two approaches possible:}
-\begin{enumerate}
-\item Use the filter equations developed in the Appendix to compute $\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}}$.
-  In effect, we compute $\Prob{\Prune_t}$ and then sum over paintings $y$.
-\item Change the order of the summation: $\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}}=\Expect{\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}\;\vert\;\Hist_t}}$.
-  That is, conditional on $\Hist_t$, the likelihood of $\Vis_t$ is sum over all $\Prune_t$ such that $\obs(\Prune_t)=\Vis_t$.
-  Therefore, any importance sampling scheme for $\Prune_t$ will do.
-  In particular, we choose a scheme that paints the tree forward in time, driven by a mimic of $\X_t$.
-  We show that this is equivalent to the specific filter equation.
+%% \AAK{Two approaches possible:}
+%% \begin{enumerate}
+%% \item Use the filter equations developed in the Appendix to compute $\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}}$.
+%%   In effect, we compute $\Prob{\Prune_t}$ and then sum over paintings $y$.
+%% \item Change the order of the summation: $\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}}=\Expect{\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}\;\vert\;\Hist_t}}$.
+%%   That is, conditional on $\Hist_t$, the likelihood of $\Vis_t$ is sum over all $\Prune_t$ such that $\obs(\Prune_t)=\Vis_t$.
+%%   Therefore, any importance sampling scheme for $\Prune_t$ will do.
+%%   In particular, we choose a scheme that paints the tree forward in time, driven by a mimic of $\X_t$.
+%%   We show that this is equivalent to the specific filter equation.
 
-  It may be useful in this to first show that $\Prob{\Prune_t|\Hist_t}$ can be expressed as an expectation over $y$, where $y$ is constrained to be equal $y^{\Prune_t}$.
-  Then, show that the sum of the $\Prune_t$-constraint indicator functions is equal to the $\Vis_t$-constraint indicator function.
-\end{enumerate}
+%%   It may be useful in this to first show that $\Prob{\Prune_t|\Hist_t}$ can be expressed as an expectation over $y$, where $y$ is constrained to be equal $y^{\Prune_t}$.
+%%   Then, show that the sum of the $\Prune_t$-constraint indicator functions is equal to the $\Vis_t$-constraint indicator function.
+%% \end{enumerate}
 
 %% \begin{figure}
 %%   \begin{center}
@@ -602,7 +610,7 @@ Our second result concerns the likelihood of a given obscured genealogy conditio
 %%   =\BinRatio{n}{\ell}{r}{s}
 %% \end{equation*}
 
-\paragraph{Integrating out the history, filter equations}
+\paragraph{Integrating out the history: filter equations}
 
 Suppose we have a pruned genealogy $\Prune^*$, defined on the time-interval $[0,T]$, with event times $0=t_0<t_1<\cdots<t_n=T$.
 From the theorem, we have, for $t\notin\event(\Prune^*)$,
@@ -664,26 +672,25 @@ Jump rates:
 Explicit expressions for the probability densities that will arise in the following are not always available.
 Hence, we will develop some technology for manipulating them that avoids the need for explicit expressions.
 
-\begin{defn}
-  Suppose $X_t$ is a continuous-time Markov process with Kolmogorov forward equation (KFE)
-  \begin{equation}\label{eq:kfe2}
-    \frac{\partial{w}}{\partial{t}}
-    =\int{w(t,x')\,\beta(t,x',x)\,\dd{x'}}
-    -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}},
-  \end{equation}
-  Suppose that $B(t,x,x')>0$ and $\lambda(t,x)\in\R$ are given functions.
-  We say that the equation
-  \begin{equation}\label{eq:filtereq}
-    \frac{\partial{w}}{\partial{t}}
-    =\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
-    -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
-    -\lambda(t,x)\,w(t,x)
-  \end{equation}
-  is the \emph{filter equation} with \emph{driver} $X_t$, \emph{boost} $B$, and \emph{decay} $\lambda$.
-\end{defn}
+Suppose $\X_t$ is a continuous-time Markov process with Kolmogorov forward equation (KFE)
+\begin{equation}\label{eq:kfe2}
+  \frac{\partial{w}}{\partial{t}}
+  =\int{w(t,x')\,\beta(t,x',x)\,\dd{x'}}
+  -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}},
+\end{equation}
+Suppose that $B(t,x,x')>0$ and $\lambda(t,x)\in\R$ are given functions.
+We say that the equation
+\begin{equation}\label{eq:filtereq}
+  \frac{\partial{w}}{\partial{t}}
+  =\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
+  -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
+  -\lambda(t,x)\,w(t,x)
+\end{equation}
+is the \emph{filter equation} with \emph{driver} $X_t$, \emph{boost} $B$, and \emph{decay} $\lambda$.
 
 Filter equations afford a convenient means of computing the likelihood of a given sequence of events.
-This is facilitated by the following
+This is facilitated by the following fact.
+
 \begin{lemma}\label{lemma:filtereq}
   \Cref{eq:filtereq} is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u$ satisfies the KFE
   \begin{equation}\label{eq:filterlemma}
@@ -717,22 +724,29 @@ This is facilitated by the following
   which is simplified to obtain \cref{eq:filtereq}.
 \end{proof}
 
-We recognize in \cref{eq:filterlemma} the KFE of a certain process $(X_t,V_t)$.
+\Cref{eq:filterlemma} is recognizable as the KFE of a certain process $(X_t,V_t)$.
 In particular, $X_t$ is the driver with KFE \cref{eq:kfe2}.
-The $V_t$ process has jumps wherever $X_t$ does, such that when $X_t$ jumps from $x$ to $x'$, $V_t$ jumps by the multiplicative factor $B(t,x,x')$.
+The $V_t$ process has jumps wherever $X_t$ does, such that when $X$ jumps at time $t$ from $x$ to $x'$, $V$ jumps by the multiplicative factor $B(t,x,x')>0$.
 Between jumps, $V_t$ decays deterministically and exponentially at rate $\lambda(t,x)$.
-If we view $V_t$ as a weight, then \cref{lemma:filtereq} says that the $V_t$-weighted average of $X_t$ evolves according to \cref{eq:filtereq}.
-This motivates the following result, which effectively allows boosts of zero.
+If we view $V_t$ as a weight, then \cref{lemma:filtereq} tells us how the $V_t$-weighted average of $X_t$ evolves in time:
+this average is simply $\int{w(t,x)\,\dd{x}}$.
+
+This motivates the following result, which shows how filter equations allow one to integrate over random histories.
 
 \begin{prop}\label{prop:zeroboost}
-  Suppose $X_t$ is a continuous-time Markov process with state space $\Xspace$ and KFE as in \cref{eq:kfe2}.
-  Let $H_t$ be its history process.
-  That is, for $\omega\in\Omega$ and $t\in\Rp$, $H_{t}(\omega):[0,t]\to\Xspace$ such that, for $t'\in{[0,t]}$,
-  $H_{t}(\omega)(t')=X_{t'}(\omega)$.
-  Moreover, there are random variables $K\in\Zp$ and $t_k\in\halfclosed{0,t}$, $k=1,\dots,K$ such that $\leftlim{X}_t=X_t$ whenever $t\ne{t_k}$ for all $k$.
-  Suppose $F$ is a real-valued function of $H_t$ such that
+  Suppose $\X_t$ is a continuous-time Markov process with state space $\Xspace$ and KFE as in \cref{eq:kfe2}.
+  %% Suppose that $B(t,x,x')>0$, $Q(t,x,x')\in\{0,1\}$, and $\lambda(t,x)\in\R$ are given measurable functions.
+  %% Consider the equation
+  %% \begin{equation*}
+  %%   \frac{\partial{w}}{\partial{t}}
+  %%   =\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,Q(t,x',x)\,\dd{x'}}
+  %%   -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
+  %%   -\lambda(t,x)\,w(t,x)
+  %% \end{equation*}
+  Let $\Hist_t$ be its history process.
+  Suppose $\rdm{R}_t$ is a real-valued random process such that
   \begin{equation*}
-    F(H_t)=\prod_{k}{Q\Big(t_k,\leftlim{H}(t_k),H(t_k)\Big)\,B\Big(t_k,\leftlim{H}(t_{k}),H(t_k)\Big)},
+    \Expect{\rdm{R}_t\;\vert\;\Hist_t}=\prod_{e\in\event(\Hist_t)}{Q(e,\leftlim{X}_e,X_e)\,B(e,\leftlim{X}_e,X_e)},
   \end{equation*}
   for some given measurable functions $B>{0}$, $Q\in\{0,1\}$.
   Suppose $w$ satisfies the filter equation
@@ -744,7 +758,7 @@ This motivates the following result, which effectively allows boosts of zero.
       &\qquad-\int{w(t,x)\,\beta(t,x,x')\,\Big(1-Q(t,x,x')\Big)\,\dd{x'}}.
     \end{aligned}
   \end{equation*}
-  Then $\Expect{F(H_t)}=\int{w(t,x)\dd{x}}$.
+  Then $\Expect{\rdm{R}_t}=\int{w(t,x)\dd{x}}$.
 \end{prop}
 \begin{proof}
   Apply \cref{lemma:filtereq} with the driver generated by the rate functions $\beta(t,x,x')\,Q(t,x,x')$.
@@ -754,15 +768,14 @@ An important special case is that of a deterministic driving process.
 The following result is established by routine calculation.
 
 \begin{prop}
-  Suppose $X:[0,T]\to\Xspace$ is a deterministic, piecewise constant, \cadlag\ function.
-  Let $E$ be the set of its jump times.
-  Then the KFE for $X_t$ is \cref{eq:kfe2} with $\beta(t,x,x')=\sum_{e\in{E}}{\delta(t,e)\delta(x',X_e)}$.
+  Suppose $X:[0,T]\to\Xspace$ is a deterministic, piecewise constant, \cadlag\ function and let $M=\event(X)$.
+  Then the KFE for $X_t$ is \cref{eq:kfe2} with $\beta(t,x,x')=\sum_{e\in{M}}{\delta(t,e)\delta(x',X_e)}$.
   With this driver, the filter equation (\cref{eq:filtereq}) becomes
   \begin{equation*}
     \begin{gathered}
       \frac{\partial{w}}{\partial{t}}=
-      -\lambda(t,x)\,w(t,x)\quad\text{for}\quad{t\notin{E}},\\
-      w(e,x)=\delta(x,X_e)\,\int{\wt(e,x')\,B(e,x',X_e)\,\dd{x'}}\quad\text{for}\quad{e\in{E}}.
+      -\lambda(t,x)\,w(t,x)\quad\text{for}\quad{t\in[0,T]\setminus{M}},\\
+      w(t,x)=\delta(x,X_t)\,\int{\wt(t,x')\,B(t,x',X_t)\,\dd{x'}}\quad\text{for}\quad{t\in{M}}.
     \end{gathered}
   \end{equation*}
 \end{prop}
@@ -772,20 +785,112 @@ We will have occasion to compute marginal expectations in the situation where so
 The following result handles this case.
 
 \begin{prop}
-  Suppose $\X_t$ is a continuous-time Markov process with state space $\Xspace$ and KFE as in \cref{eq:kfe}.
-  Let $\Hist_t$ be its history process.
-  Suppose $0<t_1<\dots<t_N\le{t}$ are fixed times and set $E=\{t_1,\dots,t_N\}$.
-  Let $B>{0}$ and $Q\in\{0,1\}$ be given measurable functions.
-  Suppose $F_E$ is an $\Rp$-valued random variable such that
+  Suppose $\X_t$ is a continuous-time Markov process with state space $\Xspace$ and KFE
   \begin{equation*}
-    \Expect{F_E\;\vert\;\Hist_t}={\prod_{e\in{E}}{B(e,\Xt_e,\X_e)\,Q(e,\Xt_e,\X_e)}}.
+    \frac{\partial{w}}{\partial{t}}(t,x)=\int\!w(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'}.
   \end{equation*}
-  Let $\pi(x,x')$ be a given probability kernel and $Y_t$ be the Markov process generated by $\beta(t,x,x')=\left(\alpha(t,x,x')+\sum_{e\in{E}}{\delta(t,e)\,\pi(x,x')}\right)\,Q(t,x,x')$.
-  Suppose $w$ satisfies the filter equation with driver $Y_t$, boost $B$, and decay $\lambda=\int{\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\,\dd{x'}}$.
-  Then $\Expect{F_E}=\int{w(t,x)\,\dd{x}}$.
+  Let $\Hist_t$ be its history process.
+  Suppose that $0<t_1<\dots<t_N\le{t}$ are fixed times and set $M=\{t_1,\dots,t_N\}$.
+  Let $B>{0}$ and $Q\in\{0,1\}$ be given measurable functions.
+  Let $\rdm{R}$ be a non-negative real-valued random variable such that
+  \begin{equation*}
+    \Expect{\rdm{R}\;\vert\;\Hist_t}=\prod_{e\in{\event(\Hist_t)}}{Q(e,\leftlim{X}_e,X_e)\,B(e,\leftlim{X}_e,X_e)}.
+  \end{equation*}
+  Let $\pi(t,x,x')$ be a given probability kernel and $\Y_t$ be the Markov process generated by \cref{eq:kfe2} where $\beta(t,x,x')=\left[\alpha(t,x,x')+\sum_{e\in{M}}{\delta(t,e)\,\pi(t,x,x')}\right]\,Q(t,x,x')$.
+  Suppose $w$ satisfies the filter equation with driver $\Y_t$, boost
+  \begin{equation*}
+    C(t,x,x')=
+    \begin{cases}
+      B(t,x,x'), &t\notin{M},\\
+      B(t,x,x')\,\displaystyle\frac{\alpha(t,x,x')}{\pi(t,x,x')}, &t\in{M},
+    \end{cases}
+  \end{equation*}
+  and decay $\lambda=\int{\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\,\dd{x'}}$.
+  Then
+  \begin{equation*}
+    \Expect{\rdm{R}\;\big\vert\;M\subseteq{\event(\Hist_t)}}=\int{w(t,x)\,\dd{x}}.
+  \end{equation*}
 \end{prop}
 \begin{proof}
   Apply \cref{lemma:filtereq}.
 \end{proof}
+
+\paragraph{More systematically}
+
+Suppose $\X_t$ is a non-explosive pure jump process with KFE
+\begin{equation*}
+  \begin{gathered}
+    \frac{\partial{w}}{\partial{t}}(t,x)=\int\!w(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'},\\
+    w(0,x)=p_0(x).
+  \end{gathered}
+\end{equation*}
+We can always take a version of $\X_t$ with \cadlag\ sample paths.
+
+Let $\rdm{\hat{X}}_k$ be the embedded chain of $\X_t$ and let $\rdm{T}^X_k$ be the point process of its jump times.
+It is elementary that
+\begin{equation*}
+  \Prob{\rdm{\hat{X}}_k=\hat{X}_k\;\Big\vert\;\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{T}^X_k=T_k}=\frac{\alpha(T_k,\hat{X}_{k-1},\hat{X}_k)}{\int{\alpha(T_k,\hat{X}_{k-1},x')\dd{x'}}}.
+\end{equation*}
+Moreover, if one has the $(\rdm{\hat{X}}_k,\rdm{T}^X_k)$ chain, one can reconstruct the $\X_t$ process.
+Conditional on $\rdm{\hat{X}}$, the jump-time chain $\rdm{T}^X_k$ is a Poisson point process with intensity $\int{\alpha(t,\X_t,x')\dd{x'}}$.
+
+We can rewrite the KFE as
+\begin{equation}\label{eq:poissdriver}
+  \begin{aligned}
+    \frac{\partial{w}}{\partial{t}}(t,n,x)=&\int\!w(t,n-1,x')\,\nu\,\pi(t,x',x)\,B(t,x,x')\,\dd{x'}-\int\!w(t,n,x)\,\alpha(t,x,x')\,\dd{x'}\\
+    =&\int\!w(t,n-1,x')\,\nu\,\pi(t,x',x)\,B(t,x,x')\dd{x'}-\int\!w(t,n,x)\,\nu\,\pi(t,x,x')\,\dd{x'}\\
+    &\qquad-\lambda(t,x)\,w(t,n,x)
+  \end{aligned}
+\end{equation}
+where $\nu>0$ is the intensity of homogenous Poisson process and
+\begin{equation*}
+  \begin{gathered}
+    A(t,x)=\int{\alpha(t,x,x')\dd{x'}}, \qquad
+    \pi(t,x,x')=\frac{\alpha(t,x,x')}{A(t,x)},\\
+    B(t,x,x')=\frac{A(t,x)}{\nu}, \qquad
+    \lambda(t,x)=A(t,x)-\nu.
+  \end{gathered}
+\end{equation*}
+Note that $\pi$ is the probability kernel of the embedded chain $\rdm{\hat{X}}$ and $A(t,x)$ is the intensity of the $\rdm{T}^X_k$ process.
+We recognize this equation as the filter equation with the rate-$\nu$ Poisson-process driver, boost $B$, and decay $\lambda$.
+
+By integrating equations of this kind, we effectively integrate over the $(\rdm{\hat{X}},\rdm{T}^X)$ process.
+To marginalize over only some of the $\rdm{T}^X_k$, we reason as follows.
+Fix $0<t_1<\dots<t_K\le{T}$ and $\nu>0$.
+Consider the mixed point process $T_k$ with intensity $\nu+\sum_{k=1}^K\delta(t,t_k)$.
+Using this as the driver in \cref{eq:poissdriver}, we obtain
+\begin{equation*}
+  \begin{aligned}
+    \frac{\partial{w}}{\partial{t}}(t,n,x)=&\int{w(t,n-1,x')\,\nu\,\pi(t,x',x)\,B(t,x',x)\dd{x'}}-\int{w(t,n,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}\\
+    &\quad+\sum_{k}\delta(t,t_k)\,\left\{\int{w(t,n-1,x')\,\pi(t,x',x)\,B(t,x,x')\dd{x'}}-\int{w(t,n,x)\,\pi(t,x,x')\,\dd{x'}}\right\}\\
+    &\qquad-\lambda(t,x)\,w(t,n,x).
+  \end{aligned}
+\end{equation*}
+Equivalently, we write:
+\begin{equation*}
+  \begin{aligned}
+    \frac{\partial{w}}{\partial{t}}(t,n,x)=&\int{w(t,n-1,x')\,\nu\,\pi(t,x',x)\,B(t,x',x)\dd{x'}}-\int{w(t,n,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}\\
+    &\qquad-\lambda(t,x)\,w(t,n,x),\\
+    w(t_k,n,x)=&\int{\leftlim{w}(t_k,n-1,x')\,\pi(t_k,x',x)\,B(t_k,x',x)\,\dd{x'}}\\
+    &\qquad=\tfrac{1}{\nu}\,\int{\leftlim{w}(t_k,n-1,x')\,\alpha(t,x',x)\,\dd{x'}}\\.
+  \end{aligned}
+\end{equation*}
+We then have $\Prob{\X_t\in\mathcal{E}\;\big\vert\;t_1,\dots,t_K\in\event(\Hist_t)}=\int_{\mathcal{E}}{w(t,x)\,\dd{x}}$.
+
+Now suppose $\rdm{R}_k$ is a Markov chain satisfying
+\begin{equation*}
+  \Prob{\rdm{R}_k=R_{k-1}\,B(T_k,\hat{X}_{k-1},\hat{X}_k)\;\Big\vert\;\rdm{\hat{X}}_k=\hat{X}_k,\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{T}^X_k=T_k,\rdm{R}_{k-1}=R_{k-1}}=1,
+\end{equation*}
+for some function $B>0$.
+\AAK{Or perhaps the following is sufficient for our purposes?}
+\begin{equation*}
+  \Expect{\rdm{R}_k\;\Big\vert\;\rdm{\hat{X}}_k=\hat{X}_k,\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{T}^X_k=T_k,\rdm{R}_{k-1}=R_{k-1}}=R_{k-1}\,B(T_k,\hat{X}_{k-1},\hat{X}_k).
+\end{equation*}
+Let $\rdm{R}_t$ be the corresponding continuous-time jump process with jumps at $\rdm{T}^X_k$.
+By \cref{lemma:filtereq}, if $w$ satisfies the boost equation with boost $B$, driver $\X$, and decay $\lambda=0$, then
+\begin{equation*}
+  \Expect{\rdm{R}_t}=\int{w(t,x)\dd{x}}.
+\end{equation*}
+
 
 \end{document}
