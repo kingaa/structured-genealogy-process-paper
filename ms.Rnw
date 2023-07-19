@@ -177,15 +177,13 @@ We assume that $\N_t$ is a simple counting process so that
     \Prob{\N_{t+\Delta}=n+1\;\vert\;\N_{t}=n}=\Delta\,\int{\alpha(t,x,x')\,\dd{x'}}+o(\Delta),
     \qquad
     \Prob{\N_{t+\Delta}>n+1\;\vert\;\N_{t}=n}=o(\Delta),\\
-    \Prob{\X_{t+\Delta}\in\mathcal{E}\;\vert\;\X_{t}=x, \N_{t+\Delta}-\N_{t}=1}=\frac{\int_{\mathcal{E}}{\alpha(t,x,x')\,\dd{x'}}}{\int{\alpha(t,x,x')\,\dd{x'}}}+\frac{o(\Delta)}{\Delta}.
+    \Prob{\X_{t+\Delta}\in\mathcal{E}\;\vert\;\X_{t}=x, \N_{t+\Delta}-\N_{t}=1}=\frac{\int_{\mathcal{E}}{\alpha(t,x,x')\,\dd{x'}}}{\int{\alpha(t,x,x')\,\dd{x'}}}.
   \end{gathered}
 \end{equation*}
-\AAK{[Do we need the last term?]}
 We will further assume that $\X_t$ is non-explosive, \ie, that $\Prob{\N_t<\infty}=1$ for all $t$.
 \AAK{[Is this equivalent to non-explosivity? Or merely an implication?]}
 
 The above may be compactly summarized by stating that if $w(t,x)$ satisfies the Kolmogorov forward equation (KFE),
-%\begin{equation}\label[pluralequation]{eq:kfe}
 \begin{equation}\label{eq:kfe}
   \frac{\partial{w}}{\partial{t}}(t,x)=\int\!w(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'},
 \end{equation}
@@ -612,24 +610,37 @@ Our second result concerns the likelihood of a given obscured genealogy conditio
 
 \paragraph{Integrating out the history: filter equations}
 
-Suppose we have a pruned genealogy $\Prune^*$, defined on the time-interval $[0,T]$, with event times $0=t_0<t_1<\cdots<t_n=T$.
-From the theorem, we have, for $t\notin\event(\Prune^*)$,
-\begin{equation}
-  \frac{\partial{w}}{\partial{t}}=\sum_{u}\int\!w(t,x')\,\alpha_u(t,x',x)\,\phi_u\big(x,y(t),y(t)\big)\,\dd{x'}
-  -\sum_{u}\int\!w(t,x)\,\alpha_u(t,x,x')\,\dd{x'}.
-\end{equation}
-At event times, $t\in\event(\Prune^*)$, one has
-\begin{equation}\label{eq:prune_filt_disc}
-  w(t,x)=\sum_{u}\int\!\wt(t,x')\,\frac{\alpha_u(t_k,x',x)}{\mu}\,\phi_u\big(x,\yt(t),y(t)\big)\,\dd{x'}\\,
-\end{equation}
-In addition, there are the initial and boundary conditions
-\begin{equation}
-  \begin{gathered}
-    w(0,x)=p_0(x), \qquad w(t,x)=0\quad\text{whenever}\quad n(x)<\ell(y(t)).
-  \end{gathered}
-\end{equation}
+Next, we derive expressions for the likelihood of pruned and obscured genealogies, unconditional on the history.
+For this, we use the filter equation technology developed in the Appendix.
+In particular, the following theorem follows immediately from \cref{prop:fullfilt}.
 
-
+\begin{thm}
+  Suppose we have a pruned genealogy $P^*_T$, $T>0$, with event times $\event(P^*_T)$.
+  Let $y^*=Y^{\Prune^*_T}$.
+  For $x,x'\in\Xspace$, $y,y'\in\Yspace$, $u\in\Jumps$, define
+  \begin{equation*}
+    \begin{gathered}
+      \phi_u\big(x,y,y')=\BinRatio{n(x)}{\ell(y')}{r^u}{s(y,y')}\qquad
+      \text{and} \qquad
+      \beta_u(t,x,x')=\alpha_u(t,x,x')\,Q_u(y,y'),
+    \end{gathered}
+  \end{equation*}
+  where $Q_u(y,y')$ is as in \cref{thm:pruned_lik}.
+  Fix $\nu>0$ and suppose $w=w(t,x)$ satisfies the filter equation
+  \begin{equation}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}=
+      &\sum_u{\int{w(t,x')\,\beta_u(t,x',x)\,\phi_u\big(x,\yt^*_t,y^*_t\big)\,\dd{x'}}}
+      -\sum_u{\int{w(t,x)\,\beta_u(t,x,x')\,\dd{x'}}}\\
+      &\quad+\sum_{e\in\event(P^*_T)}{\delta(t,e)\,\left\{\sum_u{\int{w(t,x')\,\frac{\beta_u(t,x',x)}{\nu}\,\phi_u\big(x,\yt^*_t,y^*_t\big)\,\dd{x'}}}-w(t,x)\right\}},
+    \end{aligned}
+  \end{equation}
+  with the initial condition $w(0,x)=p_0(x)$.
+  Then the likelihood of $P^*_T$ is
+  \begin{equation*}
+    \lik(P^*_T)=\int{w(T,x)\,\dd{x}}.
+  \end{equation*}
+\end{thm}
 
 \section{Examples}
 
@@ -666,40 +677,64 @@ Jump rates:
 \bibliography{phylopomp}
 
 \appendix
+\setcounter{thm}{0}
+\setcounter{equation}{0}
+\renewcommand{\theequation}{\thesection\arabic{equation}}
 
 \section{Filter equations}
 
-Explicit expressions for the probability densities that will arise in the following are not always available.
-Hence, we will develop some technology for manipulating them that avoids the need for explicit expressions.
+Explicit expressions for the quantities that arise in this paper are not always readily available.
+Here, we develop tools for manipulating complex expressions that are otherwise cumbersome.
 
-Suppose $\X_t$ is a continuous-time Markov process with Kolmogorov forward equation (KFE)
-\begin{equation}\label{eq:kfe2}
-  \frac{\partial{w}}{\partial{t}}
-  =\int{w(t,x')\,\beta(t,x',x)\,\dd{x'}}
-  -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}},
-\end{equation}
-Suppose that $B(t,x,x')>0$ and $\lambda(t,x)\in\R$ are given functions.
-We say that the equation
-\begin{equation}\label{eq:filtereq}
-  \frac{\partial{w}}{\partial{t}}
-  =\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
-  -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
-  -\lambda(t,x)\,w(t,x)
-\end{equation}
-is the \emph{filter equation} with \emph{driver} $X_t$, \emph{boost} $B$, and \emph{decay} $\lambda$.
+\begin{defn}
+  Suppose $\X_t$ is a continuous-time Markov process with Kolmogorov forward equation (KFE)
+  \begin{equation}\label{eq:kfe2}
+    \frac{\partial{w}}{\partial{t}}
+    =\int{w(t,x')\,\beta(t,x',x)\,\dd{x'}}
+    -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}.
+  \end{equation}
+  Suppose that $B(t,x,x')>0$ and $\lambda(t,x)\in\R$ are given measurable functions.
+  Let $\mathcal{M}\subseteq\Rp$ be countable such that $\mathcal{M}\cap[0,t]$ is finite for all $t$.
+  Let $\nu>0$.
+  We say that the equation
+  \begin{equation}\label{eq:filtereq}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}
+      =&\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
+      -\lambda(t,x)\,w(t,x)\\
+      &\quad+\sum_{e\in\mathcal{M}}\left\{\int{w(t,x')\,\frac{\beta(t,x',x)}{\nu}\,B(t,x',x)\,\dd{x'}}-w(t,x)\right\}.
+    \end{aligned}
+  \end{equation}
+  is the \emph{filter equation} with \emph{driver} $\X_t$, \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observed events} $\mathcal{M}$, \emph{relative to} $\nu$.
+\end{defn}
 
-Filter equations afford a convenient means of computing the likelihood of a given sequence of events.
+\begin{remark}
+  \Cref{eq:filtereq} is equivalent to
+  \begin{equation*}
+    \begin{gathered}
+      \frac{\partial{w}}{\partial{t}}
+      =\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
+      -\lambda(t,x)\,w(t,x),\quad t\notin{\mathcal{M}},\\
+      w(t,x)=\int{\leftlim{w}(t,x')\,\frac{\beta(t,x',x)}{\nu}\,B(t,x',x)\,\dd{x'}},\quad t\in{\mathcal{M}}.
+    \end{gathered}
+  \end{equation*}
+\end{remark}
+
+Filter equations afford a convenient means of computing expectations and likelihoods for pure jump processes.
 This is facilitated by the following fact.
 
 \begin{lemma}\label{lemma:filtereq}
-  \Cref{eq:filtereq} is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u$ satisfies the KFE
+  The filter equation \eqref{eq:filtereq} with $\mathcal{M}=\emptyset$ is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u$ satisfies the KFE
   \begin{equation}\label{eq:filterlemma}
     \begin{aligned}
       \frac{\partial{u}}{\partial{t}}=&\int{u(t,x',v')\,\beta(t,x',x)\,\delta(v,B(t,x',x)\,v')\,\dd{x'}\,\dd{v'}}\\
       &\qquad-\int{u(t,x,v)\,\beta(t,x,x')\,\delta(v',B(t,x,x')\,v)\,\dd{x'}\,\dd{v'}}
-      +\tfrac{\partial}{\partial{v}}\left[\lambda(t,x)\,v\,u(t,x,v)\right].
+      +\tfrac{\partial}{\partial{v}}\left[\lambda(t,x)\,v\,u(t,x,v)\right],
     \end{aligned}
   \end{equation}
+  on the space $\Xspace\times(0,\infty)$.
   Here, $\delta(v,v')$ is the familiar Dirac $\delta$.
 \end{lemma}
 \begin{proof}
@@ -724,173 +759,224 @@ This is facilitated by the following fact.
   which is simplified to obtain \cref{eq:filtereq}.
 \end{proof}
 
-\Cref{eq:filterlemma} is recognizable as the KFE of a certain process $(X_t,V_t)$.
-In particular, $X_t$ is the driver with KFE \cref{eq:kfe2}.
-The $V_t$ process has jumps wherever $X_t$ does, such that when $X$ jumps at time $t$ from $x$ to $x'$, $V$ jumps by the multiplicative factor $B(t,x,x')>0$.
-Between jumps, $V_t$ decays deterministically and exponentially at rate $\lambda(t,x)$.
-If we view $V_t$ as a weight, then \cref{lemma:filtereq} tells us how the $V_t$-weighted average of $X_t$ evolves in time:
+\Cref{eq:filterlemma} is recognizable as the KFE of a certain process $(\X_t,\rdm{V}_t)$.
+In particular, $\X_t$ is the driver with KFE \eqref{eq:kfe2}.
+The $\rdm{V}_t$ is \emph{directed} by $\X_t$ in the sense that $\rdm{V}$ has jumps wherever $\X$ does:
+when $\X$ jumps at time $t$ from $x$ to $x'$, $\rdm{V}$ jumps by the multiplicative factor $B(t,x,x')>0$.
+Between jumps, $\rdm{V}_t$ decays deterministically and exponentially at rate $\lambda(t,x)$.
+If we view $V_t$ as a weight, then \cref{lemma:filtereq} tells us how the $\rdm{V}_t$-weighted average of $\rdm{X}_t$ evolves in time:
 this average is simply $\int{w(t,x)\,\dd{x}}$.
-
 This motivates the following result, which shows how filter equations allow one to integrate over random histories.
 
 \begin{prop}\label{prop:zeroboost}
-  Suppose $\X_t$ is a continuous-time Markov process with state space $\Xspace$ and KFE as in \cref{eq:kfe2}.
-  %% Suppose that $B(t,x,x')>0$, $Q(t,x,x')\in\{0,1\}$, and $\lambda(t,x)\in\R$ are given measurable functions.
-  %% Consider the equation
-  %% \begin{equation*}
-  %%   \frac{\partial{w}}{\partial{t}}
-  %%   =\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,Q(t,x',x)\,\dd{x'}}
-  %%   -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
-  %%   -\lambda(t,x)\,w(t,x)
-  %% \end{equation*}
-  Let $\Hist_t$ be its history process.
-  Suppose $\rdm{R}_t$ is a real-valued random process such that
+  Suppose $\X_t$ is a non-explosive pure jump process with KFE
   \begin{equation*}
-    \Expect{\rdm{R}_t\;\vert\;\Hist_t}=\prod_{e\in\event(\Hist_t)}{Q(e,\leftlim{X}_e,X_e)\,B(e,\leftlim{X}_e,X_e)},
+    \begin{gathered}
+      \frac{\partial{w}}{\partial{t}}(t,x)=\int{w(t,x')\,\alpha(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}},\qquad
+      w(0,x)=p_0(x).
+    \end{gathered}
+  \end{equation*}
+  Let $\Hist_t$ be its history process.
+  Suppose $\rdm{V}_t$ is a real-valued random process such that
+  \begin{equation*}
+    \Expect{\rdm{V}_t\;\vert\;\Hist_t=H_t}=\prod_{e\in\event(H_t)}{Q(e,\leftlim{X}_e,X_e)\,B(e,\leftlim{X}_e,X_e)},
   \end{equation*}
   for some given measurable functions $B>{0}$, $Q\in\{0,1\}$.
-  Suppose $w$ satisfies the filter equation
+  If $w$ satisfies the filter equation,
   \begin{equation*}
     \begin{aligned}
       \frac{\partial{w}}{\partial{t}}(t,x)
-      =&\int{w(t,x')\,\beta(t,x',x)\,Q(t,x',x)\,B(t,x',x)\,\dd{x'}}
-      -\int{w(t,x)\,\beta(t,x,x')\,Q(t,x,x')\,\dd{x'}}\\
-      &\qquad-\int{w(t,x)\,\beta(t,x,x')\,\Big(1-Q(t,x,x')\Big)\,\dd{x'}}.
+      =&\int{w(t,x')\,\alpha(t,x',x)\,Q(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\alpha(t,x,x')\,Q(t,x,x')\,\dd{x'}}\\
+      &\qquad-\int{w(t,x)\,\alpha(t,x,x')\,\Big(1-Q(t,x,x')\Big)\,\dd{x'}},
     \end{aligned}
   \end{equation*}
-  Then $\Expect{\rdm{R}_t}=\int{w(t,x)\dd{x}}$.
+  then $\Expect{\rdm{V}_t}=\int{w(t,x)\,\dd{x}}$.
 \end{prop}
 \begin{proof}
-  Apply \cref{lemma:filtereq} with the driver generated by the rate functions $\beta(t,x,x')\,Q(t,x,x')$.
+  Apply \cref{lemma:filtereq} with $\beta(t,x,x')=\alpha(t,x,x')\,Q(t,x,x')$.
 \end{proof}
 
-An important special case is that of a deterministic driving process.
-The following result is established by routine calculation.
+%% An important special case is that of a deterministic driving process.
+%% The following result is established by routine calculation.
 
-\begin{prop}
-  Suppose $X:[0,T]\to\Xspace$ is a deterministic, piecewise constant, \cadlag\ function and let $M=\event(X)$.
-  Then the KFE for $X_t$ is \cref{eq:kfe2} with $\beta(t,x,x')=\sum_{e\in{M}}{\delta(t,e)\delta(x',X_e)}$.
-  With this driver, the filter equation (\cref{eq:filtereq}) becomes
-  \begin{equation*}
-    \begin{gathered}
-      \frac{\partial{w}}{\partial{t}}=
-      -\lambda(t,x)\,w(t,x)\quad\text{for}\quad{t\in[0,T]\setminus{M}},\\
-      w(t,x)=\delta(x,X_t)\,\int{\wt(t,x')\,B(t,x',X_t)\,\dd{x'}}\quad\text{for}\quad{t\in{M}}.
-    \end{gathered}
-  \end{equation*}
-\end{prop}
+%% \begin{prop}
+%%   Suppose $X:[0,T]\to\Xspace$ is a deterministic, piecewise constant, \cadlag\ function and let $M=\event(X)$.
+%%   Then the KFE for $X_t$ is \cref{eq:kfe2} with $\beta(t,x,x')=\sum_{e\in{M}}{\delta(t,e)\delta(x',X_e)}$.
+%%   With this driver, the filter equation (\cref{eq:filtereq}) becomes
+%%   \begin{equation*}
+%%     \begin{gathered}
+%%       \frac{\partial{w}}{\partial{t}}=
+%%       -\lambda(t,x)\,w(t,x)\quad\text{for}\quad{t\in[0,T]\setminus{M}},\\
+%%       w(t,x)=\delta(x,X_t)\,\int{\wt(t,x')\,B(t,x',X_t)\,\dd{x'}}\quad\text{for}\quad{t\in{M}}.
+%%     \end{gathered}
+%%   \end{equation*}
+%% \end{prop}
 
-The results so far allow us to compute expectations over random jumps and jump times.
-We will have occasion to compute marginal expectations in the situation where some jump times are known.
-The following result handles this case.
-
-\begin{prop}
-  Suppose $\X_t$ is a continuous-time Markov process with state space $\Xspace$ and KFE
-  \begin{equation*}
-    \frac{\partial{w}}{\partial{t}}(t,x)=\int\!w(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'}.
-  \end{equation*}
-  Let $\Hist_t$ be its history process.
-  Suppose that $0<t_1<\dots<t_N\le{t}$ are fixed times and set $M=\{t_1,\dots,t_N\}$.
-  Let $B>{0}$ and $Q\in\{0,1\}$ be given measurable functions.
-  Let $\rdm{R}$ be a non-negative real-valued random variable such that
-  \begin{equation*}
-    \Expect{\rdm{R}\;\vert\;\Hist_t}=\prod_{e\in{\event(\Hist_t)}}{Q(e,\leftlim{X}_e,X_e)\,B(e,\leftlim{X}_e,X_e)}.
-  \end{equation*}
-  Let $\pi(t,x,x')$ be a given probability kernel and $\Y_t$ be the Markov process generated by \cref{eq:kfe2} where $\beta(t,x,x')=\left[\alpha(t,x,x')+\sum_{e\in{M}}{\delta(t,e)\,\pi(t,x,x')}\right]\,Q(t,x,x')$.
-  Suppose $w$ satisfies the filter equation with driver $\Y_t$, boost
-  \begin{equation*}
-    C(t,x,x')=
-    \begin{cases}
-      B(t,x,x'), &t\notin{M},\\
-      B(t,x,x')\,\displaystyle\frac{\alpha(t,x,x')}{\pi(t,x,x')}, &t\in{M},
-    \end{cases}
-  \end{equation*}
-  and decay $\lambda=\int{\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\,\dd{x'}}$.
-  Then
-  \begin{equation*}
-    \Expect{\rdm{R}\;\big\vert\;M\subseteq{\event(\Hist_t)}}=\int{w(t,x)\,\dd{x}}.
-  \end{equation*}
-\end{prop}
-\begin{proof}
-  Apply \cref{lemma:filtereq}.
-\end{proof}
-
-\paragraph{More systematically}
-
-Suppose $\X_t$ is a non-explosive pure jump process with KFE
+Filter equations allow us to pass easily between equivalent representations of a process.
+For example, an equivalent way of representing $\X_t$ is in terms of its embedded chain and event times.
+Let $\rdm{\hat{X}}_k$ be the embedded chain of $\X_t$ and let $\rdm{\hat{T}}_k$ be the point process of its event times.
+It is elementary that
+\fontsize{10pt}{12pt}\selectfont
 \begin{equation*}
   \begin{gathered}
-    \frac{\partial{w}}{\partial{t}}(t,x)=\int\!w(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'},\\
-    w(0,x)=p_0(x).
+    \Prob{\rdm{\hat{X}}_k=\hat{X}_k\;\Big\vert\;\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{\hat{T}}_k=\hat{T}_k}=\frac{\alpha(\hat{T}_k,\hat{X}_{k-1},\hat{X}_k)}{\int{\alpha(\hat{T}_k,\hat{X}_{k-1},x')\dd{x'}}},\\
+    \Prob{\rdm{\hat{T}}_k>\rdm{\hat{T}}_{k-1}+t\;\Big\vert\;\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{\hat{T}}_{k-1}=\hat{T}_{k-1}}=\exp{\left(-\int_{0}^{t}{\int{\alpha(\hat{T}_{k-1}+s,\hat{X}_{k-1},x')\,\dd{x'}}\,\dd{s}}\right)}.
   \end{gathered}
 \end{equation*}
-We can always take a version of $\X_t$ with \cadlag\ sample paths.
-
-Let $\rdm{\hat{X}}_k$ be the embedded chain of $\X_t$ and let $\rdm{T}^X_k$ be the point process of its jump times.
-It is elementary that
-\begin{equation*}
-  \Prob{\rdm{\hat{X}}_k=\hat{X}_k\;\Big\vert\;\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{T}^X_k=T_k}=\frac{\alpha(T_k,\hat{X}_{k-1},\hat{X}_k)}{\int{\alpha(T_k,\hat{X}_{k-1},x')\dd{x'}}}.
-\end{equation*}
-Moreover, if one has the $(\rdm{\hat{X}}_k,\rdm{T}^X_k)$ chain, one can reconstruct the $\X_t$ process.
-Conditional on $\rdm{\hat{X}}$, the jump-time chain $\rdm{T}^X_k$ is a Poisson point process with intensity $\int{\alpha(t,\X_t,x')\dd{x'}}$.
-
-We can rewrite the KFE as
-\begin{equation}\label{eq:poissdriver}
-  \begin{aligned}
-    \frac{\partial{w}}{\partial{t}}(t,n,x)=&\int\!w(t,n-1,x')\,\nu\,\pi(t,x',x)\,B(t,x,x')\,\dd{x'}-\int\!w(t,n,x)\,\alpha(t,x,x')\,\dd{x'}\\
-    =&\int\!w(t,n-1,x')\,\nu\,\pi(t,x',x)\,B(t,x,x')\dd{x'}-\int\!w(t,n,x)\,\nu\,\pi(t,x,x')\,\dd{x'}\\
-    &\qquad-\lambda(t,x)\,w(t,n,x)
-  \end{aligned}
-\end{equation}
-where $\nu>0$ is the intensity of homogenous Poisson process and
-\begin{equation*}
+\normalfont
+Making the definitions,
+\begin{equation}\label[pluralequation]{eq:nudefs}
   \begin{gathered}
-    A(t,x)=\int{\alpha(t,x,x')\dd{x'}}, \qquad
+    A(t,x)=\int{\alpha(t,x,x')\,\dd{x'}}, \qquad
     \pi(t,x,x')=\frac{\alpha(t,x,x')}{A(t,x)},\\
     B(t,x,x')=\frac{A(t,x)}{\nu}, \qquad
-    \lambda(t,x)=A(t,x)-\nu.
+    \lambda(t,x)=A(t,x)-\nu,
   \end{gathered}
-\end{equation*}
-Note that $\pi$ is the probability kernel of the embedded chain $\rdm{\hat{X}}$ and $A(t,x)$ is the intensity of the $\rdm{T}^X_k$ process.
-We recognize this equation as the filter equation with the rate-$\nu$ Poisson-process driver, boost $B$, and decay $\lambda$.
+\end{equation}
+we can rewrite the KFE as
+\begin{equation}\label{eq:poissdriver}
+  \frac{\partial{w}}{\partial{t}}(t,x)=
+  \int{w(t,x')\,\nu\,\pi(t,x',x)\,B(t,x,x')\,\dd{x'}}
+  -\int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}
+  -\lambda(t,x)\,w(t,x).
+\end{equation}
+Here, $\nu>0$ is the intensity of a time-homogenous Poisson process.
+Note that $\pi$ is the probability kernel of the embedded chain $\rdm{\hat{X}}$ and $A(t,x)$ is the intensity of the $\rdm{\hat{T}}_k$ process.
+We recognize this equation as the filter equation with boost $B$, decay $\lambda$, and driver generated by $\nu\,\pi(t,x,x')$.
+It corresponds to the following procedure for simulating $\X_t$:
+\begin{compactenum}[(a)]
+\item Simulate jump times according to the rate-$\nu$ Poisson process.
+\item Simulate the embedded chain $\rdm{\hat{X}}_k$ using the kernel $\pi$.
+\item Weight the realization by the product of the $B$ factors.
+  Note that this makes the appropriate importance-sampling correction.
+\end{compactenum}
 
-By integrating equations of this kind, we effectively integrate over the $(\rdm{\hat{X}},\rdm{T}^X)$ process.
-To marginalize over only some of the $\rdm{T}^X_k$, we reason as follows.
-Fix $0<t_1<\dots<t_K\le{T}$ and $\nu>0$.
-Consider the mixed point process $T_k$ with intensity $\nu+\sum_{k=1}^K\delta(t,t_k)$.
-Using this as the driver in \cref{eq:poissdriver}, we obtain
+By integrating equations of this kind, we effectively compute expectations with respect to the $\X_t$ process.
+In particular, we can use \cref{prop:zeroboost} or \cref{eq:poissdriver} to integrate out the unobserved event times $\rdm{\hat{T}}_k$, as well as the unobserved states $\rdm{\hat{X}}_k$.
+However, we also need to compute likelihoods for data that include observed event times.
+Technically, in such a case, the likelihood is a density on the cone $\mathbb{C}_t=\coprod_{m=0}^{\infty}{\mathbb{C}^m_t}$, where $\mathbb{C}^m_t=\{t\in\halfclosed{0,t}\;\vert\;t_1<t_2<\dots<t_m\}$.
+To avoid having to work with such complex objects, it is convenient to represent the likelihood as a density with respect to a constant-rate Poisson point process.
+This is accomplished as follows.
+
+Suppose the finite set of observed event times $\mathcal{M}\subseteq\halfclosed{0,t}$ is fixed and $|\mathcal{M}|=M$.
+Let $\nu>0$ be a constant rate and consider the mixed point process with intensity $\nu+\sum_{e\in\mathcal{M}}\delta(t,e)$.
+This point process has events at $e\in\mathcal{M}$ with probability 1 as well as additional, Poisson-distributed random event times.
+Using this as the driver in \cref{eq:poissdriver}, we obtain the filter equation
 \begin{equation*}
   \begin{aligned}
-    \frac{\partial{w}}{\partial{t}}(t,n,x)=&\int{w(t,n-1,x')\,\nu\,\pi(t,x',x)\,B(t,x',x)\dd{x'}}-\int{w(t,n,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}\\
-    &\quad+\sum_{k}\delta(t,t_k)\,\left\{\int{w(t,n-1,x')\,\pi(t,x',x)\,B(t,x,x')\dd{x'}}-\int{w(t,n,x)\,\pi(t,x,x')\,\dd{x'}}\right\}\\
-    &\qquad-\lambda(t,x)\,w(t,n,x).
+    \frac{\partial{w}}{\partial{t}}(t,x)=&\int{w(t,x')\,\nu\,\pi(t,x',x)\,B(t,x',x)\,\dd{x'}}-
+    \int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}\\
+    &\quad+\sum_{e\in\mathcal{M}}\delta(t,e)\,\left\{\int{w(t,x')\,\pi(t,x',x)\,B(t,x,x')\,\dd{x'}}
+    -\int{w(t,x)\,\pi(t,x,x')\,\dd{x'}}\right\}\\
+    &\qquad-\lambda(t,x)\,w(t,x).
   \end{aligned}
 \end{equation*}
 Equivalently, we write:
-\begin{equation*}
+\begin{equation}\label[pluralequation]{eq:mixedKFE}
   \begin{aligned}
-    \frac{\partial{w}}{\partial{t}}(t,n,x)=&\int{w(t,n-1,x')\,\nu\,\pi(t,x',x)\,B(t,x',x)\dd{x'}}-\int{w(t,n,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}\\
-    &\qquad-\lambda(t,x)\,w(t,n,x),\\
-    w(t_k,n,x)=&\int{\leftlim{w}(t_k,n-1,x')\,\pi(t_k,x',x)\,B(t_k,x',x)\,\dd{x'}}\\
-    &\qquad=\tfrac{1}{\nu}\,\int{\leftlim{w}(t_k,n-1,x')\,\alpha(t,x',x)\,\dd{x'}}\\.
+    \frac{\partial{w}}{\partial{t}}(t,x)=&\int{w(t,x')\,\nu\,\pi(t,x',x)\,B(t,x',x)\,\dd{x'}}
+    -\int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}\\
+    &\qquad-\lambda(t,x)\,w(t,x)\\
+    =&\int{w(t,x')\,\alpha(t,x',x)\,\dd{x'}}
+    -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}},\quad t\notin{\mathcal{M}},\\
+    w(e,x)=&\int{\leftlim{w}(e,x')\,\pi(e,x',x)\,B(e,x',x)\,\dd{x'}}\\
+    =&\tfrac{1}{\nu}\,\int{\leftlim{w}(e,x')\,\alpha(e,x',x)\,\dd{x'}},\quad e\in\mathcal{M}.
   \end{aligned}
-\end{equation*}
-We then have $\Prob{\X_t\in\mathcal{E}\;\big\vert\;t_1,\dots,t_K\in\event(\Hist_t)}=\int_{\mathcal{E}}{w(t,x)\,\dd{x}}$.
-
-Now suppose $\rdm{R}_k$ is a Markov chain satisfying
+\end{equation}
+\Cref{eq:mixedKFE} is a filter equation relative to $\nu$ with observed events $\mathcal{M}$.
+It defines a probability measure $\mu_M$ on $\Xspace\times{\mathbb{C}^M_t}$.
+Specifically, $w(t,x)$ is the Radon-Nikodym derivative of $\mu_M$ with respect to the product of the measure on $\Xspace$ and the probability measure of the rate-$\nu$ Poisson process on $\mathbb{C}^M_t$.
+That is,
 \begin{equation*}
-  \Prob{\rdm{R}_k=R_{k-1}\,B(T_k,\hat{X}_{k-1},\hat{X}_k)\;\Big\vert\;\rdm{\hat{X}}_k=\hat{X}_k,\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{T}^X_k=T_k,\rdm{R}_{k-1}=R_{k-1}}=1,
-\end{equation*}
-for some function $B>0$.
-\AAK{Or perhaps the following is sufficient for our purposes?}
-\begin{equation*}
-  \Expect{\rdm{R}_k\;\Big\vert\;\rdm{\hat{X}}_k=\hat{X}_k,\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{T}^X_k=T_k,\rdm{R}_{k-1}=R_{k-1}}=R_{k-1}\,B(T_k,\hat{X}_{k-1},\hat{X}_k).
-\end{equation*}
-Let $\rdm{R}_t$ be the corresponding continuous-time jump process with jumps at $\rdm{T}^X_k$.
-By \cref{lemma:filtereq}, if $w$ satisfies the boost equation with boost $B$, driver $\X$, and decay $\lambda=0$, then
-\begin{equation*}
-  \Expect{\rdm{R}_t}=\int{w(t,x)\dd{x}}.
+  \mu^M_t(\dd{x}\,\dd{t_1}\,\cdots\,\dd{t_M})=\nu^{M}\,e^{-\nu\,t}\,w(t,x)\,\dd{x}\,\dd{t_1}\,\cdots\,\dd{t_M}.
 \end{equation*}
 
+The same reasoning shows how to compute expectations of a real-valued process $\rdm{V}_t$ directed by $\X_t$.
+As before, we will express the expectation $\Expect{\rdm{V}_t}$ as a density with respect to the rate-$\nu$ Poisson point process.
+
+\begin{prop}\label{prop:fullfilt}
+  Suppose $\X_t$ is a continuous-time Markov process with state space $\Xspace$ and KFE
+  \begin{equation*}
+    \frac{\partial{w}}{\partial{t}}(t,x)=\int{w(t,x')\,\alpha(t,x',x)\,\dd{x'}}
+    -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}.
+  \end{equation*}
+  Let $\Hist_t$ be its history process.
+  Suppose that $\mathcal{M}\subseteq\halfclosed{0,t}$, $|\mathcal{M}|=M$, is a fixed, finite set of observed event times.
+  Let $B>{0}$ and $Q\in\{0,1\}$ be given measurable functions.
+  Let $\rdm{V}_t$ be a non-negative real-valued random process such that
+  \begin{equation*}
+    \Expect{\rdm{V}_t\;\vert\;\Hist_t}=\prod_{e\in{\event(\Hist_t)}}{Q(e,\leftlim{X}_e,X_e)\,B(e,\leftlim{X}_e,X_e)}.
+  \end{equation*}
+  Let $\nu>0$ be a fixed rate and let $\X'_t$ be the pure-jump process generated by the rates $\alpha(t,x,x')\,Q(t,x,x')$.
+  Suppose that $w(t,x)$ satisfies the filter equation (relative to $\nu$) with driver $\X'_t$, boost $B'$, observation events $\mathcal{M}$, and decay
+  \begin{equation*}
+    \lambda(t,x)=\int{\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\,\dd{x'}}.
+  \end{equation*}
+  Then the measure $\Expect{\rdm{V}_t}$ has density $\int{w(t,x)\,\dd{x}}$ with respect to the rate-$\nu$ Poisson point process.
+\end{prop}
+\begin{proof}
+  We rewrite the filter equation of \cref{prop:zeroboost} using the rate-$\nu$ Poisson driver:
+  \begin{equation*}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}(t,x)
+      =&\int{w(t,x')\,\alpha(t,x',x)\,Q(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}\\
+      =&\int{w(t,x')\,\nu\,\pi(t,x',x)\,\frac{A(t,x')\,B(t,x',x)}{\nu}\,\dd{x'}}
+      -\int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}\\
+      &\quad-\lambda(t,x)\,w(t,x),
+    \end{aligned}
+  \end{equation*}
+  where
+  \begin{equation*}
+    \begin{gathered}
+      A(t,x)=\int{\alpha(t,x,x')\,Q(t,x,x')\dd{x'}}, \qquad
+      \lambda(t,x)=\int{\alpha(t,x,x')\,\dd{x'}}-\nu,\\
+      \pi(t,x,x')=\frac{\alpha(t,x,x')\,Q(t,x,x')}{A(t,x)}.
+    \end{gathered}
+  \end{equation*}
+  Replacing the Poisson driver with $\nu+\sum_{e\in\mathcal{M}}{\delta(t,e)}$ as before, we have
+  \begin{equation*}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}(t,x)
+      =&\int{w(t,x')\,\nu\,\pi(t,x',x)\,C(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}-\lambda(t,x)\,w(t,x)\\
+      &\quad+\sum_{e\in\mathcal{M}}{\delta(t,e)\,\left\{\int{w(t,x')\,\pi(t,x',x')\,C(t,x',x)\,\dd{x'}}
+        -\int{w(t,x)\,\pi(t,x,x')\,\dd{x'}}\right\}}\\
+    \end{aligned}
+  \end{equation*}
+  where
+  \begin{equation*}
+    C(t,x,x')=\frac{A(t,x)\,B(t,x,x')}{\nu}.
+  \end{equation*}
+  This simplifies to
+  \begin{equation*}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}(t,x)
+      =&\int{w(t,x')\,\alpha(t,x',x)\,Q(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\alpha(t,x,x')\,Q(t,x,x')\,\dd{x'}}\\
+      &\quad+\int{w(t,x)\,\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\,\dd{x'}}\\
+      &\quad+\sum_{e\in\mathcal{M}}{\delta(t,e)\,\left\{\int{w(t,x')\,\frac{\alpha(t,x',x)\,Q(t,x',x)}{\nu}\,B(t,x',x)\,\dd{x'}}
+        -w(t,x)\right\}}.\\
+    \end{aligned}
+  \end{equation*}
+  In the latter, we recognize the filter equation of the statement.
+\end{proof}
+
+\begin{remark}
+  Suppose $\X_t$, $\Y_t$ have KFEs
+  \begin{equation}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}(t,x)=
+      &\int{w(t,x')\,\alpha(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}},\\
+      \frac{\partial{w}}{\partial{t}}(t,y)=
+      &\int{w(t,y')\,\beta(t,y',y)\,\dd{y'}}
+      -\int{w(t,y)\,\beta(t,y,y')\,\dd{y'}},
+    \end{aligned}
+  \end{equation}
+  where $\beta(t,y,y')=\alpha(t,y',y)\,\left(1+\frac{1}{\nu}\sum_{e\in\mathcal{M}}{\delta(t,e)}\right)$.
+\end{remark}
 
 \end{document}
