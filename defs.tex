@@ -1,20 +1,20 @@
 \usepackage{mathabx,mathrsfs,eucal,bbm,colonequals,amsmath,amssymb}
 
 \newcommand\eps{\varepsilon}
-\newcommand\Prob[1]{\mathrm{Prob}\left[{#1}\right]}
-\newcommand\Expect[1]{\mathrm{E}\left[{#1}\right]}
+\newcommand\Prob[1]{\mathsf{Prob}\left[{#1}\right]}
+\newcommand\Expect[1]{\mathbbm{E}\left[{#1}\right]}
 \newcommand\indicator[1]{\mathbbm{1}_{{#1}}}
 \newcommand\Indicator[1]{\mathbbm{1}\{{#1}\}}
-\newcommand\Var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\Var[1]{\mathsf{Var}\left[{#1}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\log{\lik}}
 \newcommand{\code}[1]{\texttt{#1}}
-\newcommand{\pkg}[1]{\textsf{#1}}
+\newcommand{\pkg}[1]{\textbf{\texttt{#1}}}
 \newcommand{\dd}[1]{\mathrm{d}{#1}}
 \newcommand{\halfopen}[1]{[{#1})}
 \newcommand{\halfclosed}[1]{({#1}]}
-\newcommand{\transpose}{\mathrm{T}}
+\newcommand{\transpose}{\footnotesize\mathrm{T}}
 \newcommand{\scinot}[2]{#1{\times}10^{#2}}
 \newcommand{\restrict}[2]{{#1}\vert_{#2}}
 \newcommand{\opnorm}[1]{%
@@ -52,7 +52,6 @@
 \def\obs{\func{obs}}
 \def\Anc{\func{Anc}}
 \def\anc{\func{anc}}
-\def\event{\func{event}}
 \def\ct{\func{ct}}
 \def\deme{\func{deme}}
 \def\uniq{\func{uniq}}
@@ -79,3 +78,4 @@
 
 \renewcommand\binom[2]{{\scriptscriptstyle\begin{pmatrix}{#1}\\{#2}\end{pmatrix}}}
 \newcommand\BinRatio[4]{{\scriptscriptstyle\begin{pmatrix}{#1}&{#2}\\{#3}&{#4}\end{pmatrix}}}
+\newcommand\event[2]{\mathsf{M}^{#1}_{#2}}
