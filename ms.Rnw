@@ -487,7 +487,7 @@ whenever $n_i\ge{\{\ell_i,r_i\}}\ge{0}$ for all $i$.
 
 \section{Results}
 
-\paragraph{Likelihood conditional on history}
+\paragraph{Likelihood for pruned genealogies}
 
 Our first result will be an expression for the likelihood of a given pruned genealogy $P^*_t$ given the history $\Hist_t$ of the population process to time $t$.
 Of course, not every pruned genealogy is compatible with $\Hist_t$.
@@ -532,7 +532,36 @@ Recall that $n:\Xspace\to\Zp^{\Demes}$ denotes the deme-occupancy function, $r^u
 %%   \phi_u(\xi,\eta,\eta')\colonequals\BinRatio{n(\xi)}{\ell(\eta')}{r^u}{s(\eta,\eta')}\,Q_u(\eta,\eta').
 %% \end{equation*}
 
-Our second result concerns the likelihood of a given obscured genealogy conditional on the history.
+Next, we show how the likelihood of a pruned genealogies, unconditional on the history, can be computed.
+For this, we use the filter equation technology developed in the Appendix.
+In particular, the following theorem follows immediately from \cref{prop:fullfilt}.
+
+\begin{thm}
+  Suppose that $P^*_T$ is a pruned genealogy, for $T>0$.
+  Let $y^*=Y^{\Prune^*_T}$ and, for $x\in\Xspace$, $u\in\Jumps$, $t\le{T}$, define
+  \begin{equation*}
+    \phi_u\big(t,x)=\BinRatio{n(x)}{\ell(y^*_t)}{r^u}{s(\yt^*_t,y^*_t)}\,Q_u(\yt^*_t,y^*_t),
+  \end{equation*}
+  where $Q_u$ is as in \cref{thm:pruned_lik}.
+  Suppose $w=w(t,x)$ satisfies the filter equation
+  \begin{equation}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}=
+      &\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(t,x)\,\dd{x'}}}
+      -\sum_u{\int{w(t,x)\,\alpha_u(t,x',x)\,\dd{x'}}}\\
+      &\ +\sum_{e\in\event{P^*}{T}}{\delta(t,e)\,\left\{\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(t,x)\,\dd{x'}}}-w(t,x)\right\}},
+    \end{aligned}
+  \end{equation}
+  with the initial condition $w(0,x)=p_0(x)$.
+  Then the likelihood of $P^*_T$ is
+  \begin{equation*}
+    \lik(P^*_T)=\int{w(T,x)\,\dd{x}}.
+  \end{equation*}
+\end{thm}
+
+\paragraph{Likelihood for obscured genealogies}
+
+Our next result concerns the likelihood of a given obscured genealogy conditional on the history.
 
 \begin{thm}\label{thm:obsc_lik}
   Let $V^*_t$ be a given obscured genealogy.
@@ -588,67 +617,8 @@ Our second result concerns the likelihood of a given obscured genealogy conditio
   The result then follows from \cref{thm:pruned_lik}.
 \end{proof}
 
-%% \AAK{Two approaches possible:}
-%% \begin{enumerate}
-%% \item Use the filter equations developed in the Appendix to compute $\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}}$.
-%%   In effect, we compute $\Prob{\Prune_t}$ and then sum over paintings $y$.
-%% \item Change the order of the summation: $\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}}=\Expect{\Expect{\Indicator{\obs(\Prune_t)=\Vis_t}\;\vert\;\Hist_t}}$.
-%%   That is, conditional on $\Hist_t$, the likelihood of $\Vis_t$ is sum over all $\Prune_t$ such that $\obs(\Prune_t)=\Vis_t$.
-%%   Therefore, any importance sampling scheme for $\Prune_t$ will do.
-%%   In particular, we choose a scheme that paints the tree forward in time, driven by a mimic of $\X_t$.
-%%   We show that this is equivalent to the specific filter equation.
-
-%%   It may be useful in this to first show that $\Prob{\Prune_t|\Hist_t}$ can be expressed as an expectation over $y$, where $y$ is constrained to be equal $y^{\Prune_t}$.
-%%   Then, show that the sum of the $\Prune_t$-constraint indicator functions is equal to the $\Vis_t$-constraint indicator function.
-%% \end{enumerate}
-
-%% \begin{figure}
-%%   \begin{center}
-%%     \input{figs/thm1diag}
-%%   \end{center}
-%%   \caption{\label{fig:thm1diag}}
-%% \end{figure}
-
-%% \begin{center}
-%%   \input{figs/triangle1}
-%% \end{center}
-
-%% \begin{equation*}
-%%   \frac{r!}{(r-s)!}\cdot\frac{(n-\ell)!}{n!}\cdot\frac{(n-r)!}{(n-r-\ell+s)!}
-%%   =\frac{r!(n-r)!}{n!}\cdot\frac{(n-\ell)!}{(n-\ell-r+s)!(r-s)!}
-%%   =\BinRatio{n}{\ell}{r}{s}
-%% \end{equation*}
-
-\paragraph{Integrating out the history: filter equations}
-
-Next, we derive expressions for the likelihood of pruned and obscured genealogies, unconditional on the history.
-For this, we use the filter equation technology developed in the Appendix.
-In particular, the following theorem follows immediately from \cref{prop:fullfilt}.
-
-\begin{thm}
-  Suppose that $P^*_T$ is a pruned genealogy, for $T>0$.
-  Let $y^*=Y^{\Prune^*_T}$ and, for $x\in\Xspace$, $u\in\Jumps$, $t\le{T}$, define
-  \begin{equation*}
-    \phi_u\big(t,x)=\BinRatio{n(x)}{\ell(y^*_t)}{r^u}{s(\yt^*_t,y^*_t)}\,Q_u(\yt^*_t,y^*_t),
-  \end{equation*}
-  where $Q_u$ is as in \cref{thm:pruned_lik}.
-  Suppose $w=w(t,x)$ satisfies the filter equation
-  \begin{equation}
-    \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}=
-      &\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(t,x)\,\dd{x'}}}
-      -\sum_u{\int{w(t,x)\,\alpha_u(t,x',x)\,\dd{x'}}}\\
-      &\ +\sum_{e\in\event{P^*}{T}}{\delta(t,e)\,\left\{\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(t,x)\,\dd{x'}}}-w(t,x)\right\}},
-    \end{aligned}
-  \end{equation}
-  with the initial condition $w(0,x)=p_0(x)$.
-  Then the likelihood of $P^*_T$ is
-  \begin{equation*}
-    \lik(P^*_T)=\int{w(T,x)\,\dd{x}}.
-  \end{equation*}
-\end{thm}
-
 The final result shows how to compute the likelihood of an obscured genealogy.
+It is an immediate consequence of \cref{thm:obsc_lik,prop:fullfilt}.
 
 \begin{thm}
   Let $V^*_T$, $T>0$ be a given obscured genealogy.
@@ -666,7 +636,7 @@ The final result shows how to compute the likelihood of an obscured genealogy.
       \frac{\partial{w}}{\partial{t}}(t,x,y)=
       &\sum_{uy'}{\int{w(t,x',y')\,\beta_u(t,x',x,y',y)\,\phi_u(t,x,y',y)\,\dd{x'}}}\\
       &\ -\sum_{uy'}{\int{w(t,x,y)\,\beta_u(t,x,x',y,y')\,\dd{x'}}}\\
-      &\ +\sum_{e\in\event{P^*}{T}}{\delta(t,e)\,\left\{\sum_{uy'}{\int{w(t,x')\,\beta_u(t,x',x)\,\phi_u(t,x,y',y)\,\dd{x'}}}-w(t,x)\right\}},
+      &\ +\sum_{e\in\event{V^*}{T}}{\delta(t,e)\,\left\{\sum_{uy'}{\int{w(t,x')\,\beta_u(t,x',x)\,\phi_u(t,x,y',y)\,\dd{x'}}}-w(t,x)\right\}},
     \end{aligned}
   \end{equation}
   with the initial condition $w(0,x,y)=p_0(x)\,\pi_0(y)$.
@@ -675,7 +645,6 @@ The final result shows how to compute the likelihood of an obscured genealogy.
     \lik(V^*_T)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
   \end{equation*}
 \end{thm}
-
 
 \section{Examples}
 
@@ -727,9 +696,8 @@ Here, we develop tools for manipulating complex expressions that are otherwise c
     =\int{w(t,x')\,\beta(t,x',x)\,\dd{x'}}
     -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}.
   \end{equation}
-  Suppose that $B(t,x,x')>0$ and $\lambda(t,x)\in\R$ are given measurable functions.
+  Suppose that $B(t,x,x')\ge{0}$ and $\lambda(t,x)\in\R$ are given measurable functions.
   Let $\mathcal{M}\subseteq\Rp$ be countable such that $\mathcal{M}\cap[0,t]$ is finite for all $t$.
-  Let $\nu>0$.
   We say that the equation
   \begin{equation}\label{eq:filtereq}
     \begin{aligned}
@@ -737,22 +705,21 @@ Here, we develop tools for manipulating complex expressions that are otherwise c
       =&\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
       -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
       -\lambda(t,x)\,w(t,x)\\
-      &\quad+\sum_{e\in\mathcal{M}}\delta(t,e)\,\left\{\int{w(t,x')\,\frac{\beta(t,x',x)}{\nu}\,B(t,x',x)\,\dd{x'}}-w(t,x)\right\}
-      +\nu\,w(t,x).
+      &\quad+\sum_{e\in\mathcal{M}}\delta(t,e)\,\left\{\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}-w(t,x)\right\}.
     \end{aligned}
   \end{equation}
-  is the \emph{filter equation} with \emph{driver} $\X_t$, \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observed events} $\mathcal{M}$, \emph{relative to} $\nu$.
+  is the \emph{filter equation} with \emph{driver} $\X_t$ (or \emph{generated by} $\beta$), \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observed events} $\mathcal{M}$.
 \end{defn}
 
-\begin{remark}
+\begin{remark}\label{rem:equivfilt}
   \Cref{eq:filtereq} is equivalent to
   \begin{equation*}
     \begin{gathered}
       \frac{\partial{w}}{\partial{t}}
       =\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
       -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
-      -(\lambda(t,x)-\nu)\,w(t,x),\quad t\notin{\mathcal{M}},\\
-      w(t,x)=\int{\leftlim{w}(t,x')\,\frac{\beta(t,x',x)}{\nu}\,B(t,x',x)\,\dd{x'}},\quad t\in{\mathcal{M}}.
+      -\lambda(t,x)\,w(t,x),\quad t\notin{\mathcal{M}},\\
+      w(t,x)=\int{\leftlim{w}(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}},\quad t\in{\mathcal{M}}.
     \end{gathered}
   \end{equation*}
 \end{remark}
@@ -761,7 +728,7 @@ Filter equations afford a convenient means of computing expectations and likelih
 This is facilitated by the following fact.
 
 \begin{lemma}\label{lemma:filtereq}
-  The filter equation \eqref{eq:filtereq} with $\mathcal{M}=\emptyset$ is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u$ satisfies the KFE
+  The filter equation \eqref{eq:filtereq} with $\mathcal{M}=\emptyset$ and $B>0$ is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u$ satisfies the KFE
   \begin{equation}\label{eq:filterlemma}
     \begin{aligned}
       \frac{\partial{u}}{\partial{t}}=&\int{u(t,x',v')\,\beta(t,x',x)\,\delta(v,B(t,x',x)\,v')\,\dd{x'}\,\dd{v'}}\\
@@ -814,23 +781,27 @@ This motivates the following result, which shows how filter equations allow one 
   \end{equation*}
   Let $\Hist_t$ be its history process.
   Suppose $\rdm{V}_t$ is a real-valued random process such that
-  \begin{equation*}
-    \Expect{\rdm{V}_t\;\vert\;\Hist_t=H_t}=\prod_{e\in\event{H}{t}}{Q(e,\leftlim{X}_e,X_e)\,B(e,\leftlim{X}_e,X_e)},
-  \end{equation*}
-  for some given measurable functions $B>{0}$, $Q\in\{0,1\}$.
+  \begin{equation}\label{eq:Vprod}
+    \Expect{\rdm{V}_t\;\vert\;\Hist_t=H_t}=\prod_{e\in\event{H}{t}}{B(e,\leftlim{X}_e,X_e)},
+  \end{equation}
+  for some given measurable function $B\ge{0}$.
   If $w$ satisfies the filter equation,
   \begin{equation*}
-    \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}(t,x)
-      =&\int{w(t,x')\,\alpha(t,x',x)\,Q(t,x',x)\,B(t,x',x)\,\dd{x'}}
-      -\int{w(t,x)\,\alpha(t,x,x')\,Q(t,x,x')\,\dd{x'}}\\
-      &\qquad-\int{w(t,x)\,\alpha(t,x,x')\,\Big(1-Q(t,x,x')\Big)\,\dd{x'}},
-    \end{aligned}
+    \frac{\partial{w}}{\partial{t}}(t,x)
+    =\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
+    -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}\\
   \end{equation*}
   then $\Expect{\rdm{V}_t}=\int{w(t,x)\,\dd{x}}$.
 \end{prop}
 \begin{proof}
-  Apply \cref{lemma:filtereq} with $\beta(t,x,x')=\alpha(t,x,x')\,Q(t,x,x')$.
+  Define $Q(t,x,x')=\Indicator{B(t,x,x')>0}$ and apply \cref{lemma:filtereq} with
+  \begin{equation*}
+    \begin{gathered}
+      \beta(t,x,x')=\alpha(t,x,x')\,Q(t,x,x'),
+      \qquad
+      \lambda=\int{\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\dd{x'}}.
+    \end{gathered}
+  \end{equation*}
 \end{proof}
 
 %% An important special case is that of a deterministic driving process.
@@ -849,164 +820,86 @@ This motivates the following result, which shows how filter equations allow one 
 %%   \end{equation*}
 %% \end{prop}
 
-Filter equations allow us to pass easily between equivalent representations of a process.
-For example, an equivalent way of representing $\X_t$ is in terms of its embedded chain and event times.
-Let $\rdm{\hat{X}}_k$ be the embedded chain of $\X_t$ and let $\rdm{\hat{T}}_k$ be the point process of its event times.
-It is elementary that
-\fontsize{10pt}{12pt}\selectfont
-\begin{equation*}
-  \begin{gathered}
-    \Prob{\rdm{\hat{X}}_k=\hat{X}_k\;\Big\vert\;\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{\hat{T}}_k=\hat{T}_k}=\frac{\alpha(\hat{T}_k,\hat{X}_{k-1},\hat{X}_k)}{\int{\alpha(\hat{T}_k,\hat{X}_{k-1},x')\dd{x'}}},\\
-    \Prob{\rdm{\hat{T}}_k>\rdm{\hat{T}}_{k-1}+t\;\Big\vert\;\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{\hat{T}}_{k-1}=\hat{T}_{k-1}}=\exp{\left(-\int_{0}^{t}{\int{\alpha(\hat{T}_{k-1}+s,\hat{X}_{k-1},x')\,\dd{x'}}\,\dd{s}}\right)}.
-  \end{gathered}
-\end{equation*}
-\normalfont
-Making the definitions,
-\begin{equation}\label[pluralequation]{eq:nudefs}
-  \begin{gathered}
-    A(t,x)=\int{\alpha(t,x,x')\,\dd{x'}}, \qquad
-    \pi(t,x,x')=\frac{\alpha(t,x,x')}{A(t,x)},\\
-    B(t,x,x')=\frac{A(t,x)}{\nu}, \qquad
-    \lambda(t,x)=A(t,x)-\nu,
-  \end{gathered}
-\end{equation}
-we can rewrite the KFE as
-\begin{equation}\label{eq:poissdriver}
-  \frac{\partial{w}}{\partial{t}}(t,x)=
-  \int{w(t,x')\,\nu\,\pi(t,x',x)\,B(t,x,x')\,\dd{x'}}
-  -\int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}
-  -\lambda(t,x)\,w(t,x).
-\end{equation}
-Here, $\nu>0$ is the intensity of a time-homogenous Poisson process.
-Note that $\pi$ is the probability kernel of the embedded chain $\rdm{\hat{X}}$ and $A(t,x)$ is the intensity of the $\rdm{\hat{T}}_k$ process.
-We recognize this equation as the filter equation with boost $B$, decay $\lambda$, and driver generated by $\nu\,\pi(t,x,x')$.
-It corresponds to the following procedure for simulating $\X_t$:
-\begin{compactenum}[(a)]
-\item Simulate jump times according to the rate-$\nu$ Poisson process.
-\item Simulate the embedded chain $\rdm{\hat{X}}_k$ using the kernel $\pi$.
-\item Weight the realization by the product of the $B$ factors.
-  Note that this makes the appropriate importance-sampling correction.
-\end{compactenum}
-
-By integrating equations of this kind, we effectively compute expectations with respect to the $\X_t$ process.
-In particular, we can use \cref{prop:zeroboost} or \cref{eq:poissdriver} to integrate out the unobserved event times $\rdm{\hat{T}}_k$, as well as the unobserved states $\rdm{\hat{X}}_k$.
-However, we also need to be able to compute likelihoods for data that include observed event times.
-Technically, in such a case, the likelihood is a density on the cone $\mathbb{C}_t=\coprod_{m=0}^{\infty}{\mathbb{C}^m_t}$, where $\mathbb{C}^m_t=\{t\in\halfclosed{0,t}\;\vert\;t_1<t_2<\dots<t_m\}$.
-To avoid having to work directly with such complex objects, it is convenient to represent the likelihood as a density with respect to a constant-rate Poisson point process.
-This is accomplished as follows.
-
-Suppose the finite set of observed event times $\mathcal{M}\subseteq\halfclosed{0,t}$ is fixed and $|\mathcal{M}|=M$.
-Let $\nu>0$ be a constant rate and consider the mixed point process with intensity $\nu+\sum_{e\in\mathcal{M}}\delta(t,e)$.
-This point process has events at $e\in\mathcal{M}$ with probability 1 as well as additional, Poisson-distributed random event times.
-Using this as the driver in \cref{eq:poissdriver}, we obtain the filter equation
-\begin{equation*}
-  \begin{aligned}
-    \frac{\partial{w}}{\partial{t}}(t,x)=&\int{w(t,x')\,\nu\,\pi(t,x',x)\,B(t,x',x)\,\dd{x'}}-
-    \int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}
-    -\lambda(t,x)\,w(t,x)\\
-    &\quad+\sum_{e\in\mathcal{M}}\delta(t,e)\,\left\{\int{w(t,x')\,\pi(t,x',x)\,B(t,x,x')\,\dd{x'}}
-    -\int{w(t,x)\,\pi(t,x,x')\,\dd{x'}}\right\}.\\
-  \end{aligned}
-\end{equation*}
-This is equivalent to
-\begin{equation}\label[pluralequation]{eq:mixedKFE}
-  \begin{aligned}
-    \frac{\partial{w}}{\partial{t}}(t,x)
-    =&\int{w(t,x')\,\alpha(t,x',x)\,\dd{x'}}
-    -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}},\quad t\notin{\mathcal{M}},\\
-    w(e,x)=&\int{\leftlim{w}(e,x')\,\pi(e,x',x)\,B(e,x',x)\,\dd{x'}}
-    =\tfrac{1}{\nu}\,\int{\leftlim{w}(e,x')\,\alpha(e,x',x)\,\dd{x'}},\quad e\in\mathcal{M}.
-  \end{aligned}
-\end{equation}
-\Cref{eq:mixedKFE} is a filter equation relative to $\nu$ with observed events $\mathcal{M}$.
-It defines a probability measure $\mu_M$ on $\Xspace\times{\mathbb{C}^M_t}$.
-Specifically, $w(t,x)$ is the Radon-Nikodym derivative of $\mu_M$ with respect to the product of the measure on $\Xspace$ and the probability measure of the rate-$\nu$ Poisson process on $\mathbb{C}^M_t$.
-That is,
-\begin{equation*}
-  \mu^M_t(\dd{x}\,\dd{t_1}\,\cdots\,\dd{t_M})=\nu^{M}\,e^{-\nu\,t}\,w(t,x)\,\dd{x}\,\dd{t_1}\,\cdots\,\dd{t_M}.
-\end{equation*}
-
-%% We can re-express the history-process density (\cref{eq:Hdens}) using a filter equation as well.
-%% Specifically, one can readily verify that if $H_t$ is a history and $w=w(t,x,u)$ satisfies
-%% \begin{equation}\label{eq:Hdens_filt}
-%%   \begin{aligned}
-%%     \frac{\partial{w}}{\partial{t}}(t,x,u)=&-w(t,x,u)\,\sum_{u'}{\int{\alpha_{u'}(t,x,x')\,\dd{x'}}}\\
-%%     &\quad+\sum_{e\in\event{H}{t}}{\delta(t,e)\,\left\{\sum_{u'}{\int{w(t,x',u')\,\frac{\alpha_{u'}(t,x',x)}{\nu}\,\dd{x'}}}-w(t,x,u)\right\}},
-%%   \end{aligned}
-%% \end{equation}
-%% then $\pi^H(\dd{t_1}\cdots\dd{t_K})=\nu^K\,e^{-\nu\,t}\,\sum_u{\int{w(t,x,u)\,\dd{x'}}}\,\dd{t_1}\cdots\dd{t_K}$,
-%% where $K=\left\vert\event{H}{t}\right\vert$.
-%% \Cref{eq:Hdens_filt} is the filter equation, relative to $\nu$, with null driver, boost $B(t,x,x',u,u')=\alpha_{u'}(t,x,x')$, and decay $\lambda(t,x,u)=\sum_{u'}{\int{\alpha_{u'}(t,x,x')\,\dd{x'}}}$.
-
-The same kind of reasoning shows how to compute expectations of a real-valued process $\rdm{V}_t$ directed by $\X_t$.
-As before, we will express the expectation $\Expect{\rdm{V}_t}$ as a density with respect to the rate-$\nu$ Poisson point process.
+The following result extends \cref{prop:zeroboost} to the situation where $\mathcal{M}\ne\emptyset$, \ie where the times of some of the events in the history are observed.
 
 \begin{prop}\label{prop:fullfilt}
-  Suppose $\X_t$ is a continuous-time Markov process with state space $\Xspace$ and KFE
+  Let $\X_t$, $\Hist_t$, $B$, and $\rdm{V}_t$ be as in \cref{prop:zeroboost}.
+  Suppose that $\mathcal{M}\subseteq\halfclosed{0,t}$ is a fixed, finite set of observed event times.
+  Let $\Expect{\rdm{V}_t\;\vert\;\mathcal{M}}$ denote the density of $\rdm{V}_t$ conditional on $\mathcal{M}\subseteq\event{\Hist}{t}$.
+  If $w(t,x)$ satisfies $w(0,x)=p_0(x)$ and the filter equation
   \begin{equation*}
-    \frac{\partial{w}}{\partial{t}}(t,x)=\int{w(t,x')\,\alpha(t,x',x)\,\dd{x'}}
-    -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}.
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}
+      =&\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}\\
+      &\quad+\sum_{e\in\mathcal{M}}\delta(t,e)\,\left\{\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}-w(t,x)\right\},
+    \end{aligned}
   \end{equation*}
-  Let $\Hist_t$ be its history process.
-  Suppose that $\mathcal{M}\subseteq\halfclosed{0,t}$, $|\mathcal{M}|=M$, is a fixed, finite set of observed event times.
-  Let $B>{0}$ and $Q\in\{0,1\}$ be given measurable functions.
-  Let $\rdm{V}_t$ be a non-negative real-valued random process such that
-  \begin{equation*}
-    \Expect{\rdm{V}_t\;\vert\;\Hist_t}=\prod_{e\in{\event{\Hist}{t}}}{Q(e,\leftlim{X}_e,X_e)\,B(e,\leftlim{X}_e,X_e)}.
-  \end{equation*}
-  Let $\nu>0$ be a fixed rate and let $\X'_t$ be the pure-jump process generated by the rates $\alpha(t,x,x')\,Q(t,x,x')$.
-  Suppose that $w(t,x)$ satisfies the filter equation (relative to $\nu$) with driver $\X'_t$, boost $B'$, observation events $\mathcal{M}$, and decay
-  \begin{equation*}
-    \lambda(t,x)=\int{\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\,\dd{x'}}.
-  \end{equation*}
-  Then the measure $\Expect{\rdm{V}_t}$ has density $\int{w(t,x)\,\dd{x}}$ with respect to the rate-$\nu$ Poisson point process.
+  then $\Expect{\rdm{V}_t\;\vert\;\mathcal{M}}=\int{w(t,x)\,\dd{x}}$.
 \end{prop}
 \begin{proof}
-  We rewrite the filter equation of \cref{prop:zeroboost} using the rate-$\nu$ Poisson driver:
+  Suppose $s\in[0,t]$ and let
+  \begin{equation*}
+    w(s,x)=\Expect{\prod_{e\in\event{\Hist}{s}}{B\left(e,\Xt_e,\X_e\right)}}.
+  \end{equation*}
+  That is, $w(s,x)$ is the expectation (over histories) of the partial products of \cref{eq:Vprod}.
+  If $s\notin{\mathcal{M}}$, then for $\Delta>0$ sufficiently small,
   \begin{equation*}
     \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}(t,x)
-      =&\int{w(t,x')\,\alpha(t,x',x)\,Q(t,x',x)\,B(t,x',x)\,\dd{x'}}
-      -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}\\
-      =&\int{w(t,x')\,\nu\,\pi(t,x',x)\,\frac{A(t,x')\,B(t,x',x)}{\nu}\,\dd{x'}}
-      -\int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}\\
-      &\quad-\lambda(t,x)\,w(t,x),
+      w(s,x)=&\left(1-\Delta\,\int{\alpha(s-\Delta,x,x')\,\dd{x'}}\right)\,w(s-\Delta,x)\\
+      &\qquad+\int{\alpha(s-\Delta,x',x)\,B(s-\Delta,x',x)\,w(s-\Delta,x')\,\dd{x'}}+o(\Delta).
     \end{aligned}
   \end{equation*}
-  where
+  Taking the limit as $\Delta\downarrow{0}$, we obtain
   \begin{equation*}
-    \begin{gathered}
-      A(t,x)=\int{\alpha(t,x,x')\,Q(t,x,x')\dd{x'}}, \qquad
-      \lambda(t,x)=\int{\alpha(t,x,x')\,\dd{x'}}-\nu,\\
-      \pi(t,x,x')=\frac{\alpha(t,x,x')\,Q(t,x,x')}{A(t,x)}.
-    \end{gathered}
+    \frac{\partial{w}}{\partial{s}}(s,x)
+    =\int{w(s,x')\,\alpha(s,x',x)\,B(s,x',x)\,\dd{x'}}
+    -\int{w(s,x)\,\alpha(s,x,x')\,\dd{x'}}.
   \end{equation*}
-  Replacing the Poisson driver with $\nu+\sum_{e\in\mathcal{M}}{\delta(t,e)}$ as before, we have
+  If $s\in\mathcal{M}$, then
   \begin{equation*}
-    \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}(t,x)
-      =&\int{w(t,x')\,\nu\,\pi(t,x',x)\,C(t,x',x)\,\dd{x'}}
-      -\int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}-\lambda(t,x)\,w(t,x)\\
-      &\quad+\sum_{e\in\mathcal{M}}{\delta(t,e)\,\left\{\int{w(t,x')\,\pi(t,x',x')\,C(t,x',x)\,\dd{x'}}
-        -\int{w(t,x)\,\pi(t,x,x')\,\dd{x'}}\right\}},\\
-    \end{aligned}
+    w(s,x)=\int{\wt(s,x')\,\alpha(s,x',x)\,B(s,x',x)\,\dd{x'}}.
   \end{equation*}
-  where
-  \begin{equation*}
-    C(t,x,x')=\frac{A(t,x)\,B(t,x,x')}{\nu}.
-  \end{equation*}
-  This simplifies to
-  \begin{equation*}
-    \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}(t,x)
-      =&\int{w(t,x')\,\alpha(t,x',x)\,Q(t,x',x)\,B(t,x',x)\,\dd{x'}}
-      -\int{w(t,x)\,\alpha(t,x,x')\,Q(t,x,x')\,\dd{x'}}\\
-      &\quad+\int{w(t,x)\,\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\,\dd{x'}}\\
-      &\quad+\sum_{e\in\mathcal{M}}{\delta(t,e)\,\left\{\int{w(t,x')\,\frac{\alpha(t,x',x)\,Q(t,x',x)}{\nu}\,B(t,x',x)\,\dd{x'}}
-        -w(t,x)\right\}}.\\
-    \end{aligned}
-  \end{equation*}
-  In the latter, we recognize the filter equation of the statement.
+  By \cref{rem:equivfilt}, the result follows.
 \end{proof}
+
+%% Filter equations allow us to pass easily between equivalent representations of a process.
+%% For example, an equivalent way of representing $\X_t$ is in terms of its embedded chain and event times.
+%% Let $\rdm{\hat{X}}_k$ be the embedded chain of $\X_t$ and let $\rdm{\hat{T}}_k$ be the point process of its event times.
+%% It is elementary that
+%% \fontsize{10pt}{12pt}\selectfont
+%% \begin{equation*}
+%%   \begin{gathered}
+%%     \Prob{\rdm{\hat{X}}_k=\hat{X}_k\;\Big\vert\;\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{\hat{T}}_k=\hat{T}_k}=\frac{\alpha(\hat{T}_k,\hat{X}_{k-1},\hat{X}_k)}{\int{\alpha(\hat{T}_k,\hat{X}_{k-1},x')\dd{x'}}},\\
+%%     \Prob{\rdm{\hat{T}}_k>\rdm{\hat{T}}_{k-1}+t\;\Big\vert\;\rdm{\hat{X}}_{k-1}=\hat{X}_{k-1},\rdm{\hat{T}}_{k-1}=\hat{T}_{k-1}}=\exp{\left(-\int_{0}^{t}{\int{\alpha(\hat{T}_{k-1}+s,\hat{X}_{k-1},x')\,\dd{x'}}\,\dd{s}}\right)}.
+%%   \end{gathered}
+%% \end{equation*}
+%% \normalfont
+%% Fixing $\nu>0$ and making the definitions,
+%% \begin{equation}\label[pluralequation]{eq:nudefs}
+%%   \begin{gathered}
+%%     A(t,x)=\int{\alpha(t,x,x')\,\dd{x'}}, \qquad
+%%     \pi(t,x,x')=\frac{\alpha(t,x,x')}{A(t,x)},\\
+%%     B(t,x,x')=\frac{A(t,x)}{\nu}, \qquad
+%%     \lambda(t,x)=A(t,x)-\nu,
+%%   \end{gathered}
+%% \end{equation}
+%% we can rewrite the KFE as
+%% \begin{equation}\label{eq:poissdriver}
+%%   \frac{\partial{w}}{\partial{t}}(t,x)=
+%%   \int{w(t,x')\,\nu\,\pi(t,x',x)\,B(t,x,x')\,\dd{x'}}
+%%   -\int{w(t,x)\,\nu\,\pi(t,x,x')\,\dd{x'}}
+%%   -\lambda(t,x)\,w(t,x).
+%% \end{equation}
+%% Here, $\nu$ is the intensity of a time-homogenous Poisson process.
+%% Note that $\pi$ is the probability kernel of the embedded chain $\rdm{\hat{X}}$ and $A(t,x)$ is the intensity of the $\rdm{\hat{T}}_k$ process.
+%% We recognize this equation as the filter equation with boost $B$, decay $\lambda$, and driver generated by $\nu\,\pi(t,x,x')$.
+%% It corresponds to the following procedure for simulating $\X_t$:
+%% \begin{compactenum}[(a)]
+%% \item Simulate jump times according to the rate-$\nu$ Poisson process.
+%% \item Simulate the embedded chain $\rdm{\hat{X}}_k$ using the kernel $\pi$.
+%% \item Weight the realization by the product of the $B$ factors.
+%%   Note that this makes the appropriate importance-sampling correction.
+%% \end{compactenum}
 
 \end{document}

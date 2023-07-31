@@ -37,17 +37,15 @@
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}
 \newtheorem{corol}[thm]{Corollary}
-\newtheorem{prop}[thm]{Proposition}
-\newtheorem{lemma}[thm]{Lemma}
-\newtheorem{algorithm}[thm]{Algorithm}
+\newtheorem{prop}{Proposition}
+\newtheorem{lemma}[prop]{Lemma}
 \theoremstyle{definition}
 \newtheorem*{defn}{Definition}
-\newtheorem{hyp}[thm]{Hypothesis}
 \newtheorem{example}{Example}
-\newtheorem{conj}[thm]{Conjecture}
 \theoremstyle{remark}
 \newtheorem{remark}{Remark}
 \renewcommand\thethm{\arabic{thm}}
+\renewcommand\theprop{\thesection\arabic{prop}}
 
 \crefname{figure}{Fig.}{Figs.}
 \Crefname{figure}{Fig.}{Figs.}
@@ -80,6 +78,8 @@
 \Crefname{lemma}{Lemma}{Lemmas}
 \crefname{defn}{Definition}{Definitions}
 \Crefname{defn}{Definition}{Definitions}
+\crefname{remark}{Remark}{Remarks}
+\Crefname{remark}{Remark}{Remarks}
 \crefname{inpar}{}{}
 \Crefname{inpar}{Item}{Items}
 \crefformat{inpar}{(#2#1#3)}
@@ -94,7 +94,6 @@
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}} %Use Input in the format of Algorithm  
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
-
 
 \renewcommand{\theenumii}{(\alph{enumi}.\arabic{enumii})}
 \renewcommand{\labelenumii}{\theenumii}
