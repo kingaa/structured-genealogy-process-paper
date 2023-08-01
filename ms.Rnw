@@ -244,8 +244,8 @@ Consider the Markov process $(\X_t,\U_t)$.
 We define its \emph{history process}, $\Hist_t$, to be the restriction of the random function $t\mapsto(\X_t,\U_t)$ to the interval $[0,t]$.
 Note that $\Hist_t$ is itself a Markov process.
 %% Conditional on $\Hist_t$, both $\X_t$ and $\U_t$ are deterministic, as of course are the Markov chains of event times $\rdm{\hat{T}}_k$ and the embedded chains $\rdm{\hat{X}}_k=\X_{\rdm{\hat{T}}_k}$ and $\rdm{\hat{U}}_k=\U_{\rdm{\hat{T}}_k}$.
-Conditional on $\Hist_t$, both $\X_t$ and $\U_t$ are deterministic as are the embedded chain, $(\X_k,\U_k)$, and the point process of event times $\rdm{\hat{T}}_k$.
-(Recall that $\rdm{\hat{X}}_k=\rdm{X}_{\rdm{\hat{T}}_k}$.)
+Conditional on $\Hist_t$, both $\X_t$ and $\U_t$ are deterministic as are the embedded chain, $(\rdm{\hat{X}}_k,\rdm{\hat{U}}_k)$, and the point process of event times $\rdm{\hat{T}}_k$.
+(Recall that $\rdm{\hat{X}}_k=\rdm{X}_{\rdm{\hat{T}}_k}$ and $\rdm{\hat{U}}_k=\rdm{U}_{\rdm{\hat{T}}_k}$.)
 The non-explosiveness assumption implies that, for every $t$, $\rdm{K}_t\coloneq\big\vert\event{\Hist}{t}\cap[0,t]\big\vert<\infty$ a.s.
 The probability measure, $\pi^H$, for $\Hist_t$ can be expressed in terms of these:
 \begin{equation*}%\label{eq:Hdens}
@@ -338,10 +338,10 @@ Its edges represent relationships of ancestry and descent among its nodes.
 There are three distinct kinds of nodes:
 \begin{inparaenum}[(i)]
 \item \emph{tip nodes}, which represent labeled extant lineages;
-\item \emph{internal nodes}, which represent ancestral events;
+\item \emph{branch nodes}, which represent ancestral events;
 \item \emph{sample nodes}, which represent labeled samples.
 \end{inparaenum}
-More formally, we can take a genealogy, $G$, to be a finite sequence of internal nodes, together with a time.
+More formally, we can take a genealogy, $G$, to be a finite sequence of nodes, together with a time.
 Given $G$, the time is denoted $T(G)$; this is the time corresponding to the extant lineages.
 The number of nodes is $K(G)$.
 We order the nodes temporally, and denote the $k$-th node $\Node{p}_k(G)$ and we write $\Node{p}\in{G}$ if $\Node{p}$ is one of the nodes of $G$.
@@ -358,13 +358,13 @@ Every node also has one or more descendant nodes called \emph{children}.
 The population and inventory processes together induce a stochastic process, $\Gen_t$, on the space of genealogies.
 In particular, at each event in the population process, one or more of the following changes happen to the genealogy, according to the type of the event:
 \begin{enumerate}[(a)]
-\item A birth-type event at time $t$ results in the creation of one new internal node for each parent lineage.
+\item A birth-type event at time $t$ results in the creation of one new branch node for each parent lineage.
   In particular, if $j$ is one of the parent lineages, and $\Node{p}$ is the new node, then $T(\Node{p})=t$, $\Anc(\Node{p})$ is the node that was parent to $j$ prior to the event.
   The children of $\Node{p}$ include one new tip node for each new lineage sired by $j$, as well as $j$ itself.
 \item In a death-type event, all the lineages $j$ that die are removed.
-  Internal nodes without children are then recursively removed.
+  Branch nodes without children are then recursively removed.
   Sample nodes are never removed.
-\item In a migration-type event, one node is added for each migrating lineage;
+\item In a migration-type event, one branch node is added for each migrating lineage;
   each one takes the migrating lineage as child.
   The ancestor of the new node is that which was parent to the migrating lineage prior to the event.
   The deme of the lineage changes accordingly.
@@ -391,8 +391,8 @@ In general, at an event of mark $u$, there are $r^u_i$ emergent lineages in deme
 
 Although the process just described yields a genealogy that relates all extant members of the population, and all samples, the data we ultimately wish to analyze will contain only the samples.
 We therefore describe how the genealogy process is \emph{pruned} to yield the sample-only genealogy.
-Given a genealogy $\Gen_t$, one obtains the \emph{pruned genealogy}, $\Prune_t=\prune(\Gen_t)$ by first dropping every tip node and then recursively dropping every internal node without children.
-In a pruned genealogy only internal and sample nodes remain, and sample nodes are found at all of the leaves and some of the interior nodes of the genealogy.
+Given a genealogy $\Gen_t$, one obtains the \emph{pruned genealogy}, $\Prune_t=\prune(\Gen_t)$ by first dropping every tip node and then recursively dropping every branch node without children.
+In a pruned genealogy only branch and sample nodes remain, and sample nodes are found at all of the leaves and some of the interior nodes of the genealogy.
 Observe that the pruned genealogy retains information not only about how much ancestry is shared by any pair of sample lineages, but also about where among the demes each lineage was through time.
 Note also that $T(\Prune_t)=T(\Gen_t)=t$.
 
@@ -434,7 +434,7 @@ The process $\Gen_t$ is not Markovian, though $(\X_t,\Gen_t)$ is.
 To visualize $\Prune_t$, one can make a correspondence between demes and colors.
 Then a pruned genealogy is visualized as a tree with colored branches.
 Knowing the function $\deme^{\Prune_t}$ is equivalent to knowing the coloring, while $\ct^{\Prune_t}$ determines the locations of events in the genealogy and $\anc^{\Prune_t}$ determines the topology.
-Note in particular that, if $y=Y^{\Prune_t}$, then $y_j(t')\ne\yt_j(t')$ if and only if $t'$ is the time of an event from which lineage $j$ emerges.
+Note in particular that, $Y^{P_t}_j(t')\ne\leftlim{Y}^{P_t}_j(t')$ if and only if $t'$ is the time of an event from which lineage $j$ emerges.
 Note also that, there can be events on a pruned genealogy where the color does not change.
 That is, where $\ct_j$ increments, but neither $\anc_j$ nor $\deme_j$ change.
 
@@ -454,9 +454,9 @@ Therefore, for $y,y'\in\Yspace$, and $i\in\Demes$, let us define
 \begin{equation*}
   s_i(y,y')\colonequals{\left\vert\left\{j\in{\Zp}\;\vert\;\deme(y_j)=i\ \ \&\ \ \ct(y'_j)\ne\ct(y_j)\right\}\right\vert}, \qquad s(y,y')\colonequals(s_i(y,y'))_{i\in\Demes}\in{\Zp^\Demes}.
 \end{equation*}
-With this definition, for any $P$, if $y=Y^P$, then $s_i(\yt(t),y(t))$ is the number of lineages in deme $i$ that emerge from an event at time $t$ and $s(\yt(t),y(t))$ is the non-negative integer vector telling how many lineages in each deme emerge at time $t$.
-In particular, $s(y,y)=0$ so that if $e\notin\event{P}{t}$, then $s(\yt(e),y(e))=0$.
-We refer to $s\left(\yt(t),y(t)\right)$ as the \emph{saturation} at time $t$.
+With this definition, for any $P$, if $y=Y^P$, then $s_i(\yt_t,y_t)$ is the number of lineages in deme $i$ that emerge from an event at time $t$ and $s(\yt_t,y_t)$ is the non-negative integer vector telling how many lineages in each deme emerge at time $t$.
+In particular, $s(y,y)=0$ so that if $e\notin\event{P}{t}$, then $s(\yt_e,y_e)=0$.
+We refer to $s(\yt_t,y_t)$ as the \emph{saturation} at time $t$.
 
 \paragraph{Obscured genealogy}
 
@@ -495,17 +495,15 @@ In particular, $P^*_t$ is only compatible with $\Hist_t$ if every event in $P^*_
 That is, only if $\event{P^*}{t}\subseteq{\event{\Hist}{t}}$.
 Moreover, certain events in $P^*_t$ may be incompatible with all possible histories.
 For example, if $P^*_t$ has an event in which a lineage moves from deme $i$ to deme $i'$ but there are no $u\in\Jumps$ for which this is possible, then $P^*_t$ is incompatible with the population process itself.
-Let us define the function $Q:\Jumps\times\Yspace\times\Yspace\to\{0,1\}$ so that $Q_u(y,y')=1$ if and only if a change $y\to{y'}$ in a pruned genealogy is compatible with an event of mark $u$ at that time.
+Let us define the function $Q:\Jumps\times\Yspace^2\to\{0,1\}$ so that $Q_u(y,y')=1$ if and only if a change $y\to{y'}$ in a pruned genealogy is compatible with an event of mark $u$ at that time.
 Recall that $n:\Xspace\to\Zp^{\Demes}$ denotes the deme-occupancy function, $r^u$, the production of a jump of mark $u$, $\ell$, the lineage-count function, and $s$, the saturation.
 
 \begin{thm}\label{thm:pruned_lik}
   Let $P^*_t$ be a given pruned genealogy and $y^*=Y^{P^*_t}$.
   Then
   \begin{equation*}
-    \begin{aligned}
-      \Prob{P^*_t\vert\Hist_t}=&\prod_{e\in\event{\Hist}{t}}{\BinRatio{n(X_e)}{\ell(y^*(e))}{r^{U_e}}{s(\yt^*(e),y^*(e))}\,Q_{U_e}(\yt^*(e),y^*(e))}\\
-      &\qquad\times\Indicator{\event{P^*}{t}\subseteq{\event{\Hist}{t}}}.
-    \end{aligned}
+    \Prob{P^*_t\vert\Hist_t}=\prod_{e\in\event{\Hist}{t}}{\BinRatio{n(X_e)}{\ell(y^*_e)}{r^{U_e}}{s(\yt^*_e,y^*_e)}\,Q_{U_e}(\yt^*_e,y^*_e)}
+    \:\times\:\Indicator{\event{P^*}{t}\subseteq{\event{\Hist}{t}}}.
   \end{equation*}
 \end{thm}
 \begin{proof}
@@ -514,7 +512,7 @@ Recall that $n:\Xspace\to\Zp^{\Demes}$ denotes the deme-occupancy function, $r^u
   Let us therefore suppose that neither of these conditions hold.
   Recall that, conditional on $\Hist_t$, each jump of the inventory process is independent of the others.
   Moreover, at each event $e\in\event{\Hist}{t}$, a jump of mark $U_e$ occured, with a production of $r^{U_e}=(r_i)_{i\in\Demes}$, resulting in a new deme-occupancy of $n(X_e)=(n_i)_{i\in\Demes}$.
-  In $P^*_t$, at time $e$, there are $\ell_i=\ell_i(y^*(t))$ lineages in deme $i$, of which $s_i=s_i(\yt^*(t),y^*(t))$ are emergent.
+  In $P^*_t$, at time $e$, there are $\ell_i=\ell_i(y^*_t)$ lineages in deme $i$, of which $s_i=s_i(\yt^*_t,y^*_t)$ are emergent.
   The exchangeability of lineages within demes implies that each lineage present in a deme at time $e$ was equally likely to have been one of the emergent lineages.
   In particular, at time $e$, the probability that $s_i$ of the $\ell_i$ deme-$i$ lineages were among the $r_i$ of $n_i$ lineages emergent in the inventory process is the same as the probability that, upon drawing $\ell_i$ balls without replacement from an urn containing $r_i$ black balls and $n_i-r_i$ white balls, exactly $s_i$ of the drawn balls are black, namely
   \begin{equation*}
@@ -523,7 +521,7 @@ Recall that $n:\Xspace\to\Zp^{\Demes}$ denotes the deme-occupancy function, $r^u
   Because our lineages are labelled, each of the $\binom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct; just one of these is the one present in $P^*_t$.
   Moreover, since, again conditional on $\Hist_t$, the inventory process within each deme is independent of the others, we have established that
   \begin{equation*}
-    \Prob{P^*_t\vert\Hist_t}=\prod_{e\in\event{\Hist}{t}}{\BinRatio{n(X_e)}{\ell(y^*(e))}{r^{U_e}}{s(\yt^*(e),y^*(e))}}.
+    \Prob{P^*_t\vert\Hist_t=H_t}=\prod_{e\in\event{H}{t}}{\BinRatio{n(X_e)}{\ell(y^*_e)}{r^{U_e}}{s(\yt^*_e,y^*_e)}}.
   \end{equation*}
   Returning to the possibility that $P^*_t$ is incompatible with $\Hist_t$, since $\Prob{P^*_t}=0$ if either any $Q_u=0$ or any event of $P^*_t$ is not an event of $\Hist_t$, we obtain the result.
 \end{proof}
@@ -571,8 +569,8 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
   Then there is a measurable function $\kappa_{V^*_t}:[0,t]\times\Yspace^2\to\{0,1\}$ such that
   \begin{equation*}
     \begin{aligned}
-      \Prob{V^*_t\vert\Hist_t}=&\Expect{\left.\prod_{e\in\event{\Hist}{t}}{\BinRatio{n(X_e)}{\ell(\rdm{y}_e)}{r^{U_e}}{s(\leftlim{\rdm{y}}_e,\rdm{y}_e)}\,\frac{\scriptsize\kappa_{V^*_t}(e,\leftlim{\rdm{y}}_e,\rdm{y}_e)}{\scriptsize\pi_{U_e}(e,\leftlim{X}_e,X_e,\leftlim{\rdm{y}}_e,\rdm{y}_e)}}\;\right\vert\;\Hist_t}\\
-      &\qquad\times\Indicator{\event{V^*}{t}\subseteq\event{\Hist}{t}},
+      \Prob{V^*_t\vert\Hist_t=H_t}=&\Expect{\left.\prod_{e\in\event{H}{t}}{\BinRatio{n(X_e)}{\ell(\rdm{y}_e)}{r^{U_e}}{s(\leftlim{\rdm{y}}_e,\rdm{y}_e)}\,\frac{\scriptsize\kappa_{V^*_t}(e,\leftlim{\rdm{y}}_e,\rdm{y}_e)}{\scriptsize\pi_{U_e}(e,\leftlim{X}_e,X_e,\leftlim{\rdm{y}}_e,\rdm{y}_e)}}\;\right\vert\;\Hist_t}\\
+      &\qquad\times\Indicator{\event{V^*}{t}\subseteq\event{H}{t}},
     \end{aligned}
   \end{equation*}
   the expectation being taken over $\rdm{y}$.
@@ -590,9 +588,9 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
   \begin{equation*}
     \Prob{\rdm{\hat{y}}_k=\hat{y}_k\vert\rdm{\hat{y}}_{k-1}=\hat{y}_{k-1}}=\pi_{U_{t_k}}(t_k,\leftlim{X}_{t_k},X_{t_k},\hat{y}_{k-1},\hat{y}_k).
   \end{equation*}
-  Now let $\event{\Hist}{t}=\{t_1,t_2,\dots,t_K\}$.
+  Now let $\event{H}{t}=\{t_1,t_2,\dots,t_K\}$.
   $\rdm{\hat{y}}_k$ is the embedded chain of a unique, piecewise-constant, \cadlag\ process $\rdm{y}_t$, with jump times at $t_k$.
-  This construction of $\rdm{y}_t$ obviously guarantees that $\event{P(\rdm{y})}{t}\subseteq\event{\Hist}{t}$.
+  This construction of $\rdm{y}_t$ obviously guarantees that $\event{P(\rdm{y})}{t}\subseteq\event{H}{t}$.
   Moreover, the conditions on $\pi$ guarantee that, for every pruned genealogy $P_t$, $Y^{P_t}$ is a sample path of this process.
   In particular, they guarantee that $\pi_u(t,x,x',y,y')\;\propto\;{Q_u(y,y')}$.
 
@@ -606,9 +604,9 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
     \pi(\rdm{y}\vert\Hist_t)=\prod_{e\in\event{\Hist}{t}}{\pi_{U_{e}}(e,\leftlim{X}_{e},X_{e},\leftlim{\rdm{y}}_{e},\rdm{y}_{e})}.
   \end{equation*}
 
-  Finally, observe that the condition $\obs(P(\rdm{y}))=V_t$ can be factorized for all obscured genealogies $V_t$.
-  In particular, there is a function $\kappa_{V_t}:[0,t]\times\Yspace^2\to\{0,1\}$ such that $\kappa_{V_t}(s,\eta,\eta')=1$ if and only if
-  there is $y:\Rp\to\Yspace$ such that $\obs(P(y))=V_t$, $\leftlim{y}_s=\eta$, and $y_s=\eta'$, for all $s\in[0,t]$.
+  Finally, observe that the condition $\obs(P(\rdm{y}))=V$ can be factorized for all obscured genealogies $V$.
+  In particular, there is a function $\kappa_{V}:[0,t]\times\Yspace^2\to\{0,1\}$ such that $\kappa_{V}(s,\eta,\eta')=1$ if and only if
+  there is $y:\Rp\to\Yspace$ such that $\obs(P(y))=V$, $\leftlim{y}_s=\eta$, and $y_s=\eta'$, for all $s\in[0,T(V)]$.
   Thus, conditional on $\Hist_t$, if $\event{P(y)}{t}\subseteq\event{\Hist}{t}$,
   \begin{equation*}
     \Indicator{\obs(P(y))=V^*_t}=\prod_{e\in\event{\Hist}{t}}{\kappa_{V^*_t}(e,\leftlim{y}_e,y_e)}.
@@ -639,7 +637,7 @@ It is an immediate consequence of \cref{thm:obsc_lik,prop:fullfilt}.
       &\ +\sum_{e\in\event{V^*}{T}}{\delta(t,e)\,\left\{\sum_{uy'}{\int{w(t,x')\,\beta_u(t,x',x)\,\phi_u(t,x,y',y)\,\dd{x'}}}-w(t,x)\right\}},
     \end{aligned}
   \end{equation}
-  with the initial condition $w(0,x,y)=p_0(x)\,\pi_0(y)$.
+  with the initial condition $w(0,x,y)=p_0(x)$.
   Then the likelihood of $V^*_T$ is
   \begin{equation*}
     \lik(V^*_T)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
