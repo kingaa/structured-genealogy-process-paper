@@ -7,7 +7,7 @@ opts_chunk$set(
   echo=FALSE,
   eval=TRUE,
   include=TRUE,
-  dev="cairo_pdf",
+  dev="png",
   dev.args=list(bg='transparent'),
   dpi=300,
   error=FALSE,

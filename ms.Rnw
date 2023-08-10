@@ -8,27 +8,30 @@
 \author[King]{Aaron~A.~King}
 \address{
   A.~A.~King,
-  Department of Ecology \& Evolutionary Biology,
-  Center for the Study of Complex Systems, and
+  Department of Ecology \& Evolutionary~Biology,
+  Center for the Study of Complex~Systems, and
   Department of Mathematics,
   University of Michigan,
-  Ann Arbor, MI 48109 USA
+  Ann~Arbor, MI~48109~USA\\
+  Santa~Fe~Institute,
+  1399 Hyde~Park~Road,
+  Santa~Fe, NM~87501~USA
 }
 \email{kingaa@umich.edu}
 \urladdr{\href{https://kinglab.eeb.lsa.umich.edu/}{https://kinglab.eeb.lsa.umich.edu/}}
-\author[Lin]{Qianying Lin}
+\author[Lin]{Qianying~Lin}
 \address{
-  Q.-Y. Lin,
+  Q.-Y.~Lin,
   Theoretical Biology and Biophysics,
-  Los Alamos National Laboratory,
-  Los Alamos, NM XXXXX USA
+  Los~Alamos National Laboratory,
+  Los~Alamos, NM~87545~USA
 }
 \author[Ionides]{Edward~L.~Ionides}
 \address{
   E.~L.~Ionides,
   Department of Statistics
   University of Michigan,
-  Ann Arbor, MI 48109 USA
+  Ann~Arbor, MI~48109~USA
 }
 \date{\today}
 
