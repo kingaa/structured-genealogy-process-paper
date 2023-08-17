@@ -32,8 +32,6 @@
 \titlespacing{\subsection}{0em}{*0}{*0}
 \titlespacing{\paragraph}{0em}{*1}{*1}
 
-\usepackage[sort&compress]{cleveref}
-
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}
 \newtheorem{corol}[thm]{Corollary}
@@ -47,6 +45,23 @@
 \renewcommand\thethm{\arabic{thm}}
 \renewcommand\theprop{\thesection\arabic{prop}}
 
+\usepackage{algorithm}
+\usepackage{algorithmic}
+%\usepackage[noend]{algpseudocode}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}} %Use Input in the format of Algorithm  
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\renewcommand{\theenumii}{(\alph{enumi}.\arabic{enumii})}
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumiii}{(\alph{enumi}.\arabic{enumii}.\arabic{enumiii})}
+\renewcommand{\labelenumiii}{\theenumiii}
+
+\newcommand\AAK[1]{\textcolor{green!40!black}{#1}}
+\newcommand\QYL[1]{\textcolor{purple!50!black}{#1}}
+\newcommand\ELI[1]{\textcolor{brown!70!black}{#1}}
+
+\usepackage[sort&compress]{cleveref}
 \crefname{figure}{Fig.}{Figs.}
 \Crefname{figure}{Fig.}{Figs.}
 \crefname{table}{Table}{Tables}
@@ -87,22 +102,3 @@
 \newcommand{\creflastconjunction}{, and~}
 \newcommand{\ie}{\emph{i.e.,} }
 \newcommand{\eg}{\emph{e.g.,} }
-
-\usepackage{algorithm}
-\usepackage{algorithmic}
-%\usepackage[noend]{algpseudocode}
-
-\renewcommand{\algorithmicrequire}{\textbf{Input:}} %Use Input in the format of Algorithm  
-\renewcommand{\algorithmicensure}{\textbf{Output:}}
-
-\renewcommand{\theenumii}{(\alph{enumi}.\arabic{enumii})}
-\renewcommand{\labelenumii}{\theenumii}
-\renewcommand{\theenumiii}{(\alph{enumi}.\arabic{enumii}.\arabic{enumiii})}
-\renewcommand{\labelenumiii}{\theenumiii}
-
-\definecolor{darkgreen}{rgb}{0.0,0.5,0.2}
-\newcommand\AAK[1]{\textcolor{darkgreen}{#1}}
-\definecolor{darkpurple}{rgb}{0.5,0.0,1.0}
-\newcommand\QYL[1]{\textcolor{darkpurple}{#1}}
-\definecolor{darkbrown}{rgb}{0.8,0.8,0.0}
-\newcommand\ELI[1]{\textcolor{darkbrown}{#1}}
