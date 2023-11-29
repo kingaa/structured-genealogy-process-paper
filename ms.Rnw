@@ -860,7 +860,7 @@ The following result extends \cref{prop:zeroboost} to the situation where $\math
     \end{aligned}
   \end{equation*}
   then $\Expect{\rdm{V}_t\;\vert\;\mathcal{M}}=\int{w(t,x)\,\dd{x}}$.
-  \ELI{[(a) line 2: density -> expectation.
+  \ELI{[(a) line 2: density $\rightarrow$ expectation.
       (b) the term $\delta(t,e)\,w(t,x)$ seems irrelevant:
       the derivative at a finite set of points only matters when it is a delta function.
       (c) what is a ``fixed, finite set of event times''?
