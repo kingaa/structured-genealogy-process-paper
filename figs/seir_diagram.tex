@@ -1,0 +1,11 @@
+\node [box] (S) at ($(origin)+(0,0)$) {$\lab{S}$};
+\node [box,deme] (E) at ($(origin)+(2,0)$) {$\lab{E}$};
+\node [box,deme] (I) at ($(origin)+(4,0)$) {$\lab{I}$};
+\node [box] (R) at ($(origin)+(6,0)$) {$\lab{R}$};
+\coordinate (overR) at ($(R)+(0,1)$);
+\coordinate (overS) at ($(S)+(0,1)$);
+\draw [flow,->] (S) -- (E);
+\draw [flow,->] (E) -- (I);
+\draw [flow,->] (I) -- (R);
+\draw [flow,->] (R) -- (overR) -- (overS) -- (S);
+\node[font=\normalsize] (demes) at ($(origin)+(3,-1)$) {$\Demes=\{\lab{E},\lab{I}\}$};

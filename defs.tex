@@ -1,38 +1,38 @@
 \usepackage{mathabx,mathrsfs,eucal,bbm,colonequals,amsmath,amssymb}
 
 \newcommand\eps{\varepsilon}
+\newcommand\Set[1]{\left\{{#1}\right\}}
+\newcommand\CondSet[2]{\left\{{#1}\;\middle\vert\;{#2}\right\}}
 \newcommand\Prob[1]{\mathsf{Prob}\left[{#1}\right]}
+\newcommand\CondProb[2]{\mathsf{Prob}\left[{#1}\;\middle\vert\;{#2}\right]}
 \newcommand\Expect[1]{\mathbbm{E}\left[{#1}\right]}
+\newcommand\CondExpect[2]{\mathbbm{E}\left[{#1}\;\middle\vert\;{#2}\right]}
 \newcommand\indicator[1]{\mathbbm{1}_{{#1}}}
 \newcommand\Indicator[1]{\mathbbm{1}\{{#1}\}}
-\newcommand\Var[1]{\mathsf{Var}\left[{#1}\right]}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+%% \newcommand\Var[1]{\mathsf{Var}\left[{#1}\right]}
+%% \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\log{\lik}}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\pkg}[1]{\textbf{\texttt{#1}}}
 \newcommand{\dd}[1]{\mathrm{d}{#1}}
-\newcommand{\halfopen}[1]{[{#1})}
-\newcommand{\halfclosed}[1]{({#1}]}
-\newcommand{\transpose}{\footnotesize\mathrm{T}}
+\newcommand{\halfopen}[1]{\left[{#1}\right)}
+\newcommand{\halfclosed}[1]{\left({#1}\right]}
+\newcommand{\transpose}{\top}
 \newcommand{\scinot}[2]{#1{\times}10^{#2}}
-\newcommand{\restrict}[2]{{#1}\vert_{#2}}
-\newcommand{\opnorm}[1]{%
-  {\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert{#1}%
-    \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}%
-}
+%% \newcommand{\restrict}[2]{{#1}\vert_{#2}}
+%% \newcommand{\opnorm}[1]{%
+%%   {\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert{#1}%
+%%     \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}%
+%% }
 \newcommand\leftlim[1]{\widetilde{#1}}
 \newcommand\rdm[1]{\mathbf{#1}}
 \newcommand\spc[1]{\mathbb{#1}}
 \newcommand\func[1]{\mathsf{#1}}
-
-\newcommand\Node[1]{#1}
-\newcommand\Ball[1]{#1}
+\newcommand\lab[1]{\mathsf{#1}}
 
 \def\emptyset{\varnothing}
 \def\preceq{\preccurlyeq}
-\def\prec2{\llcurly}
-\def\Borel{\mathcal{B}}
 \def\cadlag{{c\`adl\`ag}}
 \def\caglad{{c\`agl\`ad}}
 \def\Xspace{\spc{X}}
@@ -40,42 +40,63 @@
 \def\Demes{\spc{D}}
 \def\Demesplus{\overline{\spc{D}}}
 \def\Yspace{\spc{Y}}
-\def\Pspace{\spc{P}}
 \def\Z{\spc{Z}}
 \def\Zp{\spc{Z}_{+}}
 \def\R{\spc{R}}
 \def\Rp{\spc{R}_{+}}
 
+\def\ie{{i.e.,} }
+\def\eg{{e.g.,} }
 \def\st{\text{s.t.}}
-\def\ext{\func{ext}}
 \def\prune{\func{prune}}
 \def\obs{\func{obs}}
-\def\Anc{\func{Anc}}
-\def\anc{\func{anc}}
-\def\ct{\func{ct}}
-\def\deme{\func{deme}}
-\def\uniq{\func{uniq}}
-\def\Lin{\func{lin}}
+\newcommand\leaves[1]{\func{leaf}\!\left({#1}\right)}
 
-\def\X{\rdm{X}}
-\def\U{\rdm{U}}
-\def\N{\rdm{N}}
-\def\Hist{\rdm{H}}
-\def\Inv{\rdm{I}}
+\def\X{\mathrm{X}}
+\def\Xr{\rdm{X}}
+\def\Xt{\leftlim{\X}}
+\def\Xrt{\leftlim{\Xr}}
+\def\Xh{\hat{\X}}
+\def\Xrh{\rdm{\hat{X}}}
+\def\U{\mathrm{U}}
+\def\Ur{\rdm{U}}
+\def\Ut{\leftlim{\U}}
+\def\Urt{\leftlim{\Ur}}
+\def\Uh{\hat{\U}}
+\def\Urh{\rdm{\hat{U}}}
+\def\Th{\mathrm{\hat{T}}}
+\def\Trh{\rdm{\Th}}
+\def\K{\mathrm{K}}
+\def\Kr{\rdm{K}}
+\def\H{\mathrm{H}}
+\def\Hr{\rdm{H}}
+\def\G{G}
+\def\Gr{\rdm{G}}
+\def\Gh{\hat{G}}
+\def\Grh{\rdm{\Gh}}
+\def\y{y}
+\def\yr{\rdm{y}}
+\def\yrh{\rdm{\hat{y}}}
+\def\yt{\leftlim{y}}
+\def\yrt{\leftlim{\rdm{y}}}
+\def\z{z}
+\def\zr{\rdm{z}}
+\def\zt{\leftlim{\z}}
+\def\P{\mathrm{P}}
+\def\Pr{\rdm{P}}
+\def\Z{Z}
+\def\Zr{\rdm{Z}}
+\def\Zt{\leftlim{\Z}}
+\def\Zrt{\leftlim{\Zr}}
+\def\Zh{\hat{\Z}}
+\def\Zrh{\rdm{\hat{Z}}}
+\def\Vr{\rdm{V}}
+\def\wt{\leftlim{w}}
+
 \def\Gen{\rdm{G}}
-\def\Prune{\rdm{P}}
-\def\Vis{\rdm{V}}
 \def\Y{\rdm{Y}}
 
-\def\ut{\leftlim{u}}
-\def\xt{\leftlim{x}}
-\def\yt{\leftlim{y}}
-\def\wt{\leftlim{w}}
-\def\Ut{\leftlim{\U}}
-\def\Wt{\leftlim{W}}
-\def\Xt{\leftlim{\X}}
-\def\Yt{\leftlim{\Y}}
 
 \renewcommand\binom[2]{{\scriptscriptstyle\begin{pmatrix}{#1}\\{#2}\end{pmatrix}}}
 \newcommand\BinRatio[4]{{\scriptscriptstyle\begin{pmatrix}{#1}&{#2}\\{#3}&{#4}\end{pmatrix}}}
-\newcommand\event[2]{\mathsf{M}^{#1}_{#2}}
+\newcommand\event[2]{\mathring{#1}_{#2}}

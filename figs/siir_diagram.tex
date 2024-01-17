@@ -1,0 +1,31 @@
+\tikzmath{
+  coordinate \orig;
+  \orig = (origin);
+  coordinate \s, \ra, \rb, \ovs, \ovr, \uns, \unr;
+  \s = (\orig) + (0,0);
+  \ra = (\orig) + (6,1);
+  \rb = (\orig) + (6,-1);
+  \ovr = (\ra) + (0,1);
+  \ovs = (\sx+\ovrx-\rax,\ovry);
+  \unr = (\rb) - (0,1);
+  \uns = (\sx+\unrx-\rbx,\unry);
+  print {
+    \coordinate (origin) at (\orig);
+    \node [box] (S) at (\s) {$\lab{S}$};
+    \node [box] (R1) at (\ra) {$\lab{R}_1$};
+    \node [box] (R2) at (\rb) {$\lab{R}_2$};
+    \coordinate (overR) at (\ovr);
+    \coordinate (overS) at (\ovs);
+    \coordinate (underR) at (\unr);
+    \coordinate (underS) at (\uns);
+  };
+}
+\node [box,deme] (E1) at ($(origin)+(2,1)$) {$\lab{E}_1$};
+\node [box,deme] (E2) at ($(origin)+(2,-1)$) {$\lab{E}_2$};
+\node [box,deme] (I1) at ($(origin)+(4,1)$) {$\lab{I}_1$};
+\node [box,deme] (I2) at ($(origin)+(4,-1)$) {$\lab{I}_2$};
+\draw [flow,->] (S) -- (E1) (E1) -- (I1) (I1) -- (R1);
+\draw [flow,->] (S) -- (E2) (E2) -- (I2) (I2) -- (R2);
+\draw [flow,->] (R1) -- (overR) -- (overS) -- (S);
+\draw [flow,->] (R2) -- (underR) -- (underS) -- (S);
+\node[font=\normalsize] (demes) at ($(origin)+(3,-2.5)$) {$\Demes=\{\lab{E}_1,\lab{I}_1,\lab{E}_2,\lab{I}_2\}$};
