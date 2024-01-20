@@ -123,35 +123,114 @@ Migration, superspreading, competition between strains.
   \begin{center}
     \resizebox{0.9\linewidth}{!}{
       \begin{tikzpicture}[scale=1]
-        \tikzstyle{box}=[color=black, draw, fill=white, very thick, minimum size=3em]
+        \colorlet{darkblue}{blue!50!black}
+        \tikzstyle{box}=[draw=black, text=black, fill=white, very thick, minimum size=3em]
+        \tikzstyle{ibox}=[draw=darkblue]
+        \tikzstyle{deme}=[fill=black!20!white]
         \tikzstyle{label}=[font=\Large]
         \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
-        \tikzstyle{flow}=[color=black, very thick, >=stealth]
-        \tikzstyle{deme}=[fill=black!20!white]
-        \tikzstyle{modulate}=[color=blue, thick, >=latex]
+        \tikzstyle{flow}=[draw=black, very thick, >=stealth]
+        \tikzstyle{modulate}=[draw=darkblue, >=Circle]
+
+        %% SEIRS model
         \coordinate (origin) at (0,0);
-        \node[label] (lab) at ($(origin)+(-0.5,2.1)$) {\textbf{A}};
-        \input{figs/seir_diagram}
+        \node[label] (lab) at (origin) {\textbf{A}};
+        \node [box] (S) at ($(origin)+(1,-1)$) {$\lab{S}$};
+        \node [box,deme] (E) at ($(S)+(2,0)$) {$\lab{E}$};
+        \node [box,ibox,deme] (I) at ($(E)+(2,0)$) {$\lab{I}$};
+        \node [box] (R) at ($(I)+(2,0)$) {$\lab{R}$};
+        \coordinate (overR) at ($(R)+(0,1)$);
+        \coordinate (midSE) at ($(S)!0.5!(E)$);
+        \draw [flow,->] (S) -- (E);
+        \draw [flow,->] (E) -- (I);
+        \draw [flow,->] (I) -- (R);
+        \draw [flow,->] (R) -- (overR) -- (S |- overR) -- (S);
+        \draw [modulate,->] (I.north west) .. controls ($(I)+(-1,1)$) and ($(midSE)+(0,1)$) .. (midSE);
+        \node[font=\normalsize] (demes) at ($(E)!0.5!(I)+(0,-1)$) {$\Demes=\{\lab{E},\lab{I}\}$};
+
+        %% SIIR (two-strain) model
+        \coordinate (origin) at (0,-3);
+        \node[label] (lab) at (origin) {\textbf{B}};
+        \node [box] (S) at ($(origin)+(1,-2)$) {$\lab{S}$};
+        \node [box] (R1) at ($(S)+(6,1)$) {$\lab{R}_1$};
+        \node [box] (R2) at ($(S)+(6,-1)$) {$\lab{R}_2$};
+        \coordinate (overR) at ($(R1)+(0,1)$);
+        \coordinate (underR) at ($(R2)-(0,1)$);
+        \node [box,deme] (E1) at ($(S)+(2,1)$) {$\lab{E}_1$};
+        \node [box,deme] (E2) at ($(S)+(2,-1)$) {$\lab{E}_2$};
+        \node [box,ibox,deme] (I1) at ($(E1)+(2,0)$) {$\lab{I}_1$};
+        \node [box,ibox,deme] (I2) at ($(E2)+(2,0)$) {$\lab{I}_2$};
+        \draw [flow,->] (S) -- (E1);
+        \draw [flow,->] (E1) -- (I1);
+        \draw [flow,->] (I1) -- (R1);
+        \draw [flow,->] (S) -- (E2);
+        \draw [flow,->] (E2) -- (I2);
+        \draw [flow,->] (I2) -- (R2);
+        \draw [flow,->] (R1) -- (overR) -- (S |- overR) -- (S);
+        \draw [flow,->] (R2) -- (underR) -- (S |- underR) -- (S);
+        \coordinate (midSE1) at ($(S)!0.5!(E1)$);
+        \coordinate (midSE2) at ($(S)!0.5!(E2)$);
+        \draw [modulate,->] (I1.north west) .. controls ($(I1)+(-1,1)$) and ($(midSE1)+(0,1.8)$) .. (midSE1);
+        \draw [modulate,->] (I2.south west) .. controls ($(I2)+(-1,-1)$) and ($(midSE2)+(0,-1.8)$) .. (midSE2);
+        \node[font=\normalsize] (demes) at ($(E2)!0.5!(I2)+(0,-2)$) {$\Demes=\{\lab{E}_1,\lab{I}_1,\lab{E}_2,\lab{I}_2\}$};
+
+        %% COVID model
         \coordinate (origin) at (9,0);
-        \node[label] (lab) at ($(origin)+(-0.5,2.1)$) {\textbf{B}};
-        \input{figs/siir_diagram}
-        \coordinate (origin) at (0,-4);
-        \node[label] (lab) at ($(origin)+(-0.5,2.1)$) {\textbf{C}};
-        \input{figs/covid_diagram}
+        \node[label] (lab) at (origin) {\textbf{C}};
+        \node [box] (S) at ($(origin)+(1,-2)$) {$\lab{S}$};
+        \node [box] (R) at ($(S)+(7,1)$) {$\lab{R}$};
+        \coordinate (overR) at ($(R)+(0,1)$);
+        \node [box,deme] (E) at ($(S)+(2,0)$) {$\lab{E}$};
+        \node [box,ibox,deme] (Ia) at ($(E)+(2,1)$) {$\lab{I_A}$};
+        \node [box,ibox,deme] (Is) at ($(E)+(2,-1)$) {$\lab{I_S}$};
+        \node [box] (H) at ($(Is)+(2,0)$) {$\lab{H}$};
+        \node [box] (D) at ($(H)+(2,0)$) {$\lab{D}$};
+        \draw [flow,->] (S) -- (E);
+        \draw [flow,->] (E) -- (Ia.west);
+        \draw [flow,->] (E) -- (Is.west);
+        \draw [flow,->] (Ia) -- (R);
+        \draw [flow,->] (Is) -- (H);
+        \draw [flow,->] (H) -- (R);
+        \draw [flow,->] (Is) -- (R);
+        \draw [flow,->] (H) -- (D);
+        \draw [flow,->] (R) -- (overR) -- (S |- overR) -- (S);
+        \coordinate (midSE) at ($(S)!0.5!(E)$);
+        \draw [modulate,->] (Ia.north west) .. controls ($(Ia.north west)+(165:1)$) and ($(midSE)+(0,2)$) .. (midSE);
+        \draw [modulate,->] (Is.south west) .. controls ($(Is.south west)+(195:1)$) and ($(midSE)+(0,-2)$) .. (midSE);
+        \node[font=\normalsize] (demes) at ($(Is)+(0,-1)$) {$\Demes=\{\lab{E},\lab{I_A},\lab{I_S}\}$};
+
+        %% SI2R (super-spreader) model
+        \coordinate (origin) at (9,-5);
+        \node[label] (lab) at (origin) {\textbf{D}};
+        \node [box] (S) at ($(origin)+(2,-1)$) {$\lab{S}$};
+        \node [box,deme] (E) at ($(S)+(2,0)$) {$\lab{E}$};
+        \node [box,ibox,deme] (Il) at ($(E)+(2,0)$) {$\lab{I_L}$};
+        \node [box,ibox,deme] (Ih) at ($(Il)+(0,-2)$) {$\lab{I_H}$};
+        \node [box] (R) at ($(Il)+(2,0)$) {$\lab{R}$};
+        \coordinate (overR) at ($(R)+(0,1)$);
+        \coordinate (midSE) at ($(S)!0.5!(E)$);
+        \draw [flow,->] (S) -- (E);
+        \draw [flow,->] (E) -- (Il);
+        \draw [flow,<->] (Il) -- (Ih);
+        \draw [flow,->] (Il) -- (R);
+        \draw [flow,->] (Ih.east) -- (R |- Ih.east) -- (R);
+        \draw [flow,->] (R) -- (overR) -- (S |- overR) -- (S);
+        \draw [modulate,->] (Il.north west) .. controls ($(Il.north west)+(135:0.8)$) and ($(midSE)+(0,1)$) .. (midSE);
+        \draw [modulate,->] (Ih.west) .. controls ($(Ih.west)+(180:0.8)$) and ($(midSE)+(0,-1)$) .. (midSE);
+        \node[font=\normalsize] (demes) at (midSE |- Ih) {$\Demes=\{\lab{E},\lab{I_L},\lab{I_H}\}$};
       \end{tikzpicture}
     }
   \end{center}
   \caption{
     Examples of discretely-structured population models.
     Demes are shaded.
-    (A) An SEIRS model.
+    \textbf{(A)} An SEIRS model.
     Susceptible individuals ($\lab{S}$), once infected, enter a transient incubation phase ($\lab{E}$) before they become infectious ($\lab{I}$).
     Upon recovery ($\lab{R}$), individuals experience immunity from reinfection.
     If this immunity wanes, they re-enter the susceptible compartment.
     Pathogen lineages are to be found in hosts within the $\lab{E}$ and $\lab{I}$ compartments only.
     Accordingly, there are two demes ($\Demes=\Set{\lab{E},\lab{I}}$).
     If there is exactly one lineage per host, then the occupancy, $n(\Xr_t)=(n_{\lab{E}}(\Xr_t),n_{\lab{I}}(\Xr_t))$, is the integer 2-vector giving the numbers of hosts in the respective compartments.
-    \AAK{[Perhaps another one or two examples here?]}
     \AAK{[We could add dots to the deme compartments to signify individuals\dots.]}
     \label{fig:examples}
   }
@@ -161,7 +240,8 @@ We will assume that our population process is a time-inhomogeneous Markov jump p
 In earlier work \citep{King2022}, we limited ourselves to the case $\Xspace=\Z^d$, but here we assume only that $\Xspace$ is a complete metric space with a countable dense subset, \ie a Polish space.
 The population process is completely specified by its initial-state distribution, $p_0$, and its transition rates $\alpha$.
 In particular, we suppose that
-\begin{equation}\label{eq:ic}
+\begin{equation}
+  \label{eq:ic}
   \Prob{\Xr_0\in\mathcal{E}}=\int_{\mathcal{E}}{p_0(x)\,\dd{x}}
 \end{equation}
 for all measurable sets $\mathcal{E}\subseteq\Xspace$.
@@ -188,7 +268,8 @@ We will further assume that $\Xr_t$ is non-explosive, \ie that $\Prob{\Kr_t<\inf
 \subsubsection{Kolmogorov forward equation}
 
 The above may be compactly summarized by stating that if $w(t,x)$ satisfies the Kolmogorov forward equation (KFE),
-\begin{equation}\label{eq:kfe}
+\begin{equation}
+  \label{eq:kfe}
   \frac{\partial{w}}{\partial{t}}(t,x)=\int\!w(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!w(t,x)\,\alpha(t,x,x')\,\dd{x'},
 \end{equation}
 and if, moreover, $w(0,x) = p_0(x)$,
@@ -203,20 +284,20 @@ Another perspective on the Markov processes is to be had from its Markov state t
       \begin{tikzpicture}[scale=1]
         \usetikzlibrary{shapes,arrows,positioning}
         \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
-        \tikzstyle{state}=[shape=ellipse, color=black, draw, font=\LARGE, fill=white, thick, minimum size=5em]
-        \tikzstyle{trans}=[color=black, thick, >=stealth]
+        \tikzstyle{state}=[shape=ellipse, color=black, draw, font=\LARGE, fill=white, thick, minimum height=8em]
+        \tikzstyle{trans}=[color=black, font=\Large, thick, >=stealth]
         \node[state] (base) at (0,0) {$x=(S,E,I,R)$};
-        \node[state] (trans) at (165:8.4) {$x'=(S-1,E+1,I,R)$};
-        \node[state] (prog) at (195:8) {$x'=(S,E-1,I+1,R+1)$};
-        \node[state] (recov) at (295:4) {$x'=(S,E,I-1,R+1)$};
-        \node[state] (wane) at (355:9) {$x'=(S+1,E,I,R-1)$};
+        \node[state] (trans) at (165:8) {$x'=(S-1,E+1,I,R)$};
+        \node[state] (prog) at (205:7) {$x'=(S,E-1,I+1,R+1)$};
+        \node[state] (recov) at (305:5) {$x'=(S,E,I-1,R+1)$};
+        \node[state] (wane) at (350:8) {$x'=(S+1,E,I,R-1)$};
         \node[state] (sample) at (18:7.5) {$x'=(S,E,I,R)$};
         \draw[trans,->] (base) -- (trans) node[midway,above,sloped] {$\lab{Trans}$};
         \draw[trans,->] (base) -- (prog) node[midway,above,sloped] {$\lab{Prog}$};
         \draw[trans,->] (base) -- (recov) node[midway,above,sloped] {$\lab{Recov}$};
         \draw[trans,->] (base) -- (wane) node[midway,above,sloped] {$\lab{Wane}$};
         \draw[trans,->] (base) -- (sample) node[midway,above,sloped] {$\lab{Sample}$};
-        \node[font=\Large] (U) at (95:3.2) {$\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab{Wane},\lab{Sample}}$};
+        \node[font=\LARGE] (U) at (95:3.5) {$\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab{Wane},\lab{Sample}}$};
       \end{tikzpicture}
     }
   \end{center}
@@ -237,7 +318,8 @@ Another perspective on the Markov processes is to be had from its Markov state t
   }
 \end{figure}
 
-\subsubsection{Structured populations, demes}
+\subsubsection{Structured populations, demes, and deme occupancy}
+\label{sec:demes}
 
 In an \emph{unstructured} Markov population process, every lineage is exactly like every other.
 \citet{King2022} showed how every such process induces an unstructured Markov genealogy process.
@@ -255,7 +337,7 @@ For this purpose, we let $\Jumps$ be a countable set of jump \emph{marks} such t
 \begin{equation*}
   \alpha(t,x,x')=\sum_u{\alpha_u(t,x,x')}.
 \end{equation*}
-In \cref{fig:markov_state}, we use the marks to distinguish events of different types.
+In \cref{fig:markov_state}, we use the marks to distinguish events with distinct effects on genealogical relationships.
 Here and in the following, sums over $u$ are taken over the whole of $\Jumps$ unless otherwise indicated.
 
 Let us define the \emph{jump mark} process, $\Ur_t$, to be the mark of the latest jump as of time $t$.
@@ -281,7 +363,8 @@ Alternatively, one can think of $\Hr_t$ as consisting of the sequence
 $\left(\left(\Trh_k,\Xrh_k,\Urh_k\right)\right)_{k=0}^{\Kr_t}$.
 In particular, conditional on $\Hr_t$, both $\Xr_t$ and $\Ur_t$ are deterministic as are $\Kr_t$ and the embedded chains, $\Xrh_k$, $\Urh_k$, and the point process of event times $\Trh_k$.
 The probability measure, $\pi^{\mathrm{H}}$, for $\Hr_t$ can be expressed in terms of these:
-\begin{equation*}\label{eq:Hdens}
+\begin{equation*}
+  \label{eq:Hdens}
   \begin{aligned}
     \pi^{\mathrm{H}}(\dd{\H_t})
     =&p_{0}(\Xh_{0})\,\dd{\Xh_0}\,
@@ -291,7 +374,8 @@ The probability measure, $\pi^{\mathrm{H}}$, for $\Hr_t$ can be expressed in ter
 \end{equation*}
 where again, by convention, $\Th_0=0$ and $\Th_{K_t+1}=t$.
 
-\subsection{Binomial ratio}\label{sec:binomial_ratio}
+\subsection{Binomial ratio}
+\label{sec:binomial_ratio}
 
 For $n,r,\ell,s\in{\Zp^\Demes}$, define the \emph{binomial ratio}
 \begin{equation*}
@@ -359,7 +443,314 @@ Let $\Yspace^z$ denote the space of all functions that respect the topological s
 Let $\Yspace^\z_t$ be the time-$t$ \emph{section} of $\Yspace^z$, \ie $\Yspace^\z_t=\displaystyle\bigcup_{y\in\Yspace^z}{\Set{y_t}}$.
 
 
-\subsection{Jump types}\label{sec:jump_types}
+\subsection{Jump types}
+\label{sec:jump_types}
+
+\begin{figure}
+  \begin{center}
+    \resizebox{0.8\linewidth}{!}{
+      \begin{tikzpicture}[scale=2]
+        \usetikzlibrary{shapes,arrows,positioning}
+        \usetikzlibrary{arrows.meta,positioning,decorations}
+        \colorlet{darkblue}{blue!50!black}
+        \colorlet{maize}{yellow!90!black}
+        \colorlet{grey}{black!30!white}
+        \colorlet{darkgreen}{green!40!black}
+        \colorlet{lightblue}{white!30!blue}
+        \tikzstyle{label}=[font=\Large]
+        \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
+        \tikzstyle{deme1}=[color=grey, line width=3pt, >={Circle[width=5pt,length=5pt]}]
+        \tikzstyle{deme2}=[color=darkblue, line width=3pt, >={Circle[width=5pt,length=5pt]}]
+        \tikzstyle{deme3}=[color=maize, line width=3pt, >={Circle[width=5pt,length=5pt]}]
+        \tikzstyle{axis}=[color=black, thick, >=stealth]
+        \tikzstyle{timepoint}=[color=red!70!black]
+
+        \def\ysp{0.2} %% spacing between adjacent lineages
+
+        %% Birth-type event
+        \begin{scope}[shift={(0,0)}]
+          \coordinate (origin) at (0,0);
+          \node[label] (lab) at (origin) {\textbf{A}};
+          \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+          \coordinate (right) at ($(left)+(1,0)$);
+          \coordinate (mid) at ($(left)!0.5!(right)$);
+          \coordinate (rlab) at ($(right)+(0.1,0)$);
+          \coordinate (bleft) at ($(left)+(0,-8*\ysp)$);
+          \coordinate (bright) at (rlab |- bleft);
+          \coordinate (temp) at ($(origin)+(0,-4*\ysp)$);
+          \coordinate (temp1) at ($(temp)+(0,\ysp)$);
+          \coordinate (temp2) at ($(temp)-(0,\ysp)$);
+          \draw[deme2] (mid |- temp) -- (mid |- temp1) -- (right |- temp1);
+          \draw[deme3] (mid |- temp) -- (mid |- temp2) -- (right |- temp2);
+          \draw[deme1] (left |- temp) -- (right |- temp);
+          \node[text=darkgreen,font=\Huge] at (mid |- temp) {$\bullet$};
+          \foreach \y in {1,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme1] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {6,8} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme2] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {2,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme3] (left |- temp) -- (right |- temp);
+          }
+          \draw[timepoint] (mid) -- (mid |- bleft);
+          \draw[axis,->] (bleft) -- (bright);
+          \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \end{scope}
+
+        %% Death-type event
+        \begin{scope}[shift={(2,0)}]
+          \coordinate (origin) at (0,0);
+          \node[label] (lab) at (origin) {\textbf{B}};
+          \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+          \coordinate (right) at ($(left)+(1,0)$);
+          \coordinate (mid) at ($(left)!0.5!(right)$);
+          \coordinate (rlab) at ($(right)+(0.1,0)$);
+          \coordinate (bleft) at ($(left)+(0,-8*\ysp)$);
+          \coordinate (bright) at (rlab |- bleft);
+          \foreach \y in {1,2,6} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme1] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {3,8} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme2] (left |- temp) -- (right |- temp);
+          }
+          \coordinate (temp) at ($(origin)+(0,-4*\ysp)$);
+          \draw[deme3,dashed] (left |- temp) -- (mid |- temp);
+          \node[text=red,font=\Huge] at (mid |- temp) {$\times$};
+          \foreach \y in {5,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme3] (left |- temp) -- (right |- temp);
+          }
+          \draw[timepoint] (mid) -- (mid |- bleft);
+          \draw[axis,->] (bleft) -- (bright);
+          \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \end{scope}
+
+        %% Migration-type event
+        \begin{scope}[shift={(4,0)}]
+          \coordinate (origin) at (0,0);
+          \node[label] (lab) at (origin) {\textbf{C}};
+          \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+          \coordinate (right) at ($(left)+(1,0)$);
+          \coordinate (mid) at ($(left)!0.5!(right)$);
+          \coordinate (rlab) at ($(right)+(0.1,0)$);
+          \coordinate (bleft) at ($(left)+(0,-8*\ysp)$);
+          \coordinate (bright) at (rlab |- bleft);
+          \foreach \y in {2,3,8} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme1] (left |- temp) -- (right |- temp);
+          }
+          \coordinate (temp) at ($(origin)+(0,-4*\ysp)$);
+          \draw[deme2] (left |- temp) -- (mid |- temp);
+          \draw[deme3] (mid |- temp) -- (right |- temp);
+          \node[text=darkgreen,font=\Huge] at (mid |- temp) {$\bullet$};
+          \foreach \y in {1,5} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme2] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {6,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme3] (left |- temp) -- (right |- temp);
+          }
+          \draw[timepoint] (mid) -- (mid |- bleft);
+          \draw[axis,->] (bleft) -- (bright);
+          \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \end{scope}
+
+        %% Sample event
+        \begin{scope}[shift={(6,0)}]
+          \coordinate (origin) at (0,0);
+          \node[label] (lab) at (origin) {\textbf{D}};
+          \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+          \coordinate (right) at ($(left)+(1,0)$);
+          \coordinate (mid) at ($(left)!0.5!(right)$);
+          \coordinate (rlab) at ($(right)+(0.1,0)$);
+          \coordinate (bleft) at ($(left)+(0,-8*\ysp)$);
+          \coordinate (bright) at (rlab |- bleft);
+          \foreach \y in {2,5} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme1] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {1,4,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme2] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {3,6,8} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme3] (left |- temp) -- (right |- temp);
+          }
+          \coordinate (temp) at ($(origin)+(0,-2*\ysp)$);
+          \node[text=lightblue,font=\Huge] at (mid |- temp) {$\bullet$};
+          \coordinate (temp) at ($(origin)+(0,-6*\ysp)$);
+          \node[text=lightblue,font=\Huge] at (mid |- temp) {$\bullet$};
+          \draw[timepoint] (mid) -- (mid |- bleft);
+          \draw[axis,->] (bleft) -- (bright);
+          \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \end{scope}
+
+        %% Neutral-type event
+        \begin{scope}[shift={(0,-2)}]
+          \coordinate (origin) at (0,0);
+          \node[label] (lab) at (origin) {\textbf{E}};
+          \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+          \coordinate (right) at ($(left)+(1,0)$);
+          \coordinate (mid) at ($(left)!0.5!(right)$);
+          \coordinate (rlab) at ($(right)+(0.1,0)$);
+          \coordinate (bleft) at ($(left)+(0,-8*\ysp)$);
+          \coordinate (bright) at (rlab |- bleft);
+          \foreach \y in {4,6,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme1] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {1,2,5} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme2] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {3,8} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme3] (left |- temp) -- (right |- temp);
+          }
+          \draw[timepoint] (mid) -- (mid |- bleft);
+          \draw[axis,->] (bleft) -- (bright);
+          \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \end{scope}
+
+        %% Compound birth/death (Moran) event
+        \begin{scope}[shift={(2,-2)}]
+          \coordinate (origin) at (0,0);
+          \node[label] (lab) at (origin) {\textbf{F}};
+          \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+          \coordinate (right) at ($(left)+(1,0)$);
+          \coordinate (mid) at ($(left)!0.5!(right)$);
+          \coordinate (rlab) at ($(right)+(0.1,0)$);
+          \coordinate (bleft) at ($(left)+(0,-8*\ysp)$);
+          \coordinate (bright) at (rlab |- bleft);
+          \coordinate (temp) at ($(origin)+(0,-4*\ysp)$);
+          \coordinate (temp1) at ($(temp)+(0,\ysp)$);
+          \draw[deme1] (mid |- temp) -- (mid |- temp1) -- (right |- temp1);
+          \draw[deme1] (left |- temp) -- (right |- temp);
+          \draw[deme3,dashed] (left |- temp1) -- (mid |- temp1);
+          \node[text=darkgreen,font=\Huge] at (mid |- temp) {$\bullet$};
+          \node[text=red,font=\Huge] at (mid |- temp1) {$\times$};
+          \foreach \y in {2,5} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme1] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {1,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme2] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {6,8} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme3] (left |- temp) -- (right |- temp);
+          }
+          \draw[timepoint] (mid) -- (mid |- bleft);
+          \draw[axis,->] (bleft) -- (bright);
+          \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \end{scope}
+
+        %% Compound sample/death event
+        \begin{scope}[shift={(4,-2)}]
+          \coordinate (origin) at (0,0);
+          \node[label] (lab) at (origin) {\textbf{G}};
+          \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+          \coordinate (right) at ($(left)+(1,0)$);
+          \coordinate (mid) at ($(left)!0.5!(right)$);
+          \coordinate (rlab) at ($(right)+(0.1,0)$);
+          \coordinate (bleft) at ($(left)+(0,-8*\ysp)$);
+          \coordinate (bright) at (rlab |- bleft);
+          \coordinate (temp) at ($(origin)+(0,-5*\ysp)$);
+          \draw[deme3] (left |- temp) -- (mid |- temp);
+          \node[text=lightblue,font=\Huge] at (mid |- temp) {$\bullet$};
+          \node[text=red,font=\Huge] at (mid |- temp) {$\times$};
+          \foreach \y in {1,6} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme1] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {2,3,8} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme2] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {4,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme3] (left |- temp) -- (right |- temp);
+          }
+          \draw[timepoint] (mid) -- (mid |- bleft);
+          \draw[axis,->] (bleft) -- (bright);
+          \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \end{scope}
+
+        %% Compound event
+        \begin{scope}[shift={(6,-2)}]
+          \coordinate (origin) at (0,0);
+          \node[label] (lab) at (origin) {\textbf{H}};
+          \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+          \coordinate (right) at ($(left)+(1,0)$);
+          \coordinate (mid) at ($(left)!0.5!(right)$);
+          \coordinate (rlab) at ($(right)+(0.1,0)$);
+          \coordinate (bleft) at ($(left)+(0,-8*\ysp)$);
+          \coordinate (bright) at (rlab |- bleft);
+          \coordinate (temp) at ($(origin)+(0,-3*\ysp)$);
+          \draw[deme3] (left |- temp) -- (mid |- temp);
+          \draw[deme2] (mid |- temp) -- (right |- temp);
+          \coordinate (temp1) at ($(temp)+(0,-\ysp)$);
+          \draw[deme2] (mid |- temp) -- (mid |- temp1) -- (right |- temp1);
+          \coordinate (temp1) at ($(temp1)+(0,-\ysp)$);
+          \draw[deme2] (mid |- temp) -- (mid |- temp1) -- (right |- temp1);
+          \coordinate (temp1) at ($(temp1)+(0,-\ysp)$);
+          \draw[deme2] (mid |- temp) -- (mid |- temp1) -- (right |- temp1);
+          \node[text=darkgreen,font=\Huge] at (mid |- temp) {$\bullet$};
+          \foreach \y in {2,7} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme1] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {1} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme2] (left |- temp) -- (right |- temp);
+          }
+          \foreach \y in {8} {
+            \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+            \draw[deme3] (left |- temp) -- (right |- temp);
+          }
+          \draw[timepoint] (mid) -- (mid |- bleft);
+          \draw[axis,->] (bleft) -- (bright);
+          \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \end{scope}
+      \end{tikzpicture}
+    }
+  \end{center}
+  \caption{
+    Jump types differ by their effects on the genealogy.
+    \textbf{(A)} A birth-type jump results in the branching of one or more child lineages from the parent.
+    There can be only one parent, though the child lineages may be in demes different from those of their parent.
+    Here, a parent of the grey deme sires one child lineage in each of the blue and yellow demes.
+    The production of an event is an integer vector, with one entry for each deme.
+    The production of this event is therefore $r=(r_{\lab{grey}},r_{\lab{blue}},r_{\lab{yellow}})=(1,1,1)$.
+    \textbf{(B)} A death-type event causes the extinction of a lineage.
+    Since internal node without children are recursively removed, the affected branch disappears.
+    The production of this event is $r=(0,0,0)$.
+    \textbf{(C)} A migration-type event results in the movement of one or more lineages from one deme to another.
+    Here, one lineage moves from the blue to the yellow deme.
+    The production of this event is $r=(0,0,1)$, \ie the production is 0 for the grey and blue demes, and 1 for the yellow.
+    \textbf{(D)} In a sample-type event, one or more sample nodes (blue circles) are inserted.
+    Here, there are two samples, one in each of the grey and yellow demes.
+    Accordingly, its production is $r=(1,0,1)$.
+    \textbf{(E)} A neutral-type event has no effect on the genealogy and zero production in all demes: $r=(0,0,0)$.
+    \textbf{(F)} The theory presented here allows for compound events.
+    As an example, here a birth/death-type event occurs, wherein one yellow lineage is extinguished and a grey lineage simultaneously sires a grey child.
+    The production of this event is $r=(2,0,0)$.
+    \textbf{(G)} Here, a compound sample/death-type event occurs.
+    A yellow lineage is sampled and simultaneously extinguished.
+    Note that the lineage is not recursively removed, since sample nodes are never removed.
+    \textbf{(H)} A compound birth/migration-type event with yellow parent and production $r=c(0,4,0)$.
+    \label{fig:jump_types}
+  }
+\end{figure}
 
 We will show how a given population process naturally induces a process in the space of genealogies.
 Because different kinds of jumps have different effects on the genealogy, we need a way of distinguishing them.
@@ -420,13 +811,6 @@ At each event in the population process, one or more of the following changes ha
 \end{compactenum}
 In each of these events, the new node or nodes that are introduced are situated at time $t$.
 
-\begin{figure}
-  \caption{
-    Illustration of genealogy processes.
-    \AAK{[Similar to that of \citet{King2022} but with multiple demes represented.]}
-  }
-\end{figure}
-
 \subsubsection{Emergent lineages and production}
 
 The lineages which descend from an inserted node are said to \emph{emerge} from the event.
@@ -451,10 +835,21 @@ We refer to this property as the \emph{exchangeability} of lineages within a dem
 
 \subsection{Pruned and obscured genealogies}
 
+\begin{figure}
+  \caption{
+    Unpruned, pruned, and obscured enealogies.
+  }
+\end{figure}
+
+The process just described yields a genealogy that relates all extant members of the population, and all samples.
+Moreover, it details each lineage's complete history of movement through the various demes.
+The data we ultimately wish to analyze will be based only on samples, however;
+nor, in general, will the histories of deme occupancy be observable.
+A generative model must account for this loss of information.
+We therefore now describe how genealogies are \emph{pruned} to yield sample-only genealogies and then \emph{obscured} via the erasure of color from their branches.
+
 \subsubsection{Pruned genealogy}
 
-Although the process just described yields a genealogy that relates all extant members of the population, and all samples, the data we ultimately wish to analyze will be based only on samples.
-We therefore describe how the genealogy process is \emph{pruned} to yield the sample-only genealogy.
 Given a genealogy $\Gen_t$, one obtains the \emph{pruned genealogy}, $\Pr_t=\prune(\Gen_t)$ by first dropping every tip node and then recursively dropping every childless internal node.
 In a pruned genealogy only internal and sample nodes remain, and sample nodes are found at all of the leaves and possibly some of the interior nodes of the genealogy.
 Observe that a pruned genealogy is a colored genealogy:
@@ -462,6 +857,7 @@ it retains information about where among the demes each of its lineages was thro
 Note also that a pruned genealogy $\Pr_t$ is characterized by functions $y^{\Pr_t}$ and $z^{\Pr_t}$ just as an un-pruned genealogy is.
 
 \subsubsection{Lineage count and saturation}
+\label{sec:ells}
 
 In the following, we will find that we need to count the deme-specific numbers of lineages present in a given pruned genealogy at a given time.
 Accordingly, suppose $\Pr_T=(y,z)$ is a pruned genealogy and suppose $t\in[0,T]$.
@@ -483,11 +879,22 @@ Thus, we can define the \emph{saturation} function such that, whenever $\Pr_T=(\
   }
 \end{figure}
 
+\subsubsection{Compatibility}
+\label{sec:compatibility}
+
+Suppose $\P_T$ is a pruned genealogy and $t\in\event{P}{T}$.
+The local structure of $\P_T$ is, in general, compatible with only a subset of the possible jumps $\Jumps$.
+For example, if the event in $\P_T$ is a branch node or a sample node, then it is compatible only with birth-type or sample-type jumps, respectively.
+Similarly, if the node in $\P_T$ at time $t$ is one at which a lineage moves from deme $i$ to deme $i'$, then $u$ must be either of $i\to{i'}$ migration type or of a birth type with parent in $i$ and $r^u_{i'}>0$.
+To accommodate all possibilities, let us introduce the indicator function $Q$ such that $Q_u(y,y',z,z')=1$ if and only if there is some pruned genealogy $\P_T$ and $t\in{[0,T]}$,
+such that $\yt^{\P_T}_t=y$, $y^{\P_T}_t=y'$, $\zt^{\P_T}_t=z$, $z^{\P_T}_t=z'$,
+and $\P_T$ is compatible with an event of type $u$ at time $t$;
+$Q=0$ otherwise.
+We refer to $Q$ as the \emph{compatibility indicator}.
+
 \subsubsection{Obscured genealogy}
 
-As we have seen, a pruned genealogy contains information about the full history of each sample lineage, including the times at which it entered or exited any deme, sired offspring, or was sampled.
-The data we seek to analyze will typically lack much of this information.
-Accordingly, we define the \emph{obscured genealogy} to be that obtained by discarding all information about demes and events not visible from the topology of the tree alone.
+The \emph{obscured genealogy} is obtained by discarding all information about demes and events not visible from the topology of the tree alone.
 In particular, if $\Pr_T=(y,z)$ is a pruned genealogy, we write $\obs(\Pr_T)=z$ to denote the obscured genealogy.
 
 \section{Results}
@@ -495,22 +902,13 @@ In particular, if $\Pr_T=(y,z)$ is a pruned genealogy, we write $\obs(\Pr_T)=z$ 
 \subsection{Likelihood for pruned genealogies}
 
 Our first result will be an expression for the likelihood of a given pruned genealogy $\P^*_T$ given the history $\Hr_T$ of the population process to time $T$.
-Of course, not every history is compatible with $\P^*_T$.
-In particular, $\Hr_T$ is only compatible with $\P^*_T$ if every node-time in $\P^*_T$ is an event time of $\Hr_T$, \ie only if $\event{\Hr}{T}\supseteq\event{P}{T}^*$.
-Moreover, even if an event in $\Hr_T$ coincides with one of the node times of $\P^*_T$, it may be incompatible with the local structure of $\P^*_T$.
-For example, if no sample is present in $\P^*_T$ at time $t$ and $\Hr_T$ contains an event of sample type at that time, then incompatibility arises.
-As another example, if $\P^*_T$ has a node at time $t$ at which a lineage moves from deme $i$ to deme $i'$, but there is no $u\in\Jumps$ for which such a move is possible, then incompatibility arises again.
-To keep track of this, let us introduce the indicator function $Q$ such that $Q_u(y,y',z,z')=1$ if and only if there is some pruned genealogy $\P_T$ and $t\in{[0,T]}$,
-such that $\yt^{\P_T}_t=y$, $y^{\P_T}_t=y'$, $\zt^{\P_T}_t=z$, $z^{\P_T}_t=z'$,
-and $\P_T$ is compatible with an event of type $u$ at time $t$;
-$Q=0$ otherwise.
 
 \begin{thm}\label{thm:pruned_lik}
   Let $\P^*_T=(y^*,z^*)$  be a given pruned genealogy and
   \begin{equation}\label{eq:phidef}
-    \phi_u(x,y,y',z,z')\coloneq\BinRatio{n(x)}{\ell(y',z')}{r^{u}}{s(y,y',z,z')}\,Q_{u}(y,y',z,z')
+    \phi_u(x,y,y',z,z')\coloneq\BinRatio{n(x)}{\ell(y',z')}{r^{u}}{s(y,y',z,z')}\,Q_{u}(y,y',z,z'),
   \end{equation}
-  (cf.~\cref{sec:binomial_ratio}).
+  where $n$ is the deme occupancy (\cref{sec:demes}), $\ell$ and $s$ are the lineage-count and saturation functions, respectively (\cref{sec:ells}), $Q$ is the compatibility indicator (\cref{sec:compatibility}), and the binomial ratio is as defined in \cref{sec:binomial_ratio}.
   Then
   \begin{equation*}
     \CondProb{\Pr_T=\P^*_T}{\Hr_T=\H_T}=\prod_{t\in\event{\H}{T}}{\phi_{\U_t}(\X_t,\yt^*_t,y^*_t,\zt^*_t,z^*_t)}
@@ -518,8 +916,8 @@ $Q=0$ otherwise.
   \end{equation*}
 \end{thm}
 \begin{proof}
-  As we have already observed, if $\event{\Hr}{T}\nsupseteq\event{\P}{T}^*$, then $\CondProb{\Pr_T=\P^*_T}{\Hr_T}=0$.
-  Similarly, if there is any event of $\Hr_T$ which is incompatible with $\P^*_T$, $\CondProb{\Pr_T=\P^*_T}{\Hr_T}=0$.
+  If $\event{\Hr}{T}\nsupseteq\event{\P}{T}^*$, then $\Hr_T$ and $\P^*_T$ are incompatible and $\CondProb{\Pr_T=\P^*_T}{\Hr_T}=0$.
+  Similarly, if any event of $\Hr_T$ is incompatible with the local structure of $\P^*_T$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr_T=\P^*_T}{\Hr_T}=0$.
   Let us therefore suppose that neither of these conditions hold.
   Conditional on $\Hr_T=\H_T$, at each time $t\in\event{\H}{T}$, a jump of mark $\U_t$ occured, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a new deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
   In $\P^*_T$, at time $t$, there are $\ell_i=\ell_i(y^*_t,z^*_t)$ lineages in deme $i$, of which $s_i=s_i(\yt^*_t,y^*_t,\zt^*_t,z^*_t)$ are emergent.
@@ -693,58 +1091,99 @@ Here, we develop tools for manipulating complex expressions that are otherwise c
 
 \begin{defn}
   Suppose $\Xr_t$ is a continuous-time Markov process with Kolmogorov forward equation (KFE)
-  \begin{equation}\label{eq:kfe2}
-    \frac{\partial{u}}{\partial{t}}
+  \begin{equation}
+    \label{eq:kfe2}
+    \frac{\partial{u}}{\partial{t}}(t,x)
     =\int{u(t,x')\,\beta(t,x',x)\,\dd{x'}}
     -\int{u(t,x)\,\beta(t,x,x')\,\dd{x'}}.
   \end{equation}
   Suppose that $B(t,x,x')\ge{0}$ and $\lambda(t,x)$ are given, real-valued, measurable functions.
-  Let $\mathcal{M}\subseteq\Rp$ be countable such that $\mathcal{M}\cap[0,t]$ is finite for all $t$.
   We say that the equation
-  \begin{equation}\label{eq:filtereq}
+  \begin{equation}
+    \label{eq:filtereq}
     \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}
+      \frac{\partial{w}}{\partial{t}}(t,x)
       =&\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
       -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
-      -\lambda(t,x)\,w(t,x)\\
-      &\quad+\sum_{e\in\mathcal{M}}\delta(t,e)\,\left\{\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}-w(t,x)\right\}.
+      -\lambda(t,x)\,w(t,x).\\
     \end{aligned}
   \end{equation}
-  is the \emph{filter equation} with \emph{driver} $\Xr_t$ (or \emph{generated by} $\beta$), \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observed events} $\mathcal{M}$.
+  is the \emph{filter equation} with \emph{driver} $\Xr_t$ (or \emph{generated by} $\beta$), \emph{boost} $B$, and \emph{decay} $\lambda$.
 \end{defn}
 
-\begin{remark}\label{rem:equivfilt}
-  \Cref{eq:filtereq} is equivalent to
-  \begin{equation*}
-    \begin{gathered}
-      \frac{\partial{w}}{\partial{t}}
-      =\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
-      -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
-      -\lambda(t,x)\,w(t,x),\quad t\notin{\mathcal{M}},\\
-      w(t,x)=\int{\leftlim{w}(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}},\quad t\in{\mathcal{M}}.
-    \end{gathered}
-  \end{equation*}
-  Here $\wt$ refers to the left-limit of $w$.
+\begin{remark}
+  Trivially, a Kolmogorov forward equation is itself a filter equation with boost $1$ and decay $0$.
 \end{remark}
 
-\begin{remark}
-  Trivially, a Kolmogorov forward equation is itself a filter equation with boost $1$, decay $0$, and no observed events ($\mathcal{M}=\emptyset$).
-\end{remark}
+The following results show how filter equations allow one to integrate over random histories.
+
+\begin{lemma}
+  Suppose that $B:\Rp\times\Xspace^2\to\Rp$ is measurable.
+  If $\Vr_t$ is an $\Rp$-valued random process satisfying
+  \begin{equation*}
+    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\prod_{e\in\event{\H}{t}}{B(e,\Xt_e,\X_e)},
+  \end{equation*}
+  then $\CondExpect{\Vr_t}{\Xr_t=x}$ is a measure-valued deterministic process on $\Xspace$ with density $w(t,x)$.
+  Moreover, $w$ satisfies the filter equation
+  \begin{equation*}
+    \frac{\partial{w}}{\partial{t}}=\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}-\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}
+  \end{equation*}
+  and $\Expect{\Vr_t}=\int{w(t,x)\,\dd{x}}$.
+\end{lemma}
+\begin{proof}
+  The expectation can be broken into three terms, according to whether $\H_t$ has zero, one, or more than one event in $\halfclosed{t-\Delta,t}$.
+  Accordingly, as $\Delta\downarrow{0}$,
+  \begin{equation*}
+    \begin{aligned}
+      w(t,x)=&\left(1-\Delta\,\int{\alpha(t-\Delta,x,x')\,\dd{x'}}\right)\,w(t-\Delta,x)\\
+      &\qquad+\Delta\,\int{\alpha(t-\Delta,x',x)\,B(t-\Delta,x',x)\,w(t-\Delta,x')\,\dd{x'}}+o(\Delta).
+    \end{aligned}
+  \end{equation*}
+  Taking the limit as $\Delta\downarrow{0}$, we obtain
+  \begin{equation*}
+    \frac{\partial{w}}{\partial{t}}(t,x)
+    =\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
+    -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}.
+  \end{equation*}
+\end{proof}
+
+\begin{lemma}
+  Suppose $\mathcal{M}\subset{\Rp}$ is finite and let $\mathcal{M}_t\coloneq\mathcal{M}\cap{[0,t]}$.
+  Suppose that $B:\Rp\times\Xspace^2\to\Rp$ is measurable and
+  $\Vr_t$ is an $\Rp$-valued process satisfying
+  \begin{equation*}
+    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\Indicator{\event{\H}{t}\supseteq\mathcal{M}_t}\,\prod_{e\in\event{\H}{t}}{B(e,\Xt_e,\X_e)}.
+  \end{equation*}
+  Then $\CondExpect{\Vr_t}{\Xr_t=x}$ is a measure-valued process on $\Rp^{\vert\mathcal{M}_t\vert}\times\Xspace$ with density $w(t,x)$.
+  Furthermore, $w(t,x)$ satisfies
+  \begin{equation*}
+    \begin{aligned}
+      \frac{\partial{w}}{\partial{t}}(t,x)&=
+      \int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}-\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}},\qquad
+      &t\notin{\mathcal{M}},\\
+      w(t,x)&=\int{\wt(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
+      &t\in{\mathcal{M}}
+    \end{aligned}
+  \end{equation*}
+  and $\Expect{\Vr_t}=\int{w(t,x)\,\dd{x}}$.
+\end{lemma}
 
 Filter equations afford a convenient means of computing expectations and likelihoods for pure jump processes.
-This is facilitated by the following fact.
+This is facilitated by the following Lemma, the statement of which relies on a non-standard Dirac delta function.
+Let $\delta(v,v')$ be the right-sided Dirac delta function satisfying $\delta(v,v')=0$ for $v\ne{v'}$ and $\int_a^b{f(v)\,\delta(v,v')\,\dd{v}}=f(v')\,\Indicator{v'\in\halfopen{a,b}}$ for all \cadlag\ $f$.
 
-\begin{lemma}\label{lemma:filtereq}
-  The filter equation \eqref{eq:filtereq} with $\mathcal{M}=\emptyset$ and $B>0$ is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u(t,x,v)$ satisfies the KFE
-  \begin{equation}\label{eq:filterlemma}
+\begin{lemma}
+  \label{lemma:filter}
+  The filter equation \eqref{eq:filtereq} is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u(t,x,v)$ satsfies the KFE
+  \begin{equation}
+    \label{eq:filterlemma}
     \begin{aligned}
       \frac{\partial{u}}{\partial{t}}=&\int{u(t,x',v')\,\beta(t,x',x)\,\delta(v,B(t,x',x)\,v')\,\dd{x'}\,\dd{v'}}\\
       &\qquad-\int{u(t,x,v)\,\beta(t,x,x')\,\delta(v',B(t,x,x')\,v)\,\dd{x'}\,\dd{v'}}
       +\tfrac{\partial}{\partial{v}}\left[\lambda(t,x)\,v\,u(t,x,v)\right],
     \end{aligned}
   \end{equation}
-  on the space $\Xspace\times(0,\infty)$.
-  Here, $\delta(v,v')$ is the familiar Dirac $\delta$.
+  on the space $\Xspace\times\Rp$.
 \end{lemma}
 \begin{proof}
   \ELI{[Conditions for differentiating under the integral in the proof?
@@ -774,119 +1213,10 @@ This is facilitated by the following fact.
 \Cref{eq:filterlemma} is recognizable as the KFE of a certain process $(\Xr_t,\Vr_t)$.
 In particular, $\Xr_t$ is the driver with KFE \eqref{eq:kfe2}.
 The $\Vr_t$ is \emph{directed} by $\Xr_t$ in the sense that $\Vr$ has jumps wherever $\Xr$ does:
-when $\Xr$ jumps at time $t$ from $x$ to $x'$, $\Vr$ jumps by the multiplicative factor $B(t,x,x')>0$.
+when $\Xr$ jumps at time $t$ from $x$ to $x'$, $\Vr$ jumps by the multiplicative factor $B(t,x,x')\ge{0}$.
 Between jumps, $\Vr_t$ decays deterministically and exponentially at rate $\lambda(t,x)$.
-If we view $\Vr_t$ as a weight, then \cref{lemma:filtereq} tells us how the $\Vr_t$-weighted average of $\Xr_t$ evolves in time:
+If we view $\Vr_t$ as a weight, then \cref{lemma:filter} tells us how the $\Vr_t$-weighted average of $\Xr_t$ evolves in time:
 this average is simply $\int\!{w(t,x)\,\dd{x}}$.
-This motivates the following result, which shows how filter equations allow one to integrate over random histories.
-
-\begin{prop}\label{prop:zeroboost}
-  Suppose $\Xr_t$ is a non-explosive pure jump process with KFE
-  \begin{equation*}
-    \begin{gathered}
-      \frac{\partial{u}}{\partial{t}}(t,x)=\int{u(t,x')\,\alpha(t,x',x)\,\dd{x'}}
-      -\int{u(t,x)\,\alpha(t,x,x')\,\dd{x'}},\qquad
-      u(0,x)=p_0(x).
-    \end{gathered}
-  \end{equation*}
-  Let $\Hr_t$ be its history process.
-  Suppose $\Vr_t$ is an $\Rp$-valued random process such that
-  \begin{equation}\label{eq:Vprod}
-    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\prod_{e\in\event{\H}{t}}{B(e,\Xt_e,\X_e)},
-  \end{equation}
-  for some given measurable function $B\ge{0}$.
-  If $w$ satisfies the filter equation,
-  \begin{equation*}
-    \frac{\partial{w}}{\partial{t}}(t,x)
-    =\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
-    -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}\\
-  \end{equation*}
-  then $\Expect{\Vr_t}=\int{w(t,x)\,\dd{x}}$.
-\end{prop}
-\begin{proof}
-  Define $Q(t,x,x')=\Indicator{B(t,x,x')>0}$ and apply \cref{lemma:filtereq} with
-  \begin{equation*}
-    \begin{gathered}
-      \beta(t,x,x')=\alpha(t,x,x')\,Q(t,x,x'),
-      \qquad
-      \lambda=\int{\alpha(t,x,x')\,\left(1-Q(t,x,x')\right)\dd{x'}}.
-    \end{gathered}
-  \end{equation*}
-  \ELI{[Lemma A1 has $B>0$, which only covers the cases when $Q=1$ and $\lambda=0$.
-      But, $B\ge{0}$ seems enough in the proof of lemma A1, as long as one allows a one-sided Dirac $\delta$ at $0$.
-      Maybe the Dirac $\delta$ should all be one-sided in order to integrate
-      correctly on right-continuous functions? ]}
-\end{proof}
-
-%% An important special case is that of a deterministic driving process.
-%% The following result is established by routine calculation.
-
-%% \begin{prop}
-%%   Suppose $X:[0,T]\to\Xspace$ is a deterministic, piecewise constant, \cadlag\ function and let $M=\event(X)$.
-%%   Then the KFE for $X_t$ is \cref{eq:kfe2} with $\beta(t,x,x')=\sum_{e\in{M}}{\delta(t,e)\delta(x',X_e)}$.
-%%   With this driver, the filter equation (\cref{eq:filtereq}) becomes
-%%   \begin{equation*}
-%%     \begin{gathered}
-%%       \frac{\partial{w}}{\partial{t}}=
-%%       -\lambda(t,x)\,w(t,x)\quad\text{for}\quad{t\in[0,T]\setminus{M}},\\
-%%       w(t,x)=\delta(x,X_t)\,\int{\wt(t,x')\,B(t,x',X_t)\,\dd{x'}}\quad\text{for}\quad{t\in{M}}.
-%%     \end{gathered}
-%%   \end{equation*}
-%% \end{prop}
-
-The following result extends \cref{prop:zeroboost} to the situation where $\mathcal{M}\ne\emptyset$, \ie where the times of some of the events in the history are observed.
-
-\begin{prop}\label{prop:fullfilt}
-  Let $\Xr_t$, $\Hr_t$, $B$, and $\Vr_t$ be as in \cref{prop:zeroboost}.
-  Suppose that $\mathcal{M}\subseteq\halfclosed{0,t}$ is a fixed, finite set of observed event times.
-  Let $\CondExpect{\Vr_t}{\event{\Hr}{t}\supseteq\mathcal{M}}$ denote the expectation of $\Vr_t$ conditional on $\event{\Hr}{t}\supseteq\mathcal{M}$.
-  If $w(t,x)$ satisfies $w(0,x)=p_0(x)$ and the filter equation
-  \begin{equation*}
-    \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}
-      =&\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
-      -\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}\\
-      &\quad+\sum_{e\in\mathcal{M}}\delta(t,e)\,\left\{\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}-w(t,x)\right\},
-    \end{aligned}
-  \end{equation*}
-  then $\CondExpect{\Vr_t}{\event{\Hr}{t}\supseteq\mathcal{M}}=\int{w(t,x)\,\dd{x}}$.
-  \ELI{[(a) line 2: density $\rightarrow$ expectation.
-      (b) the term $\delta(t,e)\,w(t,x)$ seems irrelevant:
-      the derivative at a finite set of points only matters when it is a delta function.]}
-\end{prop}
-\begin{proof}
-  Suppose $s\in[0,t]$ and let
-  \begin{equation*}
-    w(s,x)=\Expect{\prod_{e\in\event{\Hr}{s}}{B\left(e,\Xrt_e,\Xr_e\right)}}.
-  \end{equation*}
-  That is, $w(s,x)$ is the expectation (over histories) of the partial products of \cref{eq:Vprod}.
-  If $s\notin{\mathcal{M}}$, then for $\Delta>0$ sufficiently small,
-  \begin{equation*}
-    \begin{aligned}
-      w(s,x)=&\left(1-\Delta\,\int{\alpha(s-\Delta,x,x')\,\dd{x'}}\right)\,w(s-\Delta,x)\\
-      &\qquad+\int{\alpha(s-\Delta,x',x)\,B(s-\Delta,x',x)\,w(s-\Delta,x')\,\dd{x'}}+o(\Delta).
-    \end{aligned}
-  \end{equation*}
-  Taking the limit as $\Delta\downarrow{0}$, we obtain
-  \begin{equation*}
-    \frac{\partial{w}}{\partial{s}}(s,x)
-    =\int{w(s,x')\,\alpha(s,x',x)\,B(s,x',x)\,\dd{x'}}
-    -\int{w(s,x)\,\alpha(s,x,x')\,\dd{x'}}.
-  \end{equation*}
-  If $s\in\mathcal{M}$, then
-  \begin{equation*}
-    w(s,x)=\int{\wt(s,x')\,\alpha(s,x',x)\,B(s,x',x)\,\dd{x'}}.
-  \end{equation*}
-  By \cref{rem:equivfilt}, the result follows.
-  \ELI{[The argument shows that the filter equation satisfies a KFE, but the limit expression seems justified by a similar KFE.
-      Is the point that one KFE implies the other?]}
-\end{proof}
-
-\ELI{[Maybe, Prop A3 could be a version of Prop A2 allowing for discrete transitions at a finite set of times;
-    a combination of cts time and discrete time Markov chains.
-    That is all we need to extend Prop A2 to observation times, which can be viewed just as an extended Markov process including the observation events.
-    That is, to make a distinction between ``observation events'' that give the sequences used to construct the phylogeny, and ``observed events'' which are determined points on the phylogeny.
-    The latter are a realization of a random process, and the former are defined to be fixed a priori.]}
 
 
 %% Filter equations allow us to pass easily between equivalent representations of a process.
