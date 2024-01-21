@@ -1,15 +1,22 @@
-default: ms.pdf ms.R
+default: ms.pdf ms.R slides.pdf notes.pdf handout.pdf
 
-FIGS = $(wildcard figs/*.tex)
+FIGS=$(wildcard figs/*.tex)
 
-ms.pdf: $(FIGS)
+slides.pdf handout.pdf notes.pdf: talk.tex
+
+ms.tex: setup.R defs.tex $(FIGS)
 
 .INTERMEDIATE: ms.tex
 
-ms.pdf: header.tex defs.tex
+ms.pdf: ms.tex
+
+ms.tex: header.tex
+
+talk.tex: talk_header.tex beamer.tex
 
 include rules.mk
 
 clean: .clean
 
 fresh: .fresh
+	$(RM) ms.tex

@@ -1,5 +1,5 @@
 grant
-tmp/**
+tmp
 .Rhistory
 *.aux
 *.bbl

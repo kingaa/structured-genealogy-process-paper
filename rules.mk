@@ -1,12 +1,18 @@
-PDFLATEX = pdflatex
-BIBTEX = bibtex
-MAKEIDX = makeindex
-CP = cp
-RM = rm -f
-
-REXE = R --vanilla
-RCMD = $(REXE) CMD
+REXE = Rscript --no-save --no-restore --no-init-file
+RBATCH = R CMD BATCH --no-save --no-restore
 RSCRIPT = Rscript --vanilla
+RCMD = $(REXE) CMD
+PANDOC = pandoc -s -t html5+smart --mathjax
+PDFLATEX = pdflatex -halt-on-error -file-line-error -interaction batchmode
+BIBTEX = bibtex
+CP = cp -f
+RM = rm -f
+ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
+%.pdf: export BSTINPUTS=$(ROOT_DIR)
+%.pdf: export BIBINPUTS=$(ROOT_DIR)
+%.pdf: export TEXINPUTS=.:$(ROOT_DIR):$(shell echo $$TEXINPUTS)
+%.pdf: export SOURCE_DATE_EPOCH=954590400
 
 %.pdf: %.tex
 	$(PDFLATEX) $*

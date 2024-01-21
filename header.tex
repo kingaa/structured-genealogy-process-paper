@@ -2,7 +2,11 @@
 \usepackage{times}
 \usepackage[neverdecrease]{paralist}
 \usepackage[pdftex,colorlinks=true]{hyperref}
-\usepackage{pgfplots}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,decorations,calc,math}
+\graphicspath{{figs/}}
+
 \input{defs}
 
 \setcounter{tocdepth}{3}
@@ -15,7 +19,6 @@
 \setlength{\topmargin}{-.35in}
 \setlength{\parskip}{1ex}
 \setlength{\parindent}{0pt}
-% \setcitestyle{authoryear,open={((},close={))}}
 
 \usepackage{chngcntr}
 \counterwithout{equation}{section}
@@ -40,7 +43,7 @@
 \newtheorem{thm}{Theorem}
 \newtheorem{corol}[thm]{Corollary}
 \newtheorem{prop}{Proposition}
-\newtheorem{lemma}[prop]{Lemma}
+\newtheorem{lemma}{Lemma}
 \theoremstyle{definition}
 \newtheorem*{defn}{Definition}
 \newtheorem{example}{Example}
@@ -48,6 +51,7 @@
 \newtheorem{remark}{Remark}
 \renewcommand\thethm{\arabic{thm}}
 \renewcommand\theprop{\thesection\arabic{prop}}
+\renewcommand\thelemma{\thesection\arabic{lemma}}
 
 \usepackage{algorithm}
 \usepackage{algorithmic}
