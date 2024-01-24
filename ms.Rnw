@@ -502,14 +502,14 @@ In particular, if $\Pr_T=(y,z)$ is a pruned genealogy, we write $\obs(\Pr_T)=z$ 
 Our first result will be an expression for the likelihood of a given pruned genealogy $\P^*_T$ given the history $\Hr_T$ of the population process to time $T$.
 
 \begin{thm}\label{thm:pruned_lik}
-  Let $\P^*_T=(y^*,z^*)$  be a given pruned genealogy and
+  Let $\P^*_T=(\y^*,\z^*)$  be a given pruned genealogy and
   \begin{equation}\label{eq:phidef}
     \phi_u(x,y,y',z,z')\coloneq\BinRatio{n(x)}{\ell(y',z')}{r^{u}}{s(y,y',z,z')}\,Q_{u}(y,y',z,z'),
   \end{equation}
   where $n$ is the deme occupancy (\cref{sec:demes}), $\ell$ and $s$ are the lineage-count and saturation functions, respectively (\cref{sec:ells}), $Q$ is the compatibility indicator (\cref{sec:compatibility}), and the binomial ratio is as defined in \cref{sec:binomial_ratio}.
   Then
   \begin{equation*}
-    \CondProb{\Pr_T=\P^*_T}{\Hr_T=\H_T}=\Indicator{\event{\H}{T}\supseteq{\event{\P}{T}^*}}\,\prod_{t\in\event{\H}{T}}{\phi_{\U_t}(\X_t,\yt^*_t,y^*_t,\zt^*_t,z^*_t)}.
+    \CondProb{\Pr_T=\P^*_T}{\Hr_T=\H_T}=\Indicator{\event{\H}{T}\supseteq{\event{\P}{T}^*}}\,\prod_{t\in\event{\H}{T}}{\phi_{\U_t}(\X_t,\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)}.
   \end{equation*}
 \end{thm}
 \begin{proof}
@@ -517,7 +517,7 @@ Our first result will be an expression for the likelihood of a given pruned gene
   Similarly, if any event of $\Hr_T$ is incompatible with the local structure of $\P^*_T$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr_T=\P^*_T}{\Hr_T}=0$.
   Let us therefore suppose that neither of these conditions hold.
   Conditional on $\Hr_T=\H_T$, at each time $t\in\event{\H}{T}$, a jump of mark $\U_t$ occured, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a new deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
-  In $\P^*_T$, at time $t$, there are $\ell_i=\ell_i(y^*_t,z^*_t)$ lineages in deme $i$, of which $s_i=s_i(\yt^*_t,y^*_t,\zt^*_t,z^*_t)$ are emergent.
+  In $\P^*_T$, at time $t$, there are $\ell_i=\ell_i(\y^*_t,\z^*_t)$ lineages in deme $i$, of which $s_i=s_i(\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)$ are emergent.
   By assumption, at each genealogical event, lineages within a deme are exchangeable:
   each has an identical probability of being involved.
   This exchangeability implies that each lineage present in a deme at time $t$ was equally likely to have been one of the emergent lineages.
@@ -528,7 +528,7 @@ Our first result will be an expression for the likelihood of a given pruned gene
   Because our lineages are labelled, each of the $\binom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct; just one of these is the one present in $\P^*_t$.
   Moreover, since, again conditional on $\Hr_T$, the identities of the lineages involved in a genealogical event are random and independent of the identities selected at all other events, we have established that
   \begin{equation*}
-    \CondProb{\Pr_T=\P^*_T}{\Hr_T=\H_T}=\prod_{t\in\event{\H}{T}}{\BinRatio{n(\X_t)}{\ell(y^*_t,z^*_t)}{r^{\U_t}}{s(\yt^*_t,y^*_t,\zt^*_t,z^*_t)}}.
+    \CondProb{\Pr_T=\P^*_T}{\Hr_T=\H_T}=\prod_{t\in\event{\H}{T}}{\BinRatio{n(\X_t)}{\ell(\y^*_t,\z^*_t)}{r^{\U_t}}{s(\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)}}.
   \end{equation*}
   Returning to the possibility that $\H_T$ is incompatible with $\P^*_T$, since $\Prob{\Pr_T=\P^*_T}=0$ if either any $Q_u=0$ or any event of $\P^*_T$ is not an event of $\H_T$, we obtain the result.
 \end{proof}
@@ -547,9 +547,9 @@ In particular, the following theorem follows immediately from \cref{lemma:sing-f
   \begin{equation}
     \begin{aligned}
       \frac{\partial{w}}{\partial{t}}(t,x)=
-      &\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(x,\yt^*_t,y^*_t,\zt^*_t,z^*_t)\,\dd{x'}}}
+      &\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(x,\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)\,\dd{x'}}}
       -\sum_u{\int{w(t,x)\,\alpha_u(t,x,x')\,\dd{x'}}}\\
-      &\quad+\sum_{e\in\event{\P}{T}^*}{\delta(t,e)\,\left\{\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(x,\yt^*_t,y^*_t,\zt^*_t,z^*_t)\,\dd{x'}}}-w(t,x)\right\}},
+      &\quad+\sum_{e\in\event{\P}{T}^*}{\delta(t,e)\,\left\{\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(x,\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)\,\dd{x'}}}-w(t,x)\right\}},
     \end{aligned}
   \end{equation}
   where $\phi$ is defined in \cref{eq:phidef},
@@ -564,13 +564,13 @@ In particular, the following theorem follows immediately from \cref{lemma:sing-f
 Our next result concerns the likelihood of a given obscured genealogy conditional on the history.
 
 \begin{thm}\label{thm:obsc_lik}
-  Let $z^*=\obs(\P^*_T)$ be a given obscured genealogy.
-  Let $\pi$ and $q$ be probability kernels, such that for all $u\in\Jumps$, $t\in\Rp$, $x,x'\in\Xspace$, $y,y'\in\Yspace^{z^*}_t$, $\pi_u(t,x,x',y,y')\ge{0}$, $\sum_{y'\in\Yspace_t^{z^*}}{\pi_u(t,x,x',y,y')}=1$, $q(x,y)\ge{0}$, and $\sum_{y\in\Yspace_0^{z^*}}{q(x,y)}=1$.
-  Suppose moreover that $\pi_u(t,x,x',y,y')>0$ whenever $Q_u(y,y',\zt^*_t,z^*_t)=1$
-  and that $q(x,y)>0$ whenever $\Prob{\Xr_0=x,y^{\Pr_T}_0=y}>0$.
-  Then there is a Markov jump process $\yr_t$ on $\Yspace_{z^*}$ such that
+  Let $\z^*=\obs(\P^*_T)$ be a given obscured genealogy.
+  Let $\pi$ and $q$ be probability kernels, such that for all $u\in\Jumps$, $t\in\Rp$, $x,x'\in\Xspace$, $y,y'\in\Yspace^{z^*}_t$, $\pi_u(t,x,x',y,y')\ge{0}$, $\sum_{y'\in\Yspace_t^{z^*}}{\pi_u(t,x,x',y,y')}=1$, $q(x,y)\ge{0}$, and $\sum_{y\in\Yspace_0^{\z^*}}{q(x,y)}=1$.
+  Suppose moreover that $\pi_u(t,x,x',y,y')>0$ whenever $Q_u(y,y',\zt^*_t,\z^*_t)=1$
+  and that $q(x,y)>0$ whenever $\Prob{\Xr_0=x,\y^{\Pr_T}_0=y}>0$.
+  Then there is a Markov jump process $\yr_t$ on $\Yspace_{\z^*}$ such that
   \begin{equation*}
-    \CondProb{\zr_T=z^*}{\Hr_T=\H_T}=
+    \CondProb{\zr_T=\z^*}{\Hr_T=\H_T}=
     \Indicator{\event{\H}{T}\supseteq\event{\z}{T}^*}\,\Expect{\frac{1}{q(X_0,\yr_0)}\,\prod_{t\in\event{\H}{T}}{\frac{\phi_{\U_t}(\X_t,\yrt_t,\yr_t,\zt^*_t,\z^*_t)}{\pi_{\U_t}(t,\Xt_t,\X_t,\yrt_t,\yr_t)}}},
   \end{equation*}
   where $\phi$ is defined in \cref{eq:phidef} and
@@ -619,8 +619,8 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
   For $t\in\Rp$, $x,x'\in\Xspace$, $y,y'\in\Yspace^{z^*}_t$, $u\in\Jumps$, define
   \begin{equation*}
     \begin{gathered}
-      \psi_u(t,x,x',y,y')=\frac{\phi_u(x',y,y',\zt^*_t,z^*_t)}{\pi_u(t,x,x',y,y')},\\[2ex]
-      \beta_u(t,x,x',y,y')=\alpha_u(t,x,x')\,\pi_u(t,x,x',y,y'),
+      \beta_u(t,x,x',y,y')=\alpha_u(t,x,x')\,\pi_u(t,x,x',y,y'),\\[2ex]
+      \psi_u(t,x,x',y,y')=\frac{\phi_u(x',y,y',\zt^*_t,\z^*_t)}{\pi_u(t,x,x',y,y')},
     \end{gathered}
   \end{equation*}
   where $\phi$ is defined in \cref{eq:phidef}.
@@ -634,9 +634,9 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
     \end{aligned}
   \end{equation}
   with the initial condition $w(0,x,y)=p_0(x)\,q(x,y)$.
-  Then the likelihood of $V^*_T$ is
+  Then the likelihood of $\z^*_T$ is
   \begin{equation*}
-    \lik(V^*_T)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
+    \lik(\z^*_T)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
   \end{equation*}
 \end{thm}
 
