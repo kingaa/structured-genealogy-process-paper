@@ -72,6 +72,9 @@ Relation to previous work.
 Existing methods \citep{Volz2009a,Stadler2010}.
 Large-population, small sample-size approximations.
 
+For structured but deterministic models, approach of \citet{Volz2012,Rasmussen2014a}, based on approximation as birth-death processes:
+approximation no longer needed.
+
 Extension of previous results \citep{King2022}.
 Broader class of state-spaces.
 Accommodating discrete structure.
@@ -267,7 +270,8 @@ Each node $a$ is associated with a specific time, $t(a)$.
 In particular, if $a$ is a tip node in $\G_T$, then $t(a)=T$;
 if $a$ is a sample node, then $t(a)$ is the time at which the sample was taken.
 Moreover, if node $a$ is ancestral to node $a'$, then $t(a)\le{t(a')}$ and $t(a')-t(a)$ is the distance between $a$ and $a'$ along the genealogy.
-We let $\event{\G}{T}$ denote the set of all node-times of the genealogy $\G_T$.
+We let $\event{\G}{T}$ denote the set of all internal and sample node-times of the genealogy $\G_T$;
+we refer to these as \emph{genealogical event times}.
 Importantly, a genealogy informs us not only about the shared ancestry of any pair of lineages, but also about where in the set of demes any given lineage was at all times.
 Accordingly, we can visualize a genealogy as a tree, the nodes and edges of which are painted, with a distinct color for each deme.
 
@@ -306,21 +310,20 @@ When the genealogy is not clear from context, we write $\G^{\y}$ and $\G^{\z}$ t
 \label{sec:event_types}
 
 We will show how a given population process naturally induces a process in the space of genealogies.
-Specifically, we will describe how, at each jump in the population process, a corresponding change occurs in the genealogy, according to lineages branch, die, or move between demes and whether samples are taken.
+Specifically, we will describe how, at each jump in the population process, a corresponding change occurs in the genealogy, according to whether lineages branch, die, move between demes, or are sampled.
 For this purpose, there are five distinct \emph{pure types} of events:
 \begin{compactenum}[(a)]
 \item \emph{Birth-type events} result in the branching of one or more new lineages, each from some existing lineages.
   Examples of birth-type events include transmission events, speciations, and actual births.
-  For simplicity, we assume that all new lineages arising from a birth event share the same parent.
+  Importantly, we assume that all new lineages arising from a birth event share the same parent and that  at most one birth event occurs at a time, almost surely.
 \item \emph{Death-type events} result in the extinction of one or more lineages.
   Examples include recovery from infection, death of a host, and species extinctions.
   We allow for the possibility that multiple lineages die simultaneously.
 \item \emph{Migration-type events} result in the movement of a lineage from one deme to another.
   Spatial movements, changes in host age or behavior, and progression of an infection can all be represented as migration-type events.
-  We permit multiple movements to occur simultaneously.
+  We permit multiple lineages to move simultaneously.
 \item \emph{Sample-type events} result in the collection of a sample from a lineage but do not in themselves affect the inventory process.
-  We allow for the possibility that multiple samples are collected in a single sample event.
-  In this case, we assume that, in each sample-type event, each extant lineage is sampled at most once.
+  We allow for the possibility that multiple samples are collected simultaneously, though we require that, in this case, each extant lineage is sampled at most once.
 \item \emph{Neutral-type events} result in no change to any of the lineages.
 \end{compactenum}
 \Cref{fig:markov_state} depicts an example with jumps of all five pure types.
@@ -378,14 +381,14 @@ We require that $r^u_i$ be a constant, for each $u$ and $i$.
 Since, in applications, one is free to expand the set of jump-marks $\Jumps$ as needed, this is not an important restriction on the models that the theory can accommodate.
 Thus there is a function $r:\Jumps\times\Demes\to\Zp$, such that $r^u_i$ lineages of deme $i$ emerge from each event of mark $u$.
 We say $r^u=(r^u_i)_{i\in\Demes}$ is the \emph{production} of an event of mark $u$.
-Note that the lineages that die as a result of an event do not count in the production but that all parent lineages, if they survive the event, are counted in the production.
+Note that the lineages that die as a result of an event do not count in the production but that a parent lineage that survives the event does count.
 
 \subsubsection{Conditional independence and exchangeability}
 
 Application of these rules at each jump of $\Xr_t$ constructs a chain of genealogies $\Grh_k$.
 In particular, at each jump-time $\Trh_k$, the genealogy $\Grh_{k-1}$ is modified according to the jump-mark $\Urh_k$ to yield $\Grh_k$.
 We view $\Grh_k$ as the embedded chain of the continuous-time genealogy process $\Gen_t$.
-It is very important to note that, conditional on $\Urh_k$, the number of parents and number of offspring in each deme is determined and the random choice of which lineages die, migrate, are sampled, or sire offspring is independent of the choices at any other times and independent of $\Xrh_k$ for all $k$.
+It is very important to note that, conditional on $\Urh_k$, the number of parents and number of offspring in each deme is determined and the random choice of which lineages die, migrate, are sampled, or sire offspring is independent of the choices at any other times and independent of $(\Trh_k,\Xrh_k)$ for all $k$.
 Moreover, by construction, any lineage within a deme is as likely as any other lineage in that deme to be selected as a parent or for death, sampling, or migration.
 We refer to this property as the \emph{exchangeability} of lineages within a deme.
 
@@ -443,8 +446,8 @@ We refer to this property as the \emph{exchangeability} of lineages within a dem
 
 The process just described yields a genealogy that relates all extant members of the population, and all samples.
 Moreover, it details each lineage's complete history of movement through the various demes.
-The data we ultimately wish to analyze will be based only on samples, however;
-nor, in general, will the histories of deme occupancy be observable.
+The data we ultimately wish to analyze will be based only on samples, however.
+Nor, in general, will the histories of deme occupancy be observable.
 A generative model must account for this loss of information.
 We therefore now describe how genealogies are \emph{pruned} to yield sample-only genealogies and then \emph{obscured} via the erasure of color from their branches.
 
@@ -456,22 +459,23 @@ In a pruned genealogy only internal and sample nodes remain, and sample nodes ar
 Observe that a pruned genealogy is a colored genealogy:
 it retains information about where among the demes each of its lineages was through time.
 Note also that a pruned genealogy $\Pr_t$ is characterized by functions $\Pr_t^\y$ and $\Pr_t^\z$ just as an un-pruned genealogy is.
+Finally, observe that, since it contains within itself all of its past history, the pruned genealogy process $\Pr_t$ is Markov.
 
 \subsubsection{Lineage count and saturation}
 \label{sec:ells}
 
 In the following, we will find that we need to count the deme-specific numbers of lineages present in a given pruned genealogy at a given time.
-Accordingly, suppose $\Pr_T=(y,z)$ is a pruned genealogy and suppose $t\in[0,T]$.
+Accordingly, suppose $\P_T=(\y,\z)$ is a pruned genealogy and suppose $t\in[0,T]$.
 Let $\ell_i$ denote the number of lineages in deme $i$ at time $t$ and $\ell=(\ell_i)_{i\in\Demes}\in\Zp^{\Demes}$.
 Clearly, $\ell$ depends only on the values, $(\y_t,\z_t)$, of $y$ and $z$ at time $t$.
-Therefore, we can define $\ell$ as a function such that, whenever $\Pr_T=(\y,\z)$ is a pruned genealogy, $\ell(\y_t,\z_t)$ is the vector of deme-specific lineage counts at time $t$.
+Therefore, we can define $\ell$ as a function such that, whenever $\Pr_T=(\yr,\zr)$ is a pruned genealogy, $\ell(\yr_t,\zr_t)$ is the vector of deme-specific lineage counts at time $t$.
 We refer to $\ell$ as the \emph{lineage-count} function (cf.~\cref{fig:ells}).
 
 We will also have occasion to refer to the deme-specific number of lineages emerging from a given event.
-In particular, given a node time $t$ in a pruned genealogy $\Pr_T=(\y,\z)$, the number $s_i$ of lineages of deme $i$ emerging from all nodes with time $t$ is well defined and we can write $s=\left(s_i\right)_{i\in\Demes}$.
+In particular, given a node time $t$ in a pruned genealogy $\P_T=(\y,\z)$, the number $s_i$ of lineages of deme $i$ emerging from all nodes with time $t$ is well defined and we can write $s=\left(s_i\right)_{i\in\Demes}$.
 Like the lineage-count function, $s$ depends only on the local structure of $\Pr_T$.
 However, $s$ depends not only on $(\y_t,\z_t)$, but also on $(\yt_t,\zt_t)$.
-Thus, we can define the \emph{saturation} function such that, whenever $\Pr_T=(\y,\z)$ is a pruned genealogy, $s(\yt_t,\y_t,\zt_t,\z_t)$ is the integer vector of deme-specific numbers of emerging lineages at time $t$.
+Thus, we can define the \emph{saturation} function such that, whenever $\Pr_T=(\yr,\zr)$ is a pruned genealogy, $s(\yrt_t,\yr_t,\zrt_t,\zr_t)$ is the integer vector of deme-specific numbers of emerging lineages at time $t$.
 \Cref{fig:ells} illustrates.
 
 \begin{figure}
@@ -505,25 +509,26 @@ In particular, if $\Pr_T=(\y,\z)$ is a pruned genealogy, we write $\obs(\Pr_T)=\
 
 \subsection{Likelihood for pruned genealogies}
 
-Our first result will be an expression for the likelihood of a given pruned genealogy $\P^*_T$ given the history $\Hr_T$ of the population process to time $T$.
+Our first result will be an expression for the likelihood of a given pruned genealogy given the history of the population process.
 
 \begin{thm}\label{thm:pruned_lik}
-  Let $\P^*_T=(\y^*,\z^*)$  be a given pruned genealogy and
+  Suppose $\P^*=(\y^*,\z^*)$ is a given pruned genealogy with $t(\P^*)=T$.
+  Define
   \begin{equation}\label{eq:phidef}
     \phi_u(x,y,y',z,z')\coloneq\BinRatio{n(x)}{\ell(y',z')}{r^{u}}{s(y,y',z,z')}\,Q_{u}(y,y',z,z'),
   \end{equation}
   where $n$ is the deme occupancy (\cref{sec:demes}), $\ell$ and $s$ are the lineage-count and saturation functions, respectively (\cref{sec:ells}), $Q$ is the compatibility indicator (\cref{sec:compatibility}), and the binomial ratio is as defined in \cref{sec:binomial_ratio}.
   Then
   \begin{equation*}
-    \CondProb{\Pr_T=\P^*_T}{\Hr_T=\H_T}=\Indicator{\event{\H}{T}\supseteq{\event{\P}{T}^*}}\,\prod_{t\in\event{\H}{T}}{\phi_{\U_t}(\X_t,\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)}.
+    \CondProb{\Pr_T=\P^*}{\Hr_T=\H_T}=\Indicator{\event{\H}{T}\supseteq{\event{\P}{}^*}}\,\prod_{t\in\event{\H}{T}}{\phi_{\U_t}(\X_t,\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)}.
   \end{equation*}
 \end{thm}
 \begin{proof}
-  If $\event{\Hr}{T}\nsupseteq\event{\P}{T}^*$, then $\Hr_T$ and $\P^*_T$ are incompatible and $\CondProb{\Pr_T=\P^*_T}{\Hr_T}=0$.
-  Similarly, if any event of $\Hr_T$ is incompatible with the local structure of $\P^*_T$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr_T=\P^*_T}{\Hr_T}=0$.
+  If $\event{\Hr}{T}\nsupseteq\event{\P}{}^*$, then $\Hr_T$ and $\P^*$ are incompatible and $\CondProb{\Pr_T=\P^*}{\Hr_T}=0$.
+  Similarly, if any event of $\Hr_T$ is incompatible with the local structure of $\P^*$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr_T=\P^*}{\Hr_T}=0$.
   Let us therefore suppose that neither of these conditions hold.
-  Conditional on $\Hr_T=\H_T$, at each time $t\in\event{\H}{T}$, a jump of mark $\U_t$ occured, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a new deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
-  In $\P^*_T$, at time $t$, there are $\ell_i=\ell_i(\y^*_t,\z^*_t)$ lineages in deme $i$, of which $s_i=s_i(\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)$ are emergent.
+  Conditional on $\Hr_T=\H_T$, at each time $t\in\event{\H}{T}$, a jump of mark $\U_t$ occured, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
+  In $\P^*$, at time $t$, there are $\ell_i=\ell_i(\y^*_t,\z^*_t)$ lineages in deme $i$, of which $s_i=s_i(\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)$ are emergent.
   By assumption, at each genealogical event, lineages within a deme are exchangeable:
   each has an identical probability of being involved.
   This exchangeability implies that each lineage present in a deme at time $t$ was equally likely to have been one of the emergent lineages.
@@ -531,12 +536,13 @@ Our first result will be an expression for the likelihood of a given pruned gene
   \begin{equation*}
     \frac{\binom{n_i-\ell_i}{r_i-s_i}\,\binom{\ell_i}{s_i}}{\binom{n_i}{r_i}}.
   \end{equation*}
-  Because our lineages are labelled, each of the $\binom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct; just one of these is the one present in $\P^*_t$.
+  Because our lineages are labelled, each of the $\binom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct;
+  just one of these is the one present in $\P^*$.
   Moreover, since, again conditional on $\Hr_T$, the identities of the lineages involved in a genealogical event are random and independent of the identities selected at all other events, we have established that
   \begin{equation*}
     \CondProb{\Pr_T=\P^*_T}{\Hr_T=\H_T}=\prod_{t\in\event{\H}{T}}{\BinRatio{n(\X_t)}{\ell(\y^*_t,\z^*_t)}{r^{\U_t}}{s(\yt^*_t,\y^*_t,\zt^*_t,\z^*_t)}}.
   \end{equation*}
-  Returning to the possibility that $\H_T$ is incompatible with $\P^*_T$, since $\Prob{\Pr_T=\P^*_T}=0$ if either any $Q_u=0$ or any event of $\P^*_T$ is not an event of $\H_T$, we obtain the result.
+  Returning to the possibility that $\H_T$ is incompatible with $\P^*$, since $\Prob{\Pr_T=\P^*}=0$ if either any $Q_u=0$ or $\event{\P}{}^*\nsupseteq\event{\H}{T}$, we obtain the result.
 \end{proof}
 
 %% \begin{equation*}
@@ -548,7 +554,7 @@ For this, we use the filter equation technology developed in \cref{sec:filter_eq
 In particular, the following theorem follows immediately from \cref{lemma:sing-filt}.
 
 \begin{thm}
-  Suppose that $\P^*_T=(y^*,z^*)$ is a pruned genealogy, for $T>0$.
+  Suppose that $\P^*=(y^*,z^*)$ is a pruned genealogy with $T=t(\P^*)>0$.
   If $w=w(t,x)$ satisfies the initial condition $w(0,x)=p_0(x)$ and the filter equation
   \begin{equation}
     \begin{aligned}
@@ -559,9 +565,9 @@ In particular, the following theorem follows immediately from \cref{lemma:sing-f
     \end{aligned}
   \end{equation}
   where $\phi$ is defined in \cref{eq:phidef},
-  then the likelihood of $\P^*_T$ is
+  then the likelihood of $\P^*$ is
   \begin{equation*}
-    \lik(\P^*_T)=\int{w(T,x)\,\dd{x}}.
+    \lik(\P^*)=\int{w(T,x)\,\dd{x}}.
   \end{equation*}
 \end{thm}
 
@@ -571,14 +577,14 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
 
 \begin{thm}\label{thm:obsc_lik}
   \AAK{[This can be rephrased somewhat more compactly into a result claiming the existence of the Markov process $\y$.]}
-  Let $\z^*=\obs(\P^*_T)$ be a given obscured genealogy.
+  Let $\z^*$ be a given obscured genealogy.
   Let $\pi$ and $q$ be probability kernels, such that for all $u\in\Jumps$, $t\in\Rp$, $x,x'\in\Xspace$, $y,y'\in\Yspace^{z^*}_t$, $\pi_u(t,x,x',y,y')\ge{0}$, $\sum_{y'\in\Yspace_t^{z^*}}{\pi_u(t,x,x',y,y')}=1$, $q(x,y)\ge{0}$, and $\sum_{y\in\Yspace_0^{\z^*}}{q(x,y)}=1$.
   Suppose moreover that $\pi_u(t,x,x',y,y')>0$ whenever $Q_u(y,y',\zt^*_t,\z^*_t)=1$
-  and that $q(x,y)>0$ whenever $\Prob{\Xr_0=x,\y^{\Pr_T}_0=y}>0$.
-  Then there is a Markov jump process $\yr_t$ on $\Yspace_{\z^*}$ such that
+  and that $q(x,y)>0$ whenever $\CondProb{\y_0=y}{\Xr_0=x}>0$.
+  Then there is a stochastic jump process $\yr_t$ with sample paths in $\func{Y}(\z^*)$ such that $(\Xr_t,\Ur_t,\yr_t)$ is Markov and
   \begin{equation*}
     \CondProb{\zr_T=\z^*}{\Hr_T=\H_T}=
-    \Indicator{\event{\H}{T}\supseteq\event{\z}{T}^*}\,\Expect{\frac{1}{q(X_0,\yr_0)}\,\prod_{t\in\event{\H}{T}}{\frac{\phi_{\U_t}(\X_t,\yrt_t,\yr_t,\zt^*_t,\z^*_t)}{\pi_{\U_t}(t,\Xt_t,\X_t,\yrt_t,\yr_t)}}},
+    \Indicator{\event{\H}{T}\supseteq\event{\z}{}^*}\,\Expect{\frac{1}{q(X_0,\yr_0)}\,\prod_{t\in\event{\H}{T}}{\frac{\phi_{\U_t}(\X_t,\yrt_t,\yr_t,\zt^*_t,\z^*_t)}{\pi_{\U_t}(t,\Xt_t,\X_t,\yrt_t,\yr_t)}}},
   \end{equation*}
   where $\phi$ is defined in \cref{eq:phidef} and
   the expectation is taken over the sample paths of $\yr_t$, $t\in[0,T]$.
@@ -589,30 +595,30 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
     \CondProb{\zr_T=z^*}{\Hr_T}=\CondExpect{\Indicator{\obs(\Pr_T)=z^*}}{\Hr_T}.
   \end{equation}
   Our strategy will be to evaluate \cref{eq:IS1} using importance sampling:
-  we will propose pruned genealogies compatible with $z^*_t$ as sample paths from a Markov process on $\Yspace_{z^*}$ and
+  we will propose pruned genealogies compatible with $z^*_t$ as sample paths from a stochastic process driven by $\Xr_t$ and
   evaluate the the expectation in \cref{eq:IS1} by summing over these paths.
-  Conditional on $\Hr_T$, the initial distribution $q$ and probability kernel $\pi$ generate a Markov chain, $\yrh_k$, on $\Yspace_{z^*}$ such that
+  Conditional on $\Hr_T$, the initial distribution $q$ and probability kernel $\pi$ generate a Markov chain, $\yrh_k$ such that
   \begin{equation*}
     \begin{gathered}
-      \Prob{\yrh_0}=q(\yrh_0),
+      \CondProb{\yrh_0}{\Hr_T=\H_T}=q(\X_0,\yrh_0),
       \qquad
       \CondProb{\yrh_k}{\yrh_{k-1},\Hr_T=\H_T}=\pi_{\Uh_k}(\Th_k,\Xh_{k-1},\Xh_{k},\yrh_{k-1},\yrh_k).
     \end{gathered}
   \end{equation*}
-  The required Markov process $\yr_t$ is the unique \cadlag\ process with event times $\Trh_k$ and $\yrh_k$ as its embedded chain.
-  This construction of $\yr_t$ obviously guarantees that $\event{\H}{t}\supseteq\event{\y}{}\supseteq\event{\z}{}^*$.
+  The required process $\yr_t$ is the unique \cadlag\ process with event times $\Trh_k$ and $\yrh_k$ as its embedded chain.
+  This construction of $\yr_t$ obviously guarantees that $\event{\H}{t}\supseteq\event{\y}{}\supseteq\event{\z}{}^*$ and that $(\Xr_t,\Ur_t,\yr_t)$ is Markov.
 
-  Let us define $\Pr(\yr)=(\yr,z^*)$.
-  Then, by construction, for every $\yr$, $\obs(\Pr(\yr))=z^*$ and, conversely, for every pruned genealogy $\Pr_T$ satisfying $\obs(\Pr_T)=z^*$, $y^{\Pr_T}$ is a sample path of this process having nonzero probability.
+  Let us define $\P(\yr)=(\yr,z^*)$.
+  Then, by construction, for every $\yr\in\func{Y}(\z)$, $\obs(\P(\yr))=z^*$ and, conversely, for every pruned genealogy $\Pr$ satisfying $\obs(\Pr)=z^*$, $\Pr^\y$ is a sample path of this process having nonzero probability.
   We therefore have that
   \begin{equation*}
     \CondProb{\zr_T=z^*}{\Hr_T=\H_T}=
-    \Expect{\frac{\CondProb{\Pr_T=P(\yr)}{\Hr_T=\H_T}}{\pi(\yr\vert\H_T)}}
+    \Expect{\frac{\CondProb{\Pr_T=\P(\yr)}{\Hr_T=\H_T}}{\pi(\yr\vert\H_T)}}
   \end{equation*}
   the expectation being taken with respect to the random process $\yr_t$.
   Here, by definition,
   \begin{equation*}
-    \pi(\yr\vert\H_T)=\prod_{t\in\event{\H}{T}}{\pi_{\U_{t}}(t,\Xt_{t},\X_{t},\yrt_{t},\yr_{t})}.
+    \pi(\yr\vert\H_T)=q(\X_0,\yr_0)\,\prod_{t\in\event{\H}{T}}{\pi_{\U_{t}}(t,\Xt_{t},\X_{t},\yrt_{t},\yr_{t})}.
   \end{equation*}
   The result then follows from \cref{thm:pruned_lik}.
 \end{proof}
@@ -642,9 +648,9 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
     \end{aligned}
   \end{equation}
   with the initial condition $w(0,x,y)=p_0(x)\,q(x,y)$.
-  Then the likelihood of $\z^*_T$ is
+  Then the likelihood of $\z^*$ is
   \begin{equation*}
-    \lik(\z^*_T)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
+    \lik(\z^*)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
   \end{equation*}
 \end{thm}
 
@@ -677,6 +683,24 @@ Jump rates:
 %% \end{equation}
 
 \section{Discussion}
+
+Generalization of coalescent and birth-death process approaches.
+Both Moran model and birth-death processes are special cases.
+
+Allows models with demographic stochasticity.
+Incorporating environmental stochasticity is likely possible:
+extension to stochastic processes with a diffusion component.
+
+Freedom to choose models with many demes.
+Freedom to choose model of sampling.
+
+Price of flexibility is variability in the Monte Carlo estimation.
+Freedom to choose importance sampling distribution.
+Allowable to borrow information from the future.
+
+Filter equation formalism suggests approximations based on discretization of time.
+
+
 
 \bibliographystyle{preprint}
 \bibliography{phylopomp}
