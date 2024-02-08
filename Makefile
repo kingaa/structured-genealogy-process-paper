@@ -1,9 +1,5 @@
 default: ms.pdf ms.R
 
-publish: slides.pdf notes.pdf handout.pdf
-	rsync -avz --chmod=a+rX,go-w $^ salix:/var/www/html/kingaa/talks/2024/Lisbon/
-	rsync -avz --chmod=a+rX,go-w $^ ~/Dropbox/mss/sgp
-
 FIGS=$(wildcard figs/*.tex)
 
 ms.pdf: ms.tex defs.tex header.tex $(FIGS)
