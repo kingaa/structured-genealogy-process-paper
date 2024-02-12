@@ -50,7 +50,7 @@ library(viridis)
 library(phylopomp)
 stopifnot(getRversion() >= "4.3")
 stopifnot(packageVersion("pomp")>="5.1")
-stopifnot(packageVersion("phylopomp")>="0.10.1")
+stopifnot(packageVersion("phylopomp")>="0.10.2")
 theme_set(theme_bw(base_family="serif"))
 set.seed(1159254136)
 @
@@ -400,7 +400,7 @@ We refer to this property as the \emph{exchangeability} of lineages within a dem
     seed=522390503,
     simulate(
       "SEIR",
-      Beta=1,sigma=0.5,gamma=0.1,psi=0.4,delta=0.1,
+      Beta=1,sigma=0.5,gamma=0.1,psi=0.4,omega=0.1,
       S0=10,E0=1,I0=1,R0=0,
       time=10
     )
