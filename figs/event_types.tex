@@ -271,26 +271,28 @@
   Jump types differ by their effects on the genealogy.
   This can be seen by examining the local structure of the genealogy in a neighborhood of a jump event.
   \textbf{(A)} A birth-type jump results in the branching of one or more child lineages from the parent.
-  There can be only one parent, though the child lineages may be in demes different from those of their parent.
+  There can be only one parent, though the demes of the child lineages may differ from that of their parent.
   Here, a parent of the blue deme sires one child lineage in each of the blue and yellow demes.
   The production of an event is an integer vector, with one entry for each deme.
   The production of this event is therefore $r=(r_{\lab{blue}},r_{\lab{yellow}})=(2,1)$.
+  The deme occupancy at this event is $n=(n_{\lab{blue}},n_{\lab{yellow}})=(3,5)$.
   \textbf{(B)} A death-type event causes the extinction of a lineage.
   Since internal node without children are recursively removed, the affected branch disappears.
-  The production of this event is $r=(0,0)$.
+  The production of this event is $r=(0,0)$ and the deme occupancy is $n=(3,4)$.
   \textbf{(C)} A migration-type event results in the movement of one or more lineages from one deme to another.
   Here, one lineage moves from the yellow to the blue deme.
   The production of this event is $r=(1,0)$, \ie the production is 1 for the blue deme and 0 for the yellow.
+  The deme occupancy is $n=(6,2)$.
   \textbf{(D)} In a sample-type event, one or more sample nodes (blue circles) are inserted.
   Here, there are two samples, one in each of the blue and yellow demes.
-  Accordingly, its production is $r=(1,1)$.
-  \textbf{(E)} A neutral-type event has no effect on the genealogy and zero production in all demes: $r=(0,0)$.
+  Accordingly, $r=(1,1)$ and $n=(2,6)$.
+  \textbf{(E)} A neutral-type event has no effect on the genealogy and zero production in all demes: $r=(0,0)$, $n=(5,3)$.
   \textbf{(F)} The theory presented here allows for compound events.
   As an example, here a birth/death-type event occurs, wherein one yellow lineage is extinguished and a blue lineage simultaneously sires a blue child.
-  The production of this event is $r=(2,0)$.
-  \textbf{(G)} Here, a compound sample/death-type event with $r=(0,0)$ occurs.
+  For this event, we have $r=(2,0)$ and $n=(6,2)$.
+  \textbf{(G)} Here, a compound sample/death-type event with $r=(0,0)$ and $n=(2,5)$ occurs.
   A blue lineage is sampled and simultaneously extinguished.
   Note that recursive removal does not occur, since sample nodes are never removed.
-  \textbf{(H)} A compound birth/migration-type event with $r=(4,0)$.
+  \textbf{(H)} A compound birth/migration-type event with $r=(4,0)$ and $n=(6,2)$.
   \label{fig:event_types}
 }
