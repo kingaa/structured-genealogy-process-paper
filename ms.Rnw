@@ -532,9 +532,10 @@ Note that the lineages that die as a result of an event do not count in the prod
 Application of these rules at each jump of $\Xr_t$ constructs a chain of genealogies $\Grh_k$.
 In particular, at each jump-time $\Trh_k$, the genealogy $\Grh_{k-1}$ is modified according to the jump-mark $\Urh_k$ to yield $\Grh_k$.
 We view $\Grh_k$ as the embedded chain of the continuous-time genealogy process $\Gr_t$.
-It is very important to note that, conditional on $\Urh_k$, the number of parents and number of offspring in each deme is determined and the random choice of which lineages die, migrate, are sampled, or sire offspring is independent of the choices at any other times and independent of $(\Trh_k,\Xrh_k)$ for all $k$.
+It is very important to note that, conditional on $(\Xrh_k,\Urh_k)$, the number of parents and number of offspring in each deme is determined and the random choice of which lineages die, migrate, are sampled, or sire offspring is independent of these choices at any other times and independent of $(\Xrh_j,\Urh_j)$ for all $j\ne{k}$.
 Moreover, by construction, any lineage within a deme is as likely as any other lineage in that deme to be selected as a parent or for death, sampling, or migration.
 We refer to this property as the \emph{exchangeability} of lineages within a deme.
+Finally, note that $\Gr_t$ does not have the Markov property, though $(\Xr_t,\Ur_t,\Gr_t)$ and $(\Xr_t,\Gr_t)$ do.
 
 \subsection{Pruned and obscured genealogies}
 
@@ -818,6 +819,10 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
   \end{equation*}
 \end{corol}
 
+\begin{remark}
+  Note that, since $\func{Y}_t(\Z)$ is finite, it is permissible to choose $q$ and $\pi$ to be uniform.
+\end{remark}
+
 Lemmas in the appendix show how this can be computed via Sequential Monte Carlo.
 
 
@@ -911,6 +916,8 @@ Here, we develop tools for manipulating complex expressions that are otherwise c
   Trivially, a Kolmogorov forward equation is itself a filter equation with boost $1$ and decay $0$.
 \end{remark}
 
+\AAK{[We should define the singular filter equations (\ie those with a discrete portion) also.]}
+
 The following results show how filter equations allow one to integrate over random histories.
 
 \begin{lemma}
@@ -942,7 +949,7 @@ The following results show how filter equations allow one to integrate over rand
 
 \begin{lemma}
   \label{lemma:sing-filt}
-  Suppose $\mathcal{M}\subset{\Rp}$ is finite and let $\mathcal{M}_t\coloneq\mathcal{M}\cap{[0,t]}$.
+  Suppose $\mathcal{M}\subset{\Rp}$ is countable such that $\mathcal{M}_t\coloneq\mathcal{M}\cap{[0,t]}$ is finite for all $t$.
   Suppose that $B:\Rp\times\Xspace^2\to\Rp$ is measurable and
   $\Vr_t$ is an $\Rp$-valued process satisfying
   \begin{equation*}
