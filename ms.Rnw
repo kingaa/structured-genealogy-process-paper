@@ -343,7 +343,7 @@ The probability measure, $\pi^{\mathrm{H}}$, for $\Hr_t$ can be expressed in ter
     &\qquad\times\exp{\left(-\sum_{k=0}^{K_t}{\int_{\Th_{k}}^{\Th_{k+1}}{\sum_{u}{\int{\alpha_{u}(t',\Xh_{k},x')\,\dd{x'}}}}\,\dd{t'}}\right)},
   \end{aligned}
 \end{equation*}
-where again, by convention, $\Th_0=0$ and $\Th_{K_t+1}=t$.
+where again, by convention, $\Th_0=0$ and $\Th_{K^{}_t+1}=t$.
 
 If $\H$ is such a history, we define $\time(\H)$ to be the right endpoint of its domain and use the notation $\event{\H}=\Set{\Th_1,\dots,\Th_{\K_t}}\subset{[0,\time(\H)]}$ to denote the set of its jump times.
 
