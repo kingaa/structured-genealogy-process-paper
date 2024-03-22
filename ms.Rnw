@@ -65,11 +65,12 @@ set.seed(1159254136)
 
 \section{Introduction}
 
-Advent of routine molecular surveillance.
-With certain pathogens, with matching of time-scales, information on transmission is possible.
-With sufficiently dense sampling, it is sometimes possible to reconstruct WAIFW.
-More typically, one wishes to gain insight into the structure and parameterization of the transmission process.
-This is accomplished by formalizing a transmission model or suite of transmission models, estimating parameters, and comparing their ability to explain the data.
+With the advent of inexpensive genome sequencing technologies, routine molecular surveillance has become an important tool in the epidemiologist's kit.
+When an infectious agent evolves quickly enough so that information on its history of transmission accumulates in its genome, yet not so quickly that it is dissipated, it is possible to extract this information to gain insight into the determinants of transmission.
+With sufficiently dense sampling, it can be possible to reconstruct the specific history of who has infected whom, which can aid identification of the correlates of transmission and immunity and the features of infections.
+More typically, one can attempt to learn about these features via the estimation of a model of the transmission process on the basis of relatively sparse samples.
+In particular, one can formalize one or more mathematical models of transmission, estimate their parameters, and comparing their ability to explain data, following a standard statistical paradigm.
+For the purposes of this paper, we refer to the latter program as \emph{phylodynamics}.
 
 Because there is commonly broad uncertainty regarding the structure of the transmission process, for example due to heterogeneities in transmission rates and susceptibilities, complex behavior patterns, etc., methods that have the plug-and-play property are particularly useful.
 Such techniques for inference based on time series are well understood and widely used.
@@ -79,6 +80,7 @@ Here, we derive expressions for the exact likelihood of a genealogy generated th
 
 Problem of phylodynamics.
 Factorization of problem into two subproblems.
+Problems with this approach \citep{Smith2017}.
 
 Relation to previous work.
 Existing methods \citep{Volz2009a,Stadler2010}.
@@ -86,6 +88,8 @@ Large-population, small sample-size approximations.
 
 For structured but deterministic models, approach of \citet{Volz2012,Rasmussen2014a}, based on approximation as birth-death processes:
 approximation no longer needed.
+
+Modeling of the sampling process.
 
 Extension of previous results \citep{King2022}.
 Broader class of state-spaces.
@@ -122,7 +126,7 @@ Accordingly, if $\Phir_t$ is a \cadlag\ random process, we define
 \end{equation*}
 Note that $\Phirt_t$ is thus left-continuous with right limits.
 
-If $\Phir_t$, $t\in\Rp$ is a pure jump process, knowledge of its sample path is equivalent to knowledge of the number, $\Kr_t$, of jumps it has taken as of time $t$, the jump times $\Trh_k$, and the embedded chain $\Phirh_k\coloneq{\Phir_{\Trh_k}}$, $k=0,\dots,\Kr_t$.
+If $\Phir_t$, $t\in\Rp$ is a pure jump process, knowledge of its sample path is equivalent to knowledge of the number, $\Kr_t$, of jumps it has taken as of time $t$, the jump times $\Trh_k$, and the embedded chain $\Phirh^{}_k\coloneq{\Phir_{\Trh^{}_k}}$, $k=0,\dots,\Kr^{}_t$.
 In particular, if we adopt the convention that $\Trh_0=0$ and $\Trh_{\Kr_t+1}=t$, then
 $\Phir_t=\Phirh_k$ for $t\in\halfopen{\Trh_k,\Trh_{k+1}}$, $k=0,\dots,\Kr_t$.
 
@@ -218,6 +222,7 @@ Observe that, though $\Xr_t$ and $(\Xr_t,\Ur_t)$ are Markov processes, $\Ur_t$ i
 \citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
 The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
 Its state vector is $x=(S,I,R)$ and its KFE is
+\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
   \begin{split}
     \frac{\partial{v}}{\partial{t}}(t,S,I,R)=
@@ -229,6 +234,7 @@ Its state vector is $x=(S,I,R)$ and its KFE is
     -\omega\,R\,v(t,S,I,R).
   \end{split}
 \end{equation*}
+\normalfont
 Note that we have here allowed for the possibility that the transmission rate, $\beta$, depends on time.
 
 \subsubsection{SEIRS model}
@@ -236,6 +242,7 @@ Note that we have here allowed for the possibility that the transmission rate, $
 A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
 The state space is $\Rp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
 It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
+\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
   \begin{split}
     \frac{\partial{v}}{\partial{t}}(t,S,E,I,R)=
@@ -249,6 +256,7 @@ It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
     -\omega\,R\,v(t,S,E,I,R),
   \end{split}
 \end{equation*}
+\normalfont
 where $N=S+E+I+R$ is the total population size.
 The deme occupancy function in this case is $n(x)=(E,I)$.
 Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
@@ -259,6 +267,7 @@ A simple model for the competition of two strains for susceptible hosts is depic
 In this model, the state vector consists of seven numbers: $x=(S,E_1,E_2,I_1,I_2,R_1,R_2)$.
 There are four demes ($\Demes=\Set{\lab{E}_1,\lab{E}_2,\lab{I}_1,\lab{I}_2}$) and the occupancy function is $n(x)=(E_1,E_2,I_1,I_2)$.
 This model has KFE
+\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
   \begin{split}
     \frac{\partial{v}}{\partial{t}}=
@@ -280,12 +289,14 @@ This model has KFE
     -\omega_2\,R_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
   \end{split}
 \end{equation*}
+\normalfont
 
 \subsubsection{Superspreading model}
 
 \Cref{fig:example_models}D depicts a model of superspreading.
 There are three demes ($\Demes=\Set{\lab{E},\lab{I_L},\lab{I_H}}$).
 The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
+\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
   \begin{split}
     \frac{\partial{v}}{\partial{t}}=
@@ -305,10 +316,11 @@ The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
     -\omega\,R\,v(t,S,E,I_L,I_H,R).\\
   \end{split}
 \end{equation*}
-
+\normalfont
 
 \subsubsection{Linear birth-death model}
 
+\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
   \frac{\partial{v}}{\partial{t}}=
   \lambda\,(N-1)\,v(t,N-1)
@@ -316,15 +328,11 @@ The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
   +\mu\,(N+1)\,v(t,N+1)
   -\mu\,N\,v(t,N)
 \end{equation*}
+\normalfont
 
 \subsubsection{Moran model and the Kingman coalescent}
 
 \subsection{History}
-
-\AAK{[Maybe it would be better to speak instead of $\Hr_t$ being the random $\sigma$-algebra generated by the sequences $(\Trh_k,\Xrh_k,\Urh_k)_{k=1}^{\Kr_t}$.
-    The only thing we do with $\Hr$ is condition on it.
-    One (perhaps minor) problem with this is that we cannot then speak about the measure on histories.
-]}
 
 Consider the Markov process $(\Xr_t,\Ur_t)$.
 We define its \emph{history process}, $\Hr_t$, to be the restriction of the random function $s\mapsto(\Xr_s,\Ur_s)$ to the interval $[0,t]$.
@@ -332,20 +340,20 @@ Note that $\Hr_t$ is itself trivially a Markov process, since it contains its ow
 
 Alternatively, one can think of $\Hr_t$ as consisting of the sequence
 $\left(\left(\Trh_k,\Xrh_k,\Urh_k\right)\right)_{k=0}^{\Kr_t}$.
-In particular, conditional on $\Hr_t$, both $\Xr_t$ and $\Ur_t$ are deterministic as are $\Kr_t$ and the embedded chains, $\Xrh_k$, $\Urh_k$, and the point process of event times $\Trh_k$.
+In particular, conditional on $\Hr_t$, both $\Xr_t$ and $\Ur_t$ are deterministic, as are $\Kr_t$ and the embedded chains, $\Xrh_k$, $\Urh_k$, and the point process of event times $\Trh_k$.
 The probability measure, $\pi^{\mathrm{H}}$, for $\Hr_t$ can be expressed in terms of these:
+\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
   \label{eq:Hdens}
-  \begin{aligned}
-    \pi^{\mathrm{H}}(\dd{\H_t})
-    =&p_{0}(\Xh_{0})\,\dd{\Xh_0}\,
-    \prod_{k=1}^{K_{t}}{\alpha_{\Uh_k}\!\!\left(\Th_k,\Xh_{k-1},\Xh_{k}\right)\,\dd{\Xh_k}\,\dd{\Th_k}}\\
-    &\qquad\times\exp{\left(-\sum_{k=0}^{K_t}{\int_{\Th_{k}}^{\Th_{k+1}}{\sum_{u}{\int{\alpha_{u}(t',\Xh_{k},x')\,\dd{x'}}}}\,\dd{t'}}\right)},
-  \end{aligned}
+  \pi^{\mathrm{H}}(\dd{\H_t})
+  =p_{0}(\Xh_{0})\,\dd{\Xh_0}\,
+  \prod_{k=1}^{K_{t}}{\alpha_{\Uh_k}\!\!\left(\Th_k,\Xh_{k-1},\Xh_{k}\right)\,\dd{\Xh_k}\,\dd{\Th_k}}
+  \,\exp{\left(-\sum_{k=0}^{K_t}{\int_{\Th_{k}}^{\Th_{k+1}}{\sum_{u}{\int{\alpha_{u}(t',\Xh_{k},x')\,\dd{x'}}}}\,\dd{t'}}\right)},
 \end{equation*}
-where again, by convention, $\Th_0=0$ and $\Th_{K^{}_t+1}=t$.
+\normalfont
+where again, by convention, $\Th^{}_0=0$ and $\Th^{}_{K^{}_t+1}=t$.
 
-If $\H$ is such a history, we define $\time(\H)$ to be the right endpoint of its domain and use the notation $\event{\H}=\Set{\Th_1,\dots,\Th_{\K_t}}\subset{[0,\time(\H)]}$ to denote the set of its jump times.
+If $\H$ is such a history, we define $\time(\H)$ to be the right endpoint of its domain and use the notation $\event{\H}\coloneq\Set{\Th^{}_1,\dots,\Th^{}_{\K_t}}\subset{[0,\time(\H)]}$ to denote the set of its jump times.
 
 \subsection{Genealogies}
 \label{sec:genealogy}
@@ -401,15 +409,15 @@ we refer to these as \emph{genealogical event times}.
 Importantly, a genealogy informs us not only about the shared ancestry of any pair of lineages, but also about where in the set of demes any given lineage was at all times.
 Accordingly, we can visualize a genealogy as a tree, the nodes and edges of which are painted with a distinct color for each deme (\cref{fig:geneal}).
 Note that a genealogy will in general have \emph{branch-point nodes}, \ie internal nodes with more than one descendant, but may also have internal nodes with only one descendant.
-These occur whenever the color changes along a branch, but can also occur without a color-change.
 We refer to such nodes as \emph{inline nodes}.
+These occur whenever the color changes along a branch, but can also occur without a color-change.
 
 Formally, we define a genealogy, $G$, to be a triple, $(T,Z,Y)$, where $T=\time(G)\in\Rp$ is the \emph{genealogy time}, $Z$ specifies the genealogy's \emph{tree structure}, and $Y$ gives the \emph{coloring}.
-In particular, let $\leaves$ be a countable set of labels and let $\func{Z}$ be the set of all collections of finite, mutually-disjoint subsets of $\leaves$.
-That is, an element $\zeta\in{\func{Z}}$ is a partition of the finite set $\bigcup\zeta\subseteq\leaves$.
-Partition \emph{fineness} defines a partial order on $\func{Z}$.
-Specifically, for $\zeta,\zeta'\in{\func{Z}}$, we say $\zeta\preceq{\zeta'}$ if and only if for every $b'\in{\zeta'}$ there is $b\in{\zeta}$ such that $b\supseteq{b'}$.
-The tree structure of $G$ is defined by a \cadlag\ map $Z:[0,T]\to\func{Z}$ that is monotone in the sense that $t_1\le{t_2}$ implies $Z_{t_1}\preceq{Z_{t_2}}$.
+In particular, let $\leaves$ be a countable set of labels and let $\part(\leaves)$ be the set of all collections of finite, mutually-disjoint subsets of $\leaves$.
+That is, an element $\zeta\in{\part(\leaves)}$ is a partition of the finite set $\bigcup\zeta\subseteq\leaves$.
+Partition \emph{fineness} defines a partial order on $\part(\leaves)$.
+Specifically, for $\zeta,\zeta'\in{\part(\leaves)}$, we say $\zeta\preceq{\zeta'}$ if and only if for every $b'\in{\zeta'}$ there is $b\in{\zeta}$ such that $b\supseteq{b'}$.
+The tree structure of $G$ is defined by a \cadlag\ map $Z:[0,T]\to\part(\leaves)$ that is monotone in the sense that $t_1\le{t_2}$ implies $Z_{t_1}\preceq{Z_{t_2}}$.
 An element $b\in{Z_t}$ is a set of labels;
 it represents the branch of the tree that bears the corresponding lineages.
 We use the notation $\event{Z}$ to denote the set of times at which $Z$ is discontinuous.
@@ -599,7 +607,7 @@ Moreover, it details each lineage's complete history of movement through the var
 The data we ultimately wish to analyze will be based only on samples, however.
 Nor, in general, will the histories of deme occupancy be observable.
 A generative model must account for this loss of information.
-We therefore now describe how genealogies are \emph{pruned} to yield sample-only genealogies and then \emph{obscured} via the erasure of color from their branches.
+We therefore now describe how genealogies are \emph{pruned} to yield sample-only genealogies and then \emph{obscured} via the erasure of color from their branches (\cref{fig:upo}).
 
 \subsubsection{Pruned genealogy}
 \label{sec:pruning}
@@ -639,12 +647,12 @@ Suppose $P$ is a pruned genealogy, with $\time(P)=T$ and $t\in\event{P}$.
 The local structure of $P$ at $t$ is, in general, compatible with only a subset of the possible jumps $\Jumps$.
 For example, if the event in $P$ at $t$ is a branch node or a sample node, then it is compatible only with birth-type or sample-type jumps, respectively.
 Similarly, if the node in $P$ at time $t$ is one at which a lineage moves from deme $i$ to deme $i'$, then $u$ must be either of $i\to{i'}$ migration type or of a birth type with parent in $i$ and $r^u_{i'}>0$.
-To accommodate all possibilities, let us introduce the indicator function $Q$ such that $Q=1$ if the local genealogy structure---which is captured by the values of $P^{\lab{Y}}$ just before and after $t$---is compatible with an event of type $u$ and $Q=0$ otherwise.
+To succinctly accommodate all possibilities, let us introduce the indicator function $Q$ such that $Q=1$ if the local genealogy structure---which is captured by the values of $P^{\lab{Y}}$ just before and after $t$---is compatible with an event of type $u$ and $Q=0$ otherwise.
 That is, $Q_u(\eta,\eta')=1$ if and only if
 there is a feasible genealogy, $\G=(\T,\Z,\Y)$, and history, $\H$,
 and a $t\in{[0,\T]}$ such that,
 given $\Gr_\T=\G$ and $\Hr_\T=\H$,
-$\U_t=u$, $\Yt_t=\eta$, and $\Y_t=\eta'$.
+we have $\U_t=u$, $\Yt_t=\eta$, and $\Y_t=\eta'$.
 We refer to $Q$ as the \emph{compatibility indicator}.
 
 \subsubsection{Obscured genealogy}
@@ -925,7 +933,7 @@ The following results show how filter equations allow one to integrate over rand
   Suppose that $B:\Rp\times\Xspace^2\to\Rp$ is measurable.
   If $\Vr_t$ is an $\Rp$-valued random process satisfying
   \begin{equation*}
-    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\prod_{e\in\event{\H}_t}{B(e,\Xt_e,\X_e)},
+    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\prod_{e\in\event{\H_t}}{B(e,\Xt_e,\X_e)},
   \end{equation*}
   then $\CondExpect{\Vr_t}{\Xr_t=x}$ is a measure-valued deterministic process on $\Xspace$ with density $w(t,x)$ that satisfies the filter equation
   \begin{equation}
@@ -953,7 +961,7 @@ The following results show how filter equations allow one to integrate over rand
   Suppose that $B:\Rp\times\Xspace^2\to\Rp$ is measurable and
   $\Vr_t$ is an $\Rp$-valued process satisfying
   \begin{equation*}
-    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\Indicator{\event{\H}_{t}\supseteq\mathcal{M}_t}\,\prod_{e\in\event{\H}_{t}}{B(e,\Xt_e,\X_e)}.
+    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\Indicator{\event{\H_{t}}\supseteq\mathcal{M}_t}\,\prod_{e\in\event{\H_{t}}}{B(e,\Xt_e,\X_e)}.
   \end{equation*}
   Then $\CondExpect{\Vr_t}{\Xr_t=x}$ is a measure-valued process on $\Rp^{\vert\mathcal{M}_t\vert}\times\Xspace$ with density $w(t,x)$ that satisfies
   \begin{equation}

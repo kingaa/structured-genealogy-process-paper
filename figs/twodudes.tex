@@ -2,6 +2,7 @@
   \usetikzlibrary{calc}
   \tikzstyle{branch}=[color=black, line width=4pt, line join=miter]
   \coordinate (origin) at (0,0);
+  \coordinate (GB) at (-0.5,0);
   \coordinate (bl) at (-6,0);
   \coordinate (S1) at (5,9);
   \coordinate (S2) at (5,6);
@@ -18,11 +19,11 @@
   \node[anchor=west] (R2i) at (R2.east) {\includegraphics[height=36pt]{infected}};
   \draw[branch] (R1i.west) -- (B1) -- (Bmid) -- (L) (R2i.west) -- (B2) -- (Bmid);
   \node[anchor=east] (Li) at (L.west) {\includegraphics[height=36pt]{infected}};
-  \draw[branch,color=blue] (S1) -- (origin |- S1) -- (origin |- S2) -- (S2);
-  \node[anchor=east,outer sep=2ex] (lab1) at (L.west) {\parbox[t]{72pt}{\raggedright Transmission tree}};
-  \node[anchor=east,outer sep=2ex] (lab2) at (L.west |- Smid) {\parbox[t]{72pt}{\raggedright Pathogen genealogy}};
+  \draw[branch,color=blue] (S1) -- (GB |- S1) -- (GB |- S2) -- (S2);
+  \node[anchor=east,outer sep=1em] (lab1) at (Li.west) {\parbox[t]{72pt}{\raggedright Transmission tree}};
+  \node[outer sep=1em] (lab2) at (lab1 |- Smid) {\parbox[t]{72pt}{\raggedright Pathogen genealogy}};
   \coordinate (tc) at ($(origin|-Seq1.north)+(0,1em)$);
   \draw[very thin,color=gray] (origin) -- (tc);
-  \node (tlab) at ($(Seq1.east|-origin)+(1em,0)$) {$t$};
-  \draw[thin,->,>=latex] (bl) -- (tlab);
+  \node (tlab) at (Seq1|-origin) {$t$};
+  \draw[thin,->,>=latex] (lab1 |- bl) -- (tlab);
 \end{tikzpicture}

@@ -273,11 +273,12 @@
   \textbf{(A)} A birth-type jump results in the branching of one or more child lineages from the parent.
   There can be only one parent, though the demes of the child lineages may differ from that of their parent.
   Here, a parent of the blue deme sires one child lineage in each of the blue and yellow demes.
-  The production of an event is an integer vector, with one entry for each deme.
+  The \emph{production} of an event is an integer vector, with one entry for each deme.
   The production of this event is therefore $r=(r_{\lab{blue}},r_{\lab{yellow}})=(2,1)$.
-  The deme occupancy at this event is $n=(n_{\lab{blue}},n_{\lab{yellow}})=(3,5)$.
+  The \emph{deme occupancy} of an event is the number of lineages in each deme just to the right of the event.
+  The deme occupancy at this event is therefore $n=(n_{\lab{blue}},n_{\lab{yellow}})=(3,5)$.
   \textbf{(B)} A death-type event causes the extinction of a lineage.
-  Since internal node without children are recursively removed, the affected branch disappears.
+  Since internal nodes without children are recursively removed, the affected branch is dropped.
   The production of this event is $r=(0,0)$ and the deme occupancy is $n=(3,4)$.
   \textbf{(C)} A migration-type event results in the movement of one or more lineages from one deme to another.
   Here, one lineage moves from the yellow to the blue deme.

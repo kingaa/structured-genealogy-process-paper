@@ -25,11 +25,9 @@ ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 	$(RM) $*.o
 
 %.html: %.Rmd
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
 	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
 %.html: %.md
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
 	Rscript --vanilla -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
 
 %.R: %.Rmd
