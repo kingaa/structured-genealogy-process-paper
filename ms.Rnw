@@ -95,6 +95,8 @@ Extension of previous results \citep{King2022}.
 Broader class of state-spaces.
 Accommodating discrete structure.
 
+Relations to lookdown construction of \citet{Etheridge2019}.
+
 Classes of Markov processes.
 Utility and flexibility of Markov assumptions.
 
@@ -168,7 +170,7 @@ We assume that $\Kr_t$ is a simple counting process so that
   \begin{gathered}
     \CondProb{\Kr_{t+\Delta}=n+1}{\Kr_{t}=n}=\Delta\,\int{\alpha(t,x,x')\,\dd{x'}}+o(\Delta),\\
     \CondProb{\Kr_{t+\Delta}>n+1}{\Kr_{t}=n}=o(\Delta),\\
-    \CondProb{\Xr_{t+\Delta}\in\mathcal{E}}{\Xr_{t}=x, \Kr_{t+\Delta}-\Kr_{t}=1}=\frac{\int_{\mathcal{E}}{\alpha(t,x,x')\,\dd{x'}}}{\int{\alpha(t,x,x')\,\dd{x'}}}.
+    \CondProb{\Xr_{t+\Delta}\in\mathcal{E}}{\Xr_{t}=x, \Kr_{t+\Delta}-\Kr_{t}=1}=\frac{\int_{\mathcal{E}}{\alpha(t,x,x')\,\dd{x'}}}{\int{\alpha(t,x,x')\,\dd{x'}}}+o(\Delta).
   \end{gathered}
 \end{equation*}
 We will further assume that the number of jumps that occur in a finite time-interval is finite: $\Prob{\Kr_t<\infty}=1$ for all $t$.
@@ -222,8 +224,8 @@ Observe that, though $\Xr_t$ and $(\Xr_t,\Ur_t)$ are Markov processes, $\Ur_t$ i
 \citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
 The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
 Its state vector is $x=(S,I,R)$ and its KFE is
-\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
+  \fontsize{10pt}{11pt}\selectfont
   \begin{split}
     \frac{\partial{v}}{\partial{t}}(t,S,I,R)=
     &\frac{\beta(t)\,I\,(S+1)}{N}\,v(t,S+1,I-1,R)
@@ -233,8 +235,8 @@ Its state vector is $x=(S,I,R)$ and its KFE is
     &+\omega\,(R+1)\,v(t,S-1,I,R+1)
     -\omega\,R\,v(t,S,I,R).
   \end{split}
+  \normalfont
 \end{equation*}
-\normalfont
 Note that we have here allowed for the possibility that the transmission rate, $\beta$, depends on time.
 
 \subsubsection{SEIRS model}
@@ -242,8 +244,8 @@ Note that we have here allowed for the possibility that the transmission rate, $
 A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
 The state space is $\Rp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
 It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
-\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
+  \fontsize{10pt}{11pt}\selectfont
   \begin{split}
     \frac{\partial{v}}{\partial{t}}(t,S,E,I,R)=
     &\frac{\beta(t)\,I\,(S+1)}{N}\,v(t,S+1,E-1,I,R)
@@ -255,8 +257,8 @@ It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
     &+\omega\,(R+1)\,v(t,S-1,E,I,R+1)
     -\omega\,R\,v(t,S,E,I,R),
   \end{split}
+  \normalfont
 \end{equation*}
-\normalfont
 where $N=S+E+I+R$ is the total population size.
 The deme occupancy function in this case is $n(x)=(E,I)$.
 Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
@@ -267,8 +269,8 @@ A simple model for the competition of two strains for susceptible hosts is depic
 In this model, the state vector consists of seven numbers: $x=(S,E_1,E_2,I_1,I_2,R_1,R_2)$.
 There are four demes ($\Demes=\Set{\lab{E}_1,\lab{E}_2,\lab{I}_1,\lab{I}_2}$) and the occupancy function is $n(x)=(E_1,E_2,I_1,I_2)$.
 This model has KFE
-\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
+  \fontsize{10pt}{11pt}\selectfont
   \begin{split}
     \frac{\partial{v}}{\partial{t}}=
     &\frac{\beta_1(t)\,I_1\,(S+1)}{N}\,v(t,S+1,E_1-1,E_2,I_1,I_2,R_1,R_2)
@@ -288,16 +290,16 @@ This model has KFE
     &+\omega_2\,(R_2+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1,R_2+1)
     -\omega_2\,R_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
   \end{split}
+  \normalfont
 \end{equation*}
-\normalfont
 
 \subsubsection{Superspreading model}
 
 \Cref{fig:example_models}D depicts a model of superspreading.
 There are three demes ($\Demes=\Set{\lab{E},\lab{I_L},\lab{I_H}}$).
 The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
-\fontsize{10pt}{11pt}\selectfont
 \begin{equation*}
+  \fontsize{10pt}{11pt}\selectfont
   \begin{split}
     \frac{\partial{v}}{\partial{t}}=
     &\frac{\beta(t)\,(I_L+\theta\,I_H)\,(S+1)}{N}\,v(t,S+1,E-1,I_L,I_H,R)
@@ -315,8 +317,8 @@ The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
     &\omega\,(R+1)\,v(t,S-1,E,I_L,I_H,R+1)
     -\omega\,R\,v(t,S,E,I_L,I_H,R).\\
   \end{split}
+  \normalfont
 \end{equation*}
-\normalfont
 
 \subsubsection{Linear birth-death model}
 
@@ -342,15 +344,15 @@ Alternatively, one can think of $\Hr_t$ as consisting of the sequence
 $\left(\left(\Trh_k,\Xrh_k,\Urh_k\right)\right)_{k=0}^{\Kr_t}$.
 In particular, conditional on $\Hr_t$, both $\Xr_t$ and $\Ur_t$ are deterministic, as are $\Kr_t$ and the embedded chains, $\Xrh_k$, $\Urh_k$, and the point process of event times $\Trh_k$.
 The probability measure, $\pi^{\mathrm{H}}$, for $\Hr_t$ can be expressed in terms of these:
-\fontsize{10pt}{11pt}\selectfont
-\begin{equation*}
+\begin{equation}
   \label{eq:Hdens}
+  \fontsize{9pt}{11pt}\selectfont
   \pi^{\mathrm{H}}(\dd{\H_t})
   =p_{0}(\Xh_{0})\,\dd{\Xh_0}\,
   \prod_{k=1}^{K_{t}}{\alpha_{\Uh_k}\!\!\left(\Th_k,\Xh_{k-1},\Xh_{k}\right)\,\dd{\Xh_k}\,\dd{\Th_k}}
   \,\exp{\left(-\sum_{k=0}^{K_t}{\int_{\Th_{k}}^{\Th_{k+1}}{\sum_{u}{\int{\alpha_{u}(t',\Xh_{k},x')\,\dd{x'}}}}\,\dd{t'}}\right)},
-\end{equation*}
-\normalfont
+  \normalfont
+\end{equation}
 where again, by convention, $\Th^{}_0=0$ and $\Th^{}_{K^{}_t+1}=t$.
 
 If $\H$ is such a history, we define $\time(\H)$ to be the right endpoint of its domain and use the notation $\event{\H}\coloneq\Set{\Th^{}_1,\dots,\Th^{}_{\K_t}}\subset{[0,\time(\H)]}$ to denote the set of its jump times.
@@ -710,6 +712,7 @@ For this, we use the filter equation technology developed in \cref{sec:filter_eq
 In particular, the following theorem follows immediately from \cref{lemma:sing-filt}.
 
 \begin{corol}
+  \label{thm:pruned_uncond}
   Suppose that $\P=(\T,\Z,\Y)$ is a given pruned genealogy.
   Suppose that $w=w(t,x)$ satisfies the initial condition $w(0,x)=p_0(x)$ and the filter equation
   \begin{equation}
@@ -796,10 +799,13 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
   The result then follows from \cref{thm:pruned_lik}.
 \end{proof}
 
+Note that, since $\func{Y}_t(\Z)$ is finite, it is permissible, for example, to choose $q$ and $\pi$ to be uniform.
+
 The final result shows how to compute the likelihood of an obscured genealogy.
 It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
 
 \begin{corol}
+  \label{thm:obsc_uncond}
   Let $V=(\T,\Z)$ be a given obscured genealogy.
   Then there are probability kernels $q$ and $\pi$ as in \cref{thm:obsc_lik} such that if
   \begin{equation*}
@@ -826,10 +832,6 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
     \lik(V)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
   \end{equation*}
 \end{corol}
-
-\begin{remark}
-  Note that, since $\func{Y}_t(\Z)$ is finite, it is permissible to choose $q$ and $\pi$ to be uniform.
-\end{remark}
 
 Lemmas in the appendix show how this can be computed via Sequential Monte Carlo.
 
@@ -898,52 +900,73 @@ Filter equation formalism suggests approximations based on discretization of tim
 Explicit expressions for the quantities that arise in this paper are not always readily available.
 Here, we develop tools for manipulating complex expressions that are otherwise cumbersome.
 
+Relations to filtering of continuous-time Markov chains by \citet{Giesecke2018}.
+
 \begin{defn}
-  Suppose $\Xr_t$ is a continuous-time Markov process with Kolmogorov forward equation (KFE)
+  Let $\Xr_t$ be a continuous-time Markov process with KFE
   \begin{equation}
+    \fontsize{9pt}{11pt}\selectfont
     \label{eq:kfe2}
     \frac{\partial{u}}{\partial{t}}(t,x)
     =\int{u(t,x')\,\beta(t,x',x)\,\dd{x'}}
     -\int{u(t,x)\,\beta(t,x,x')\,\dd{x'}}.
+    \normalfont
   \end{equation}
-  Suppose that $B(t,x,x')\ge{0}$ and $\lambda(t,x)$ are given, real-valued, measurable functions.
-  We say that the equation
+  Suppose that $B:\Rp\times\Xspace^2\to\Rp$ and $\lambda:\Rp\times\Xspace\to\mathbb{R}$ are are given measurable functions.
+  Let $S\subset\Rp$ be countable and locally finite (\ie $S\cap{[0,t]}$ is finite for all $t>0$).
+  Then the system of equations
   \begin{equation}
-    \label{eq:reg-filter-eq}
+    \fontsize{9pt}{11pt}\selectfont
+    \label[pluralequation]{eq:filter-eq-defn}
     \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}(t,x)
-      =&\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      \frac{\partial{w}}{\partial{t}}(t,x)&=
+      \int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
       -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
-      -\lambda(t,x)\,w(t,x).\\
+      -\lambda(t,x)\,w(t,x),
+      \qquad
+      &t\notin{S},\\
+      w(t,x)&=\int{\wt(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
+      &t\in{S},
     \end{aligned}
+    \normalfont
   \end{equation}
-  is the \emph{filter equation} with \emph{driver} $\Xr_t$ (or \emph{generated by} $\beta$), \emph{boost} $B$, and \emph{decay} $\lambda$.
+  is called the \emph{filter equation} \emph{generated by} $\beta$, with \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observation times} $S$.
+  The process $\Xr_t$ is said to be the \emph{driver} of the filter equation.
+  The first of \cref{eq:filter-eq-defn} is the \emph{regular part} of the filter equation;
+  the second is known as the \emph{singular part}.
 \end{defn}
 
 \begin{remark}
-  Trivially, a Kolmogorov forward equation is itself a filter equation with boost $1$ and decay $0$.
+  Trivially, a Kolmogorov forward equation is itself a filter equation with boost $1$, decay $0$, and $S=\emptyset$.
 \end{remark}
 
-\AAK{[We should define the singular filter equations (\ie those with a discrete portion) also.]}
-
 The following results show how filter equations allow one to integrate over random histories.
+First, \cref{lemma:reg-filt} shows how one integrates over the full space of histories using a regular filter equation.
+\Cref{lemma:sing-filt} builds on this when the set of histories is restricted.
 
 \begin{lemma}
   \label{lemma:reg-filt}
   Suppose that $B:\Rp\times\Xspace^2\to\Rp$ is measurable.
-  If $\Vr_t$ is an $\Rp$-valued random process satisfying
+  Let $\Vr_t$ be an $\Rp$-valued random process satisfying
   \begin{equation*}
-    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\prod_{e\in\event{\H_t}}{B(e,\Xt_e,\X_e)},
+    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\prod_{\mathclap{e\;\in\;\event{\H_t}}}{B(e,\Xt_e,\X_e)}.
   \end{equation*}
-  then $\CondExpect{\Vr_t}{\Xr_t=x}$ is a measure-valued deterministic process on $\Xspace$ with density $w(t,x)$ that satisfies the filter equation
+  Let the family of measures $\lambda_t$ on $\Xspace$ be defined by
+  \begin{equation*}
+    \lambda_t(\mathcal{E})=\Expect{\Vr_t\cdot\Indicator{\Xr_t\in{\mathcal{E}}}},
+  \end{equation*}
+  for measurable $\mathcal{E}$, and let $w(t,x)$ be the density of $\lambda_t$,
+  \ie $\lambda_t(\dd{x})=w(t,x)\,\dd{x}$.
+  In particular, $\Expect{\Vr_t}=\lambda_t(\Xspace)=\int{w(t,x)\,\dd{x}}$.
+  Then $w$ satisfies the initial condition $w(0,x)=p_0(x)$ and the regular filter equation,
   \begin{equation}
     \label{eq:reg-filter-eq2}
     \frac{\partial{w}}{\partial{t}}=\int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}-\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}}.
   \end{equation}
-  Moreover, $\Expect{\Vr_t}=\int{w(t,x)\,\dd{x}}$.
 \end{lemma}
 \begin{proof}
-  The expectation can be broken into three terms, according to whether $\H_t$ has zero, one, or more than one event in $\halfclosed{t-\Delta,t}$.
+  Since $\Prob{\Vr_0=1}=1$, $\lambda_0(\mathcal{E})=\Prob{\Xr_0\in\mathcal{E}}$, which implies that $w(0,x)=p_0(x)$.
+  For $t>0$ and $\Delta>0$ sufficiently small, the expectation can be broken into three terms, according to whether $\H_t$ has zero, one, or more than one event in $\halfclosed{t-\Delta,t}$.
   Accordingly, as $\Delta\downarrow{0}$,
   \begin{equation*}
     \begin{aligned}
@@ -951,31 +974,52 @@ The following results show how filter equations allow one to integrate over rand
       &\qquad+\Delta\,\int{\alpha(t-\Delta,x',x)\,B(t-\Delta,x',x)\,w(t-\Delta,x')\,\dd{x'}}+o(\Delta).
     \end{aligned}
   \end{equation*}
-  In the limit, we obtain \cref{eq:reg-filter-eq}.
-  The last statement follows by definition.
+  In the limit, we obtain \cref{eq:reg-filter-eq2}, the regular filtering equation generated by $\alpha$, with boost $B$ and zero decay.
+  \AAK{[This depends on $\alpha$ and $B$ being continuous in their first arguments.]}
 \end{proof}
+
+When events are known to have occurred at particular times, it is of interest to integrate over those histories that include an event at each of these times.
+This leads to singular filter equations, as the next lemma shows.
+Before we state the lemma, some terminology is needed.
+Let $\mathbb{S}$ be the space of increasing, locally finite sequences in $\Rp$, with the topology induced by the Skorokhod metric and Lebesgue measure.
+For $t\in\Rp$ and $s\in\mathbb{S}$, let $s^{}_t\coloneq{s\cap{[0,t]}}$.
+Thus if $s\in\mathbb{S}$ and $s^{}_t=(\hat{s}_1,\dots,\hat{s}_K)$, then the infinitesimal element of Lebesgue measure at $s^{}_t$ is $\dd{s^{}_t}=\prod_{n=1}^{K}\dd{\hat{s}_n}$.
 
 \begin{lemma}
   \label{lemma:sing-filt}
-  Suppose $\mathcal{M}\subset{\Rp}$ is countable such that $\mathcal{M}_t\coloneq\mathcal{M}\cap{[0,t]}$ is finite for all $t$.
   Suppose that $B:\Rp\times\Xspace^2\to\Rp$ is measurable and
-  $\Vr_t$ is an $\Rp$-valued process satisfying
+  $\Vr_t$ is an $\Rp$-valued random process satisfying
   \begin{equation*}
-    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\Indicator{\event{\H_{t}}\supseteq\mathcal{M}_t}\,\prod_{e\in\event{\H_{t}}}{B(e,\Xt_e,\X_e)}.
+    \CondExpect{\Vr_t}{\Hr_t=\H_t}=\prod_{\mathclap{e\;\in\;\event{\H_{t}}}}{B(e,\Xt_e,\X_e)}.
   \end{equation*}
-  Then $\CondExpect{\Vr_t}{\Xr_t=x}$ is a measure-valued process on $\Rp^{\vert\mathcal{M}_t\vert}\times\Xspace$ with density $w(t,x)$ that satisfies
+  Let $\lambda_t$ be a family measures on $\Xspace\times\mathbb{S}$ defined by
+  \begin{equation*}
+    \lambda_t(\mathcal{E},\mathcal{S})=\Expect{\Vr_t\cdot\Indicator{\Xr_t\in{\mathcal{E}}}\cdot\Indicator{\exists{s\in\mathcal{S}}\:\text{s.t.}\:\event{\Hr_t}\supseteq{s^{}_t}}},
+  \end{equation*}
+  whenever $\mathcal{E}\subseteq\Xspace$ and $\mathcal{S}\subseteq\mathbb{S}$ are measurable.
+  Let $w(t,x,s)$ be the density of this measure, \ie
+  \begin{equation*}
+    \lambda_t(\dd{x}\,\dd{s})=w(t,x,s)\,\dd{x}\,\dd{s^{}_t}.
+  \end{equation*}
+  Then $w$ satisfies
   \begin{equation}
     \label{eq:two-part-filter}
     \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}(t,x)&=
-      \int{w(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}-\int{w(t,x)\,\alpha(t,x,x')\,\dd{x'}},\qquad
-      &t\notin{\mathcal{M}},\\
-      w(t,x)&=\int{\wt(t,x')\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
-      &t\in{\mathcal{M}}.
+      \frac{\partial{w}}{\partial{t}}(t,x,s)&=
+      \int{w(t,x',s)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      -\int{w(t,x,s)\,\alpha(t,x,x')\,\dd{x'}},\qquad
+      &t\notin{s},\\
+      w(t,x,s)&=\int{\wt(t,x',s)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
+      &t\in{s}.
     \end{aligned}
   \end{equation}
-  Moreover, $\Expect{\Vr_t}=\int{w(t,x)\,\dd{x}}$.
 \end{lemma}
+\begin{proof}
+  The proof proceeds by induction on the cardinality of $s_t$.
+  The base case, for which $s_t=\emptyset$, follows immediately from \cref{lemma:reg-filt}.
+  Assuming that it holds for $|s^{}_t|<K$, one has only to verify the singular part of \cref{eq:two-part-filter}.
+  One can integrate \cref{eq:Hdens} directly to accomplish this.
+\end{proof}
 
 \begin{lemma}
   Showing how \cref{eq:two-part-filter} can be stated as a singular filter equation, \ie with driver $\beta$ and boost $C$, where
