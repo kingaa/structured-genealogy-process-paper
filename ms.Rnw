@@ -1,4 +1,4 @@
-\documentclass[10pt,reqno,final]{amsart}
+\documentclass[10pt,leqno,final]{amsart}
 
 \input{header}
 
@@ -177,10 +177,12 @@ We will further assume that the number of jumps that occur in a finite time-inte
 
 \subsubsection{Kolmogorov forward equation}
 
-The above may be compactly summarized by stating that if $v(t,x)$ satisfies the Kolmogorov forward equation (KFE),
+The above may be compactly summarized by stating that if $u(t,x)$ satisfies the Kolmogorov forward equation (KFE),
 \begin{equation}
   \label{eq:kfe}
-  \frac{\partial{v}}{\partial{t}}(t,x)=\int\!v(t,x')\,\alpha(t,x',x)\,\dd{x'}-\int\!v(t,x)\,\alpha(t,x,x')\,\dd{x'},
+  \frac{\partial{u}}{\partial{t}}(t,x)
+  =\int\!{u(t,x')\,\alpha(t,x',x)\,\dd{x'}}
+  -\int\!{u(t,x)\,\alpha(t,x,x')\,\dd{x'}},
 \end{equation}
 and if, moreover, $v(0,x) = p_0(x)$,
 then $\int_{\mathcal{E}}\!{v(t,x)\,\dd{x}}=\Prob{\Xr_t\in\mathcal{E}}$ for every measurable $\mathcal{E}\subseteq{\Xspace}$.
@@ -224,19 +226,19 @@ Observe that, though $\Xr_t$ and $(\Xr_t,\Ur_t)$ are Markov processes, $\Ur_t$ i
 \citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
 The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
 Its state vector is $x=(S,I,R)$ and its KFE is
-\begin{equation*}
-  \fontsize{10pt}{11pt}\selectfont
-  \begin{split}
-    \frac{\partial{v}}{\partial{t}}(t,S,I,R)=
-    &\frac{\beta(t)\,I\,(S+1)}{N}\,v(t,S+1,I-1,R)
-    -\frac{\beta(t)\,I\,S}{N}\,v(t,S,I,R)\\
-    &+\gamma\,(I+1)\,v(t,S,I+1,R-1)
-    -\gamma\,I\,v(t,S,I,R)\\
-    &+\omega\,(R+1)\,v(t,S-1,I,R+1)
-    -\omega\,R\,v(t,S,I,R).
-  \end{split}
-  \normalfont
-\end{equation*}
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{v}}{\partial{t}}(t,S,I,R)=
+      &\frac{\beta(t)\,I\,(S+1)}{N}\,v(t,S+1,I-1,R)
+      -\frac{\beta(t)\,I\,S}{N}\,v(t,S,I,R)\\
+      &+\gamma\,(I+1)\,v(t,S,I+1,R-1)
+      -\gamma\,I\,v(t,S,I,R)\\
+      &+\omega\,(R+1)\,v(t,S-1,I,R+1)
+      -\omega\,R\,v(t,S,I,R).
+    \end{split}
+  \end{equation*}
+\end{mathsize}
 Note that we have here allowed for the possibility that the transmission rate, $\beta$, depends on time.
 
 \subsubsection{SEIRS model}
@@ -244,21 +246,21 @@ Note that we have here allowed for the possibility that the transmission rate, $
 A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
 The state space is $\Rp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
 It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
-\begin{equation*}
-  \fontsize{10pt}{11pt}\selectfont
-  \begin{split}
-    \frac{\partial{v}}{\partial{t}}(t,S,E,I,R)=
-    &\frac{\beta(t)\,I\,(S+1)}{N}\,v(t,S+1,E-1,I,R)
-    -\frac{\beta(t)\,I\,S}{N}\,v(t,S,E,I,R)\\
-    &+\sigma\,(E+1)\,v(t,S,E+1,I-1,R)
-    -\sigma\,E\,v(t,S,E,I,R)\\
-    &+\gamma\,(I+1)\,v(t,S,E,I+1,R-1)
-    -\gamma\,I\,v(t,S,E,I,R)\\
-    &+\omega\,(R+1)\,v(t,S-1,E,I,R+1)
-    -\omega\,R\,v(t,S,E,I,R),
-  \end{split}
-  \normalfont
-\end{equation*}
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{v}}{\partial{t}}(t,S,E,I,R)=
+      &\frac{\beta(t)\,I\,(S+1)}{N}\,v(t,S+1,E-1,I,R)
+      -\frac{\beta(t)\,I\,S}{N}\,v(t,S,E,I,R)\\
+      &+\sigma\,(E+1)\,v(t,S,E+1,I-1,R)
+      -\sigma\,E\,v(t,S,E,I,R)\\
+      &+\gamma\,(I+1)\,v(t,S,E,I+1,R-1)
+      -\gamma\,I\,v(t,S,E,I,R)\\
+      &+\omega\,(R+1)\,v(t,S-1,E,I,R+1)
+      -\omega\,R\,v(t,S,E,I,R),
+    \end{split}
+  \end{equation*}
+\end{mathsize}
 where $N=S+E+I+R$ is the total population size.
 The deme occupancy function in this case is $n(x)=(E,I)$.
 Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
@@ -269,68 +271,68 @@ A simple model for the competition of two strains for susceptible hosts is depic
 In this model, the state vector consists of seven numbers: $x=(S,E_1,E_2,I_1,I_2,R_1,R_2)$.
 There are four demes ($\Demes=\Set{\lab{E}_1,\lab{E}_2,\lab{I}_1,\lab{I}_2}$) and the occupancy function is $n(x)=(E_1,E_2,I_1,I_2)$.
 This model has KFE
-\begin{equation*}
-  \fontsize{10pt}{11pt}\selectfont
-  \begin{split}
-    \frac{\partial{v}}{\partial{t}}=
-    &\frac{\beta_1(t)\,I_1\,(S+1)}{N}\,v(t,S+1,E_1-1,E_2,I_1,I_2,R_1,R_2)
-    -\frac{\beta_1(t)\,I_1\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    &+\frac{\beta_2(t)\,I_2\,(S+1)}{N}\,v(t,S+1,E_1,E_2-1,I_1,I_2,R_1,R_2)
-    -\frac{\beta_2(t)\,I_2\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    &+\sigma_1\,(E_1+1)\,v(t,S,E_1+1,E_2,I_1-1,I_2,R_1,R_2)
-    -\sigma_1\,E_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    &+\sigma_2\,(E_2+1)\,v(t,S,E_1,E_2+1,I_1,I_2-1,R_1,R_2)
-    -\sigma_2\,E_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    &+\gamma_1\,(I_1+1)\,v(t,S,E_1,E_2,I_1+1,I_2,R_1-1,R_2)
-    -\gamma_1\,I_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    &+\gamma_2\,(I_2+1)\,v(t,S,E_1,E_2,I_1,I_2+1,R_1,R_2-1)
-    -\gamma_2\,I_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    &+\omega_1\,(R_1+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1+1,R_2)
-    -\omega_1\,R_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    &+\omega_2\,(R_2+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1,R_2+1)
-    -\omega_2\,R_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-  \end{split}
-  \normalfont
-\end{equation*}
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{v}}{\partial{t}}=
+      &\frac{\beta_1(t)\,I_1\,(S+1)}{N}\,v(t,S+1,E_1-1,E_2,I_1,I_2,R_1,R_2)
+      -\frac{\beta_1(t)\,I_1\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\frac{\beta_2(t)\,I_2\,(S+1)}{N}\,v(t,S+1,E_1,E_2-1,I_1,I_2,R_1,R_2)
+      -\frac{\beta_2(t)\,I_2\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\sigma_1\,(E_1+1)\,v(t,S,E_1+1,E_2,I_1-1,I_2,R_1,R_2)
+      -\sigma_1\,E_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\sigma_2\,(E_2+1)\,v(t,S,E_1,E_2+1,I_1,I_2-1,R_1,R_2)
+      -\sigma_2\,E_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\gamma_1\,(I_1+1)\,v(t,S,E_1,E_2,I_1+1,I_2,R_1-1,R_2)
+      -\gamma_1\,I_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\gamma_2\,(I_2+1)\,v(t,S,E_1,E_2,I_1,I_2+1,R_1,R_2-1)
+      -\gamma_2\,I_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\omega_1\,(R_1+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1+1,R_2)
+      -\omega_1\,R_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\omega_2\,(R_2+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1,R_2+1)
+      -\omega_2\,R_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+    \end{split}
+  \end{equation*}
+\end{mathsize}
 
 \subsubsection{Superspreading model}
 
 \Cref{fig:example_models}D depicts a model of superspreading.
 There are three demes ($\Demes=\Set{\lab{E},\lab{I_L},\lab{I_H}}$).
 The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
-\begin{equation*}
-  \fontsize{10pt}{11pt}\selectfont
-  \begin{split}
-    \frac{\partial{v}}{\partial{t}}=
-    &\frac{\beta(t)\,(I_L+\theta\,I_H)\,(S+1)}{N}\,v(t,S+1,E-1,I_L,I_H,R)
-    -\frac{\beta(t)\,(I_L+\theta\,I_H)\,S}{N}\,v(t,S,E,I_L,I_H,R)\\
-    &\sigma\,(E+1)\,v(t,S,E+1,I_L-1,I_H,R)
-    -\sigma\,E\,v(t,S,E,I_L,I_H,R)\\
-    &\eps_{LH}\,(I_L+1)\,v(t,S,E,I_L+1,I_H-1,R)
-    -\eps_{LH}\,I_L\,v(t,S,E,I_L,I_H,R)\\
-    &\eps_{HL}\,(I_H+1)\,v(t,S,E,I_L-1,I_H+1,R)
-    -\eps_{HL}\,I_H\,v(t,S,E,I_L,I_H,R)\\
-    &\gamma\,(I_L+1)\,v(t,S,E,I_L+1,I_H,R-1)
-    -\gamma\,I_L\,v(t,S,E,I_L,I_H,R)\\
-    &\gamma\,(I_H+1)\,v(t,S,E,I_L,I_H+1,R-1)
-    -\gamma\,I_H\,v(t,S,E,I_L,I_H,R)\\
-    &\omega\,(R+1)\,v(t,S-1,E,I_L,I_H,R+1)
-    -\omega\,R\,v(t,S,E,I_L,I_H,R).\\
-  \end{split}
-  \normalfont
-\end{equation*}
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{v}}{\partial{t}}=
+      &\frac{\beta(t)\,(I_L+\theta\,I_H)\,(S+1)}{N}\,v(t,S+1,E-1,I_L,I_H,R)
+      -\frac{\beta(t)\,(I_L+\theta\,I_H)\,S}{N}\,v(t,S,E,I_L,I_H,R)\\
+      &\sigma\,(E+1)\,v(t,S,E+1,I_L-1,I_H,R)
+      -\sigma\,E\,v(t,S,E,I_L,I_H,R)\\
+      &\eps_{LH}\,(I_L+1)\,v(t,S,E,I_L+1,I_H-1,R)
+      -\eps_{LH}\,I_L\,v(t,S,E,I_L,I_H,R)\\
+      &\eps_{HL}\,(I_H+1)\,v(t,S,E,I_L-1,I_H+1,R)
+      -\eps_{HL}\,I_H\,v(t,S,E,I_L,I_H,R)\\
+      &\gamma\,(I_L+1)\,v(t,S,E,I_L+1,I_H,R-1)
+      -\gamma\,I_L\,v(t,S,E,I_L,I_H,R)\\
+      &\gamma\,(I_H+1)\,v(t,S,E,I_L,I_H+1,R-1)
+      -\gamma\,I_H\,v(t,S,E,I_L,I_H,R)\\
+      &\omega\,(R+1)\,v(t,S-1,E,I_L,I_H,R+1)
+      -\omega\,R\,v(t,S,E,I_L,I_H,R).\\
+    \end{split}
+  \end{equation*}
+\end{mathsize}
 
 \subsubsection{Linear birth-death model}
 
-\fontsize{10pt}{11pt}\selectfont
-\begin{equation*}
-  \frac{\partial{v}}{\partial{t}}=
-  \lambda\,(N-1)\,v(t,N-1)
-  -\lambda\,N\,v(t,N)
-  +\mu\,(N+1)\,v(t,N+1)
-  -\mu\,N\,v(t,N)
-\end{equation*}
-\normalfont
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \frac{\partial{v}}{\partial{t}}=
+    \lambda\,(N-1)\,v(t,N-1)
+    -\lambda\,N\,v(t,N)
+    +\mu\,(N+1)\,v(t,N+1)
+    -\mu\,N\,v(t,N)
+  \end{equation*}
+\end{mathsize}
 
 \subsubsection{Moran model and the Kingman coalescent}
 
@@ -344,15 +346,15 @@ Alternatively, one can think of $\Hr_t$ as consisting of the sequence
 $\left(\left(\Trh_k,\Xrh_k,\Urh_k\right)\right)_{k=0}^{\Kr_t}$.
 In particular, conditional on $\Hr_t$, both $\Xr_t$ and $\Ur_t$ are deterministic, as are $\Kr_t$ and the embedded chains, $\Xrh_k$, $\Urh_k$, and the point process of event times $\Trh_k$.
 The probability measure, $\pi^{\mathrm{H}}$, for $\Hr_t$ can be expressed in terms of these:
-\begin{equation}
-  \label{eq:Hdens}
-  \fontsize{9pt}{11pt}\selectfont
-  \pi^{\mathrm{H}}(\dd{\H_t})
-  =p_{0}(\Xh_{0})\,\dd{\Xh_0}\,
-  \prod_{k=1}^{K_{t}}{\alpha_{\Uh_k}\!\!\left(\Th_k,\Xh_{k-1},\Xh_{k}\right)\,\dd{\Xh_k}\,\dd{\Th_k}}
-  \,\exp{\left(-\sum_{k=0}^{K_t}{\int_{\Th_{k}}^{\Th_{k+1}}{\sum_{u}{\int{\alpha_{u}(t',\Xh_{k},x')\,\dd{x'}}}}\,\dd{t'}}\right)},
-  \normalfont
-\end{equation}
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation}
+    \label{eq:Hdens}
+    \pi^{\mathrm{H}}(\dd{\H_t})
+    =p_{0}(\Xh_{0})\,\dd{\Xh_0}\,
+    \prod_{k=1}^{K_{t}}{\alpha_{\Uh_k}\!\!\left(\Th_k,\Xh_{k-1},\Xh_{k}\right)\,\dd{\Xh_k}\,\dd{\Th_k}}
+    \,\exp{\left(-\sum_{k=0}^{K_t}{\int_{\Th_{k}}^{\Th_{k+1}}{\sum_{u}{\int{\alpha_{u}(t',\Xh_{k},x')\,\dd{x'}}}}\,\dd{t'}}\right)},
+  \end{equation}
+\end{mathsize}
 where again, by convention, $\Th^{}_0=0$ and $\Th^{}_{K^{}_t+1}=t$.
 
 If $\H$ is such a history, we define $\time(\H)$ to be the right endpoint of its domain and use the notation $\event{\H}\coloneq\Set{\Th^{}_1,\dots,\Th^{}_{\K_t}}\subset{[0,\time(\H)]}$ to denote the set of its jump times.
@@ -711,7 +713,7 @@ Next, we show how the likelihood of a pruned genealogies, unconditional on the h
 For this, we use the filter equation technology developed in \cref{sec:filter_eqns}.
 In particular, the following theorem follows immediately from \cref{lemma:sing-filt}.
 
-\begin{corol}
+\begin{thm}
   \label{thm:pruned_uncond}
   Suppose that $\P=(\T,\Z,\Y)$ is a given pruned genealogy.
   Suppose that $w=w(t,x)$ satisfies the initial condition $w(0,x)=p_0(x)$ and the filter equation
@@ -730,7 +732,7 @@ In particular, the following theorem follows immediately from \cref{lemma:sing-f
   \begin{equation*}
     \lik(\P)=\int{w(T,x)\,\dd{x}}.
   \end{equation*}
-\end{corol}
+\end{thm}
 
 \subsection{Likelihood for obscured genealogies}
 
@@ -804,7 +806,7 @@ Note that, since $\func{Y}_t(\Z)$ is finite, it is permissible, for example, to 
 The final result shows how to compute the likelihood of an obscured genealogy.
 It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
 
-\begin{corol}
+\begin{thm}
   \label{thm:obsc_uncond}
   Let $V=(\T,\Z)$ be a given obscured genealogy.
   Then there are probability kernels $q$ and $\pi$ as in \cref{thm:obsc_lik} such that if
@@ -831,10 +833,9 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
   \begin{equation*}
     \lik(V)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
   \end{equation*}
-\end{corol}
+\end{thm}
 
-Lemmas in the appendix show how this can be computed via Sequential Monte Carlo.
-
+\Cref{lemma:monte-carlo} shows how this can be computed via Sequential Monte Carlo.
 
 \section{Examples}
 
@@ -904,36 +905,36 @@ Relations to filtering of continuous-time Markov chains by \citet{Giesecke2018}.
 
 \begin{defn}
   Let $\Xr_t$ be a continuous-time Markov process with KFE
-  \begin{equation}
-    \fontsize{9pt}{11pt}\selectfont
-    \label{eq:kfe2}
-    \frac{\partial{u}}{\partial{t}}(t,x)
-    =\int{u(t,x')\,\beta(t,x',x)\,\dd{x'}}
-    -\int{u(t,x)\,\beta(t,x,x')\,\dd{x'}}.
-    \normalfont
-  \end{equation}
+  \begin{mathsize}{9pt}{10pt}
+    \begin{equation}
+      \label{eq:kfe2}
+      \frac{\partial{u}}{\partial{t}}(t,x)
+      =\int{u(t,x')\,\beta(t,x',x)\,\dd{x'}}
+      -\int{u(t,x)\,\beta(t,x,x')\,\dd{x'}}.
+    \end{equation}
+  \end{mathsize}
   Suppose that $B:\Rp\times\Xspace^2\to\Rp$ and $\lambda:\Rp\times\Xspace\to\mathbb{R}$ are are given measurable functions.
   Let $S\subset\Rp$ be countable and locally finite (\ie $S\cap{[0,t]}$ is finite for all $t>0$).
   Then the system of equations
-  \begin{equation}
-    \fontsize{9pt}{11pt}\selectfont
-    \label[pluralequation]{eq:filter-eq-defn}
-    \begin{aligned}
+  \begin{mathsize}{9pt}{11pt}
+    \begin{align}
       \frac{\partial{w}}{\partial{t}}(t,x)&=
       \int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
       -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
       -\lambda(t,x)\,w(t,x),
       \qquad
-      &t\notin{S},\\
+      &t\notin{S},
+      \label{eq:filter-eq-defn-reg}\\
       w(t,x)&=\int{\wt(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
       &t\in{S},
-    \end{aligned}
+      \label{eq:filter-eq-defn-sing}
+    \end{align}
     \normalfont
-  \end{equation}
+  \end{mathsize}
   is called the \emph{filter equation} \emph{generated by} $\beta$, with \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observation times} $S$.
   The process $\Xr_t$ is said to be the \emph{driver} of the filter equation.
-  The first of \cref{eq:filter-eq-defn} is the \emph{regular part} of the filter equation;
-  the second is known as the \emph{singular part}.
+  \Cref{eq:filter-eq-defn-reg} is the \emph{regular part} of the filter equation;
+  \Cref{eq:filter-eq-defn-sing} is known as the \emph{singular part}.
 \end{defn}
 
 \begin{remark}
@@ -1002,27 +1003,26 @@ Thus if $s\in\mathbb{S}$ and $s^{}_t=(\hat{s}_1,\dots,\hat{s}_K)$, then the infi
     \lambda_t(\dd{x}\,\dd{s})=w(t,x,s)\,\dd{x}\,\dd{s^{}_t}.
   \end{equation*}
   Then $w$ satisfies
-  \begin{equation}
-    \label{eq:two-part-filter}
-    \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}(t,x,s)&=
-      \int{w(t,x',s)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
-      -\int{w(t,x,s)\,\alpha(t,x,x')\,\dd{x'}},\qquad
-      &t\notin{s},\\
-      w(t,x,s)&=\int{\wt(t,x',s)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
-      &t\in{s}.
-    \end{aligned}
-  \end{equation}
+  \begin{align}
+    \label{eq:two-part-filter-reg}
+    \frac{\partial{w}}{\partial{t}}(t,x,s)&=
+    \int{w(t,x',s)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
+    -\int{w(t,x,s)\,\alpha(t,x,x')\,\dd{x'}},\qquad
+    &t\notin{s},\\
+    \label{eq:two-part-filter-sing}
+    w(t,x,s)&=\int{\wt(t,x',s)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
+    &t\in{s}.
+  \end{align}
 \end{lemma}
 \begin{proof}
   The proof proceeds by induction on the cardinality of $s_t$.
   The base case, for which $s_t=\emptyset$, follows immediately from \cref{lemma:reg-filt}.
-  Assuming that it holds for $|s^{}_t|<K$, one has only to verify the singular part of \cref{eq:two-part-filter}.
-  One can integrate \cref{eq:Hdens} directly to accomplish this.
+  Assuming that it holds for $|s^{}_t|<K$, one has only to verify \cref{eq:two-part-filter-sing}.
+  This can be accomplished by integrating \cref{eq:Hdens} directly.
 \end{proof}
 
 \begin{lemma}
-  Showing how \cref{eq:two-part-filter} can be stated as a singular filter equation, \ie with driver $\beta$ and boost $C$, where
+  Showing how \cref{eq:two-part-filter-reg,eq:two-part-filter-sing} can be stated as a singular filter equation, \ie with driver $\beta$ and boost $C$, where
   \begin{equation*}
     \begin{gathered}
       A(t,x)=\sum_{x'}{\alpha(t,x,x')}, \qquad
@@ -1053,7 +1053,7 @@ whenever $f$ is \cadlag\ and $-\infty\le{a}<{b}\le{\infty}$.
 
 \begin{lemma}
   \label{lemma:filter}
-  The filter equation \eqref{eq:reg-filter-eq} is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u(t,x,v)$ satisfies the KFE
+  The filter equation \eqref{eq:reg-filter-eq-reg} is satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u(t,x,v)$ satisfies the KFE
   \begin{equation}
     \label{eq:filterlemma}
     \begin{aligned}
