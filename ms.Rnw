@@ -146,7 +146,7 @@ Migration, superspreading, competition between strains.
 \end{figure}
 
 We will assume that our population process is a time-inhomogeneous Markov jump process, $\Xr_t$, $t\in\Rp$, taking values in some space $\Xspace$.
-In earlier work \citep{King2022}, we limited ourselves to the case $\Xspace=\mathbb{Z}^d$, but here we assume only that $\Xspace$ is a complete metric space with a countable dense subset, \ie a Polish space.
+In earlier work \citep{King2022}, we limited ourselves to the case $\Xspace=\mathbb{Z}^d$, but here we assume only that $\Xspace$ is a complete metric measure space with a countable dense subset.
 The population process is completely specified by its initial-state density, $p_0$, and its transition rates $\alpha$.
 In particular, we suppose that
 \begin{equation}
@@ -162,7 +162,7 @@ More precisely, the transition rates have the following properties:
   \end{gathered}
 \end{equation*}
 for all $t\in\Rp$ and $x,x'\in\Xspace$.
-\AAK{[We could mention that we use the continuity of $\alpha$ with respect to $t$ in some of the following, but that this condition can be relaxed.]}
+We further assume that $\alpha(t,x,x')$ is \cadlag\ as a function of time for all $x,x'\in{\Xspace}$.
 Henceforth, we understand that integrals are taken over all of $\Xspace$ unless otherwise specified.
 Let $\Kr_t$ be the number of jumps that $\Xr$ has taken by time $t$.
 We assume that $\Kr_t$ is a simple counting process so that
@@ -177,16 +177,20 @@ We will further assume that the number of jumps that occur in a finite time-inte
 
 \subsubsection{Kolmogorov forward equation}
 
-The above may be compactly summarized by stating that if $u(t,x)$ satisfies the Kolmogorov forward equation (KFE),
+The above may be compactly summarized by stating that if $v(t,x)$ satisfies the Kolmogorov forward equation (KFE),
 \begin{equation}
   \label{eq:kfe}
-  \frac{\partial{u}}{\partial{t}}(t,x)
-  =\int\!{u(t,x')\,\alpha(t,x',x)\,\dd{x'}}
-  -\int\!{u(t,x)\,\alpha(t,x,x')\,\dd{x'}},
+  \frac{\partial{v}}{\partial{t}}(t,x)
+  =\int\!{v(t,x')\,\alpha(t,x',x)\,\dd{x'}}
+  -\int\!{v(t,x)\,\alpha(t,x,x')\,\dd{x'}},
 \end{equation}
 and if, moreover, $v(0,x) = p_0(x)$,
 then $\int_{\mathcal{E}}\!{v(t,x)\,\dd{x}}=\Prob{\Xr_t\in\mathcal{E}}$ for every measurable $\mathcal{E}\subseteq{\Xspace}$.
 \Cref{eq:kfe} is sometimes called the \emph{master equation} for $\Xr_t$.
+
+\AAK{[
+    We can also let $\alpha$ have some singular components (i.e., $\delta$ functions).
+]}
 
 Another perspective on the Markov processes is to be had from its Markov state transition diagram (\cref{fig:markov_state}).
 
@@ -226,42 +230,13 @@ Observe that, though $\Xr_t$ and $(\Xr_t,\Ur_t)$ are Markov processes, $\Ur_t$ i
 \citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
 The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
 Its state vector is $x=(S,I,R)$ and its KFE is
-\begin{mathsize}{10pt}{11pt}
-  \begin{equation*}
-    \begin{split}
-      \frac{\partial{v}}{\partial{t}}(t,S,I,R)=
-      &\frac{\beta(t)\,I\,(S+1)}{N}\,v(t,S+1,I-1,R)
-      -\frac{\beta(t)\,I\,S}{N}\,v(t,S,I,R)\\
-      &+\gamma\,(I+1)\,v(t,S,I+1,R-1)
-      -\gamma\,I\,v(t,S,I,R)\\
-      &+\omega\,(R+1)\,v(t,S-1,I,R+1)
-      -\omega\,R\,v(t,S,I,R).
-    \end{split}
-  \end{equation*}
-\end{mathsize}
 Note that we have here allowed for the possibility that the transmission rate, $\beta$, depends on time.
 
 \subsubsection{SEIRS model}
 
 A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
 The state space is $\Rp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
-It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
-\begin{mathsize}{10pt}{11pt}
-  \begin{equation*}
-    \begin{split}
-      \frac{\partial{v}}{\partial{t}}(t,S,E,I,R)=
-      &\frac{\beta(t)\,I\,(S+1)}{N}\,v(t,S+1,E-1,I,R)
-      -\frac{\beta(t)\,I\,S}{N}\,v(t,S,E,I,R)\\
-      &+\sigma\,(E+1)\,v(t,S,E+1,I-1,R)
-      -\sigma\,E\,v(t,S,E,I,R)\\
-      &+\gamma\,(I+1)\,v(t,S,E,I+1,R-1)
-      -\gamma\,I\,v(t,S,E,I,R)\\
-      &+\omega\,(R+1)\,v(t,S-1,E,I,R+1)
-      -\omega\,R\,v(t,S,E,I,R),
-    \end{split}
-  \end{equation*}
-\end{mathsize}
-where $N=S+E+I+R$ is the total population size.
+It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$).
 The deme occupancy function in this case is $n(x)=(E,I)$.
 Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
 
@@ -270,69 +245,13 @@ Note that the terms associated with sampling cancel each other in the KFE, since
 A simple model for the competition of two strains for susceptible hosts is depicted in \cref{fig:example_models}B.
 In this model, the state vector consists of seven numbers: $x=(S,E_1,E_2,I_1,I_2,R_1,R_2)$.
 There are four demes ($\Demes=\Set{\lab{E}_1,\lab{E}_2,\lab{I}_1,\lab{I}_2}$) and the occupancy function is $n(x)=(E_1,E_2,I_1,I_2)$.
-This model has KFE
-\begin{mathsize}{10pt}{11pt}
-  \begin{equation*}
-    \begin{split}
-      \frac{\partial{v}}{\partial{t}}=
-      &\frac{\beta_1(t)\,I_1\,(S+1)}{N}\,v(t,S+1,E_1-1,E_2,I_1,I_2,R_1,R_2)
-      -\frac{\beta_1(t)\,I_1\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\frac{\beta_2(t)\,I_2\,(S+1)}{N}\,v(t,S+1,E_1,E_2-1,I_1,I_2,R_1,R_2)
-      -\frac{\beta_2(t)\,I_2\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\sigma_1\,(E_1+1)\,v(t,S,E_1+1,E_2,I_1-1,I_2,R_1,R_2)
-      -\sigma_1\,E_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\sigma_2\,(E_2+1)\,v(t,S,E_1,E_2+1,I_1,I_2-1,R_1,R_2)
-      -\sigma_2\,E_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\gamma_1\,(I_1+1)\,v(t,S,E_1,E_2,I_1+1,I_2,R_1-1,R_2)
-      -\gamma_1\,I_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\gamma_2\,(I_2+1)\,v(t,S,E_1,E_2,I_1,I_2+1,R_1,R_2-1)
-      -\gamma_2\,I_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\omega_1\,(R_1+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1+1,R_2)
-      -\omega_1\,R_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\omega_2\,(R_2+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1,R_2+1)
-      -\omega_2\,R_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    \end{split}
-  \end{equation*}
-\end{mathsize}
 
 \subsubsection{Superspreading model}
 
 \Cref{fig:example_models}D depicts a model of superspreading.
 There are three demes ($\Demes=\Set{\lab{E},\lab{I_L},\lab{I_H}}$).
-The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
-\begin{mathsize}{10pt}{11pt}
-  \begin{equation*}
-    \begin{split}
-      \frac{\partial{v}}{\partial{t}}=
-      &\frac{\beta(t)\,(I_L+\theta\,I_H)\,(S+1)}{N}\,v(t,S+1,E-1,I_L,I_H,R)
-      -\frac{\beta(t)\,(I_L+\theta\,I_H)\,S}{N}\,v(t,S,E,I_L,I_H,R)\\
-      &\sigma\,(E+1)\,v(t,S,E+1,I_L-1,I_H,R)
-      -\sigma\,E\,v(t,S,E,I_L,I_H,R)\\
-      &\eps_{LH}\,(I_L+1)\,v(t,S,E,I_L+1,I_H-1,R)
-      -\eps_{LH}\,I_L\,v(t,S,E,I_L,I_H,R)\\
-      &\eps_{HL}\,(I_H+1)\,v(t,S,E,I_L-1,I_H+1,R)
-      -\eps_{HL}\,I_H\,v(t,S,E,I_L,I_H,R)\\
-      &\gamma\,(I_L+1)\,v(t,S,E,I_L+1,I_H,R-1)
-      -\gamma\,I_L\,v(t,S,E,I_L,I_H,R)\\
-      &\gamma\,(I_H+1)\,v(t,S,E,I_L,I_H+1,R-1)
-      -\gamma\,I_H\,v(t,S,E,I_L,I_H,R)\\
-      &\omega\,(R+1)\,v(t,S-1,E,I_L,I_H,R+1)
-      -\omega\,R\,v(t,S,E,I_L,I_H,R).\\
-    \end{split}
-  \end{equation*}
-\end{mathsize}
 
 \subsubsection{Linear birth-death model}
-
-\begin{mathsize}{10pt}{11pt}
-  \begin{equation*}
-    \frac{\partial{v}}{\partial{t}}=
-    \lambda\,(N-1)\,v(t,N-1)
-    -\lambda\,N\,v(t,N)
-    +\mu\,(N+1)\,v(t,N+1)
-    -\mu\,N\,v(t,N)
-  \end{equation*}
-\end{mathsize}
 
 \subsubsection{Moran model and the Kingman coalescent}
 
@@ -835,7 +754,7 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
   \end{equation*}
 \end{thm}
 
-\Cref{lemma:monte-carlo} shows how this can be computed via Sequential Monte Carlo.
+\Cref{lemma:filter} shows how this can be computed via Sequential Monte Carlo.
 
 \section{Examples}
 
@@ -1135,5 +1054,167 @@ this average is simply $\int\!{w(t,x)\,\dd{x}}$.
 %% \item Weight the realization by the product of the $B$ factors.
 %%   Note that this makes the appropriate importance-sampling correction.
 %% \end{compactenum}
+
+\section{Examples}
+
+\subsection{SIRS model}
+
+\citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
+The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
+Its state vector is $x=(S,I,R)$ and its KFE is
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{v}}{\partial{t}}(t,S,I,R)=
+      &\frac{\beta(t)\,(S+1)\,(I-1)}{N}\,v(t,S+1,I-1,R)
+      -\frac{\beta(t)\,S\,I}{N}\,v(t,S,I,R)\\
+      &+\gamma\,(I+1)\,v(t,S,I+1,R-1)
+      -\gamma\,I\,v(t,S,I,R)\\
+      &+\omega\,(R+1)\,v(t,S-1,I,R+1)
+      -\omega\,R\,v(t,S,I,R).
+    \end{split}
+  \end{equation*}
+\end{mathsize}%
+Here $N=S+I+R$ is the host population size.
+Note that we have here allowed for the possibility that the transmission rate, $\beta$, depends on time.
+
+\subsection{SEIRS model}
+
+A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
+The state space is $\Rp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
+It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{v}}{\partial{t}}(t,S,E,I,R)=
+      &\frac{\beta(t)\,(S+1)\,I}{N}\,v(t,S+1,E-1,I,R)
+      -\frac{\beta(t)\,S\,I}{N}\,v(t,S,E,I,R)\\
+      &+\sigma\,(E+1)\,v(t,S,E+1,I-1,R)
+      -\sigma\,E\,v(t,S,E,I,R)\\
+      &+\gamma\,(I+1)\,v(t,S,E,I+1,R-1)
+      -\gamma\,I\,v(t,S,E,I,R)\\
+      &+\omega\,(R+1)\,v(t,S-1,E,I,R+1)
+      -\omega\,R\,v(t,S,E,I,R),
+    \end{split}
+  \end{equation*}
+\end{mathsize}%
+where $N=S+E+I+R$ is the total population size.
+The deme occupancy function in this case is $n(x)=(E,I)$.
+Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
+
+\subsection{Two-strain competition model}
+
+A simple model for the competition of two strains for susceptible hosts is depicted in \cref{fig:example_models}B.
+In this model, the state vector consists of seven numbers: $x=(S,E_1,E_2,I_1,I_2,R_1,R_2)$.
+There are four demes ($\Demes=\Set{\lab{E}_1,\lab{E}_2,\lab{I}_1,\lab{I}_2}$) and the occupancy function is $n(x)=(E_1,E_2,I_1,I_2)$.
+This model has KFE
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{v}}{\partial{t}}=
+      &\frac{\beta_1(t)\,I_1\,(S+1)}{N}\,v(t,S+1,E_1-1,E_2,I_1,I_2,R_1,R_2)
+      -\frac{\beta_1(t)\,I_1\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\frac{\beta_2(t)\,I_2\,(S+1)}{N}\,v(t,S+1,E_1,E_2-1,I_1,I_2,R_1,R_2)
+      -\frac{\beta_2(t)\,I_2\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\sigma_1\,(E_1+1)\,v(t,S,E_1+1,E_2,I_1-1,I_2,R_1,R_2)
+      -\sigma_1\,E_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\sigma_2\,(E_2+1)\,v(t,S,E_1,E_2+1,I_1,I_2-1,R_1,R_2)
+      -\sigma_2\,E_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\gamma_1\,(I_1+1)\,v(t,S,E_1,E_2,I_1+1,I_2,R_1-1,R_2)
+      -\gamma_1\,I_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\gamma_2\,(I_2+1)\,v(t,S,E_1,E_2,I_1,I_2+1,R_1,R_2-1)
+      -\gamma_2\,I_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\omega_1\,(R_1+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1+1,R_2)
+      -\omega_1\,R_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+      &+\omega_2\,(R_2+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1,R_2+1)
+      -\omega_2\,R_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
+    \end{split}
+  \end{equation*}
+\end{mathsize}%
+
+\subsection{Superspreading model}
+
+\Cref{fig:example_models}D depicts a model of superspreading.
+There are three demes ($\Demes=\Set{\lab{E},\lab{I_L},\lab{I_H}}$).
+The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{v}}{\partial{t}}=
+      &\frac{\beta(t)\,(I_L+\theta\,I_H)\,(S+1)}{N}\,v(t,S+1,E-1,I_L,I_H,R)
+      -\frac{\beta(t)\,(I_L+\theta\,I_H)\,S}{N}\,v(t,S,E,I_L,I_H,R)\\
+      &\sigma\,(E+1)\,v(t,S,E+1,I_L-1,I_H,R)
+      -\sigma\,E\,v(t,S,E,I_L,I_H,R)\\
+      &\eps_{LH}\,(I_L+1)\,v(t,S,E,I_L+1,I_H-1,R)
+      -\eps_{LH}\,I_L\,v(t,S,E,I_L,I_H,R)\\
+      &\eps_{HL}\,(I_H+1)\,v(t,S,E,I_L-1,I_H+1,R)
+      -\eps_{HL}\,I_H\,v(t,S,E,I_L,I_H,R)\\
+      &\gamma\,(I_L+1)\,v(t,S,E,I_L+1,I_H,R-1)
+      -\gamma\,I_L\,v(t,S,E,I_L,I_H,R)\\
+      &\gamma\,(I_H+1)\,v(t,S,E,I_L,I_H+1,R-1)
+      -\gamma\,I_H\,v(t,S,E,I_L,I_H,R)\\
+      &\omega\,(R+1)\,v(t,S-1,E,I_L,I_H,R+1)
+      -\omega\,R\,v(t,S,E,I_L,I_H,R).\\
+    \end{split}
+  \end{equation*}
+\end{mathsize}%
+
+\subsection{Linear birth-death model}
+
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \frac{\partial{v}}{\partial{t}}=
+    \lambda\,(N-1)\,v(t,N-1)
+    -\lambda\,N\,v(t,N)
+    +\mu\,(N+1)\,v(t,N+1)
+    -\mu\,N\,v(t,N)
+  \end{equation*}
+\end{mathsize}%
+
+\subsection{Moran model and the Kingman coalescent}
+
+In the Moran model, events occur according to a rate-$\mu$ Poisson process.
+At each event, a compound birth-death jump (cf.~\cref{fig:event_types}F) occurs so that the population size, $n$, remains constant.
+If we let $X_t$ be the number of events that have occurred by time $t$, then $X_t$ is a simple counting process, which we can use to define the state of the population process.
+Its KFE is then
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation*}
+    \begin{gathered}
+      \frac{\partial{v}}{\partial{t}}=
+      \mu\,(x-1)\,v(t,x-1)
+      -\mu\,x\,v(t,x),
+      \qquad
+      v(0,x) =
+      \begin{cases}
+        1, & x=0,\\
+        0, & x>0.
+      \end{cases}
+    \end{gathered}
+  \end{equation*}
+\end{mathsize}%
+
+Since there is only a single deme, and since nothing depends on the state, in writing the corresponding filter equation, we can take $w$ to be independent of both $x$ and $y$.
+If only $m$ samples are taken simultaneously at a single time, $T$, the filter equation thus reads
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation}
+    \label{eq:moran-filter}
+    \begin{gathered}
+      w(0) = 1,
+      \qquad
+      \frac{\partial{w}}{\partial{t}}=
+      \mu\,w(t)\,\left(1-\frac{\tbinom{\ell(t)}{2}}{\tbinom{n}{2}}\right)
+      -\mu\,w(t),\quad t\notin{S},
+      \qquad
+      w(t) = \mu\,\frac{\wt(t)}{\tbinom{n}{2}},\quad t\in{S}.
+    \end{gathered}
+  \end{equation}
+\end{mathsize}%
+Integrating \cref{eq:moran-filter} and taking logarithms yields
+\begin{equation}
+  \label{eq:kingman}
+  \log{w(T)}=k\,\log{\frac{\mu}{\tbinom{n}{2}}}-\frac{\mu}{\tbinom{n}{2}}\,\sum_{i=m-k}^{m}\!{\tbinom{i}{2}\,s^{}_i},
+\end{equation}
+where $k$ is the number of branch-points and the $s^{}_{i}\coloneq\int{\Indicator{\ell(t)=i}\,\dd{t}}$ are the durations of the \emph{coalescent intervals}, \ie intervals between successive branch-points.
+We recognize \cref{eq:kingman} as the expression for the \citet{Kingman1982a} coalescent \citep[\eg][]{Wakeley2008}.
 
 \end{document}
