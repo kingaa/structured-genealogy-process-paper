@@ -10,8 +10,8 @@
   Center for the Study of Complex~Systems, and
   Department of Mathematics,
   University of Michigan,
-  Ann~Arbor, MI~48109~USA\\
-  Santa~Fe~Institute,
+  Ann~Arbor, MI~48109~USA
+  \emph{and} Santa~Fe~Institute,
   1399 Hyde~Park~Road,
   Santa~Fe, NM~87501~USA
 }
@@ -27,7 +27,7 @@
 \author[Ionides]{Edward~L.~Ionides}
 \address{
   E.~L.~Ionides,
-  Department of Statistics
+  Department of Statistics,
   University of Michigan,
   Ann~Arbor, MI~48109~USA
 }
@@ -94,6 +94,10 @@ Modeling of the sampling process.
 Extension of previous results \citep{King2022}.
 Broader class of state-spaces.
 Accommodating discrete structure.
+
+In an \emph{unstructured} Markov population process, every lineage is exactly like every other.
+\citet{King2022} showed how every such process induces an unstructured Markov genealogy process.
+Here, our aim is to expand the theory considerably by allowing our population of lineages to have discrete structure.
 
 Relations to lookdown construction of \citet{Etheridge2019}.
 
@@ -162,7 +166,6 @@ More precisely, the transition rates have the following properties:
   \end{gathered}
 \end{equation*}
 for all $t\in\Rp$ and $x,x'\in\Xspace$.
-We further assume that $\alpha(t,x,x')$ is \cadlag\ as a function of time for all $x,x'\in{\Xspace}$.
 Henceforth, we understand that integrals are taken over all of $\Xspace$ unless otherwise specified.
 Let $\Kr_t$ be the number of jumps that $\Xr$ has taken by time $t$.
 We assume that $\Kr_t$ is a simple counting process so that
@@ -173,9 +176,9 @@ We assume that $\Kr_t$ is a simple counting process so that
     \CondProb{\Xr_{t+\Delta}\in\mathcal{E}}{\Xr_{t}=x, \Kr_{t+\Delta}-\Kr_{t}=1}=\frac{\int_{\mathcal{E}}{\alpha(t,x,x')\,\dd{x'}}}{\int{\alpha(t,x,x')\,\dd{x'}}}+o(\Delta).
   \end{gathered}
 \end{equation*}
-We will further assume that the number of jumps that occur in a finite time-interval is finite: $\Prob{\Kr_t<\infty}=1$ for all $t$.
+We further assume that $\alpha(t,x,x')$ is \cadlag\ as a function of time for all $x,x'\in{\Xspace}$ and that the number of jumps that occur in a finite time-interval is finite: $\Prob{\Kr_t<\infty}=1$ for all $t$.
 
-\subsubsection{Kolmogorov forward equation}
+\subsection{Kolmogorov forward equation}
 
 The above may be compactly summarized by stating that if $v(t,x)$ satisfies the Kolmogorov forward equation (KFE),
 \begin{equation}
@@ -188,30 +191,45 @@ and if, moreover, $v(0,x) = p_0(x)$,
 then $\int_{\mathcal{E}}\!{v(t,x)\,\dd{x}}=\Prob{\Xr_t\in\mathcal{E}}$ for every measurable $\mathcal{E}\subseteq{\Xspace}$.
 \Cref{eq:kfe} is sometimes called the \emph{master equation} for $\Xr_t$.
 
-\AAK{[
-    We can also let $\alpha$ have some singular components (i.e., $\delta$ functions).
-]}
+\subsection{Inclusion of jumps at deterministic times}
 
-Another perspective on the Markov processes is to be had from its Markov state transition diagram (\cref{fig:markov_state}).
+For modeling purposes, it is sometimes desirable to insist that certain events occur at specific, known times.
+For example, if samples are collected at specific times in such a way that the timing itself conveys no information about the process, one might wish to condition on the sampling time.
+We can expand the class of population models to allow for this as follows.
+Suppose that $S=\Set{s_1,s_2,\dots,}\subset\Zp$ is a sequence of event times.
+If we postulate that, at time $s_i$, an event occurred at which $\Xr_t$ jumped from state $x$ to state $x'$ with probability $\pi(s_i,x,x')$, the KFE for the process becomes
+\begin{align}
+  \label{eq:kfe-reg}
+  \frac{\partial{v}}{\partial{t}}(t,x)
+  &=\int\!{v(t,x')\,\alpha(t,x',x)\,\dd{x'}}
+  -\int\!{v(t,x)\,\alpha(t,x,x')\,\dd{x'}},
+  &t\notin{S},\\
+  \label{eq:kfe-sing}
+  v(t,x)
+  &=\int\!{\leftlim{v}(t,x')\,\pi(t,x',x)\,\dd{x'}},
+  &t\in{S}.
+\end{align}
+Note that the \cref{eq:kfe-reg} is identical to \cref{eq:kfe};
+we call this the \emph{regular part} of the KFE.
+We refer to \cref{eq:kfe-sing} as the \emph{singular part} of the KFE.
+
+Using a Dirac delta notation, one can represent \cref{eq:kfe-reg,eq:kfe-sing} as a single equation in the form of \cref{eq:kfe}.
+In particular, if in \cref{eq:kfe} we make the substitution
+\begin{equation*}
+  \alpha(t,x,x')\mapsto\alpha(t,x,x')+\sum_{s\in{S}}{\delta(t,s)\,\pi(t,x,x')},
+\end{equation*}
+we obtain an equation which we can view as shorthand for \cref{eq:kfe-reg,eq:kfe-sing}.
+%% To be even more parsimonious, we can refer to \cref{eq:kfe-reg,eq:kfe-sing} as the $(\alpha,\pi,S)$ KFE.
+
+\subsection{Jump marks}
+
+%% Another perspective on the Markov processes is to be had from its Markov state transition diagram (\cref{fig:markov_state}).
 
 \begin{figure}
   \input{figs/markov_diagram}
 \end{figure}
 
-\subsubsection{Structured populations, demes, and deme occupancy}
-\label{sec:demes}
-
-In an \emph{unstructured} Markov population process, every lineage is exactly like every other.
-\citet{King2022} showed how every such process induces an unstructured Markov genealogy process.
-Here, our aim is to expand the theory considerably by allowing our population of lineages to have discrete structure.
-In particular, we suppose that there are a countable set of subpopulations that may differ in their vital rates, but within each of which, individual lineages are statistically identical.
-We call these subpopulations \emph{demes}, and use the symbol $\Demes$ to denote an index set for them.
-We define the \emph{deme occupancy} function $n:\Demes\times\Xspace\to\Zp$ so that
-for $i\in\Demes$, $x\in\Xspace$, $n_i(x)$ is the number of lineages in deme $i$ when the population is in state $x$.
-
-\subsection{Jump marks}
-
-In the following, it will be useful to divide the jumps of the population process $\Xr_t$ into distinct categories.
+It will be useful to divide the jumps of the population process $\Xr_t$ into distinct categories.
 For this purpose, we let $\Jumps$ be a countable set of jump \emph{marks} such that
 \begin{equation*}
   \alpha(t,x,x')=\sum_u{\alpha_u(t,x,x')}.
@@ -223,20 +241,39 @@ Let us define the \emph{jump mark} process, $\Ur_t$, to be the mark of the lates
 As usual, we take the sample paths of $\Ur_t$ to be \cadlag.
 Observe that, though $\Xr_t$ and $(\Xr_t,\Ur_t)$ are Markov processes, $\Ur_t$ is not.
 
+\subsection{Demes and deme occupancy}
+\label{sec:demes}
+
+Our first goal in this paper is to show how a given population process induces a unique stochastic process on the space of genealogies.
+At each time, this genealogy will represent the relationships of shared ancestry among a population of lineages extant at that time.
+To accommodate the structure of the population, this population of lineages will itself be subdivided into discrete categories.
+In particular, we suppose that there are a countable set of subpopulations, within each of which individual lineages are statistically identical.
+We call these subpopulations \emph{demes}, and use the symbol $\Demes$ to denote an index set for them.
+Demes can be used to introduce spatial, behavioral, physiological, and life-history structure into a model.
+The flexibility this allows can also be used, via the linear chain trick, to introduce delays into the dynamics.
+\Cref{fig:example_models} illustrates this concept in the context of several compartmental models.
+
+We define the \emph{deme occupancy} function $n:\Demes\times\Xspace\to\Zp$ so that
+for $i\in\Demes$, $x\in\Xspace$, $n_i(x)$ is the number of lineages in deme $i$ when the population is in state $x$.
+
 \subsection{Examples}
+
+The class of population models to which the theory presented here applies is very broad indeed.
+In particular, it encompasses the entire class of compartmental models with time-dependent flow rates.
+Here, to give a sense of this breadth, we briefly describe a few models of interest.
+\Cref{appendix:examples} works out the theory for each of these examples.
+
 
 \subsubsection{SIRS model}
 
 \citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
 The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
-Its state vector is $x=(S,I,R)$ and its KFE is
-Note that we have here allowed for the possibility that the transmission rate, $\beta$, depends on time.
 
 \subsubsection{SEIRS model}
 
 A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
-The state space is $\Rp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
-It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$).
+The state space is $\Zp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
+It has two demes: $\Demes=\Set{\lab{E},\lab{I}}$.
 The deme occupancy function in this case is $n(x)=(E,I)$.
 Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
 
@@ -253,7 +290,15 @@ There are three demes ($\Demes=\Set{\lab{E},\lab{I_L},\lab{I_H}}$).
 
 \subsubsection{Linear birth-death model}
 
+The linear birth-death process, a mainstay of existing phylodynamic methods, is a special case of the theory presented here.
+For this process, we have $\Xspace=\Zp$ and there is a single deme.
+$\Xr_t$ represents the size of a population and $n(X_t)=X_t$.
+
 \subsubsection{Moran model and the Kingman coalescent}
+
+The Kingman coalescent is another workhorse in existing phylodynamic approaches.
+It is the ancestral process for the Moran model, in which a fixed population of $n$ lineages experiences events at times distributed according to a rate-$\mu$ Poisson process.
+At each such event, an individual lineage selected uniformly at random dies and is replaced by the offspring of a second randomly selected lineage.
 
 \subsection{History}
 
@@ -263,7 +308,7 @@ Note that $\Hr_t$ is itself trivially a Markov process, since it contains its ow
 
 Alternatively, one can think of $\Hr_t$ as consisting of the sequence
 $\left(\left(\Trh_k,\Xrh_k,\Urh_k\right)\right)_{k=0}^{\Kr_t}$.
-In particular, conditional on $\Hr_t$, both $\Xr_t$ and $\Ur_t$ are deterministic, as are $\Kr_t$ and the embedded chains, $\Xrh_k$, $\Urh_k$, and the point process of event times $\Trh_k$.
+In particular, conditional on $\Hr_t$, both $\Xr_t$ and $\Ur_t$ are deterministic, as are $\Kr_t$, the embedded chains, $\Xrh_k$, $\Urh_k$, and the point process of event times $\Trh_k$.
 The probability measure, $\pi^{\mathrm{H}}$, for $\Hr_t$ can be expressed in terms of these:
 \begin{mathsize}{9pt}{10pt}
   \begin{equation}
@@ -273,7 +318,7 @@ The probability measure, $\pi^{\mathrm{H}}$, for $\Hr_t$ can be expressed in ter
     \prod_{k=1}^{K_{t}}{\alpha_{\Uh_k}\!\!\left(\Th_k,\Xh_{k-1},\Xh_{k}\right)\,\dd{\Xh_k}\,\dd{\Th_k}}
     \,\exp{\left(-\sum_{k=0}^{K_t}{\int_{\Th_{k}}^{\Th_{k+1}}{\sum_{u}{\int{\alpha_{u}(t',\Xh_{k},x')\,\dd{x'}}}}\,\dd{t'}}\right)},
   \end{equation}
-\end{mathsize}
+\end{mathsize}%
 where again, by convention, $\Th^{}_0=0$ and $\Th^{}_{K^{}_t+1}=t$.
 
 If $\H$ is such a history, we define $\time(\H)$ to be the right endpoint of its domain and use the notation $\event{\H}\coloneq\Set{\Th^{}_1,\dots,\Th^{}_{\K_t}}\subset{[0,\time(\H)]}$ to denote the set of its jump times.
@@ -831,7 +876,7 @@ Relations to filtering of continuous-time Markov chains by \citet{Giesecke2018}.
       =\int{u(t,x')\,\beta(t,x',x)\,\dd{x'}}
       -\int{u(t,x)\,\beta(t,x,x')\,\dd{x'}}.
     \end{equation}
-  \end{mathsize}
+  \end{mathsize}%
   Suppose that $B:\Rp\times\Xspace^2\to\Rp$ and $\lambda:\Rp\times\Xspace\to\mathbb{R}$ are are given measurable functions.
   Let $S\subset\Rp$ be countable and locally finite (\ie $S\cap{[0,t]}$ is finite for all $t>0$).
   Then the system of equations
@@ -848,8 +893,7 @@ Relations to filtering of continuous-time Markov chains by \citet{Giesecke2018}.
       &t\in{S},
       \label{eq:filter-eq-defn-sing}
     \end{align}
-    \normalfont
-  \end{mathsize}
+  \end{mathsize}%
   is called the \emph{filter equation} \emph{generated by} $\beta$, with \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observation times} $S$.
   The process $\Xr_t$ is said to be the \emph{driver} of the filter equation.
   \Cref{eq:filter-eq-defn-reg} is the \emph{regular part} of the filter equation;
@@ -1194,18 +1238,20 @@ Its KFE is then
 \end{mathsize}%
 
 Since there is only a single deme, and since nothing depends on the state, in writing the corresponding filter equation, we can take $w$ to be independent of both $x$ and $y$.
-If only $m$ samples are taken simultaneously at a single time, $T$, the filter equation thus reads
+
+In the classical \citet{Kingman1982a} case, $m$ samples are taken simultaneously at a single time, $T$.
+For this case, if $B$ is the set of branch-times and $\ell(t)$ is the number of lineages in the genealogy at time $t$, the filter equation reads
 \begin{mathsize}{10pt}{11pt}
   \begin{equation}
-    \label{eq:moran-filter}
+    \label[pluralequation]{eq:moran-filter}
     \begin{gathered}
       w(0) = 1,
       \qquad
       \frac{\partial{w}}{\partial{t}}=
       \mu\,w(t)\,\left(1-\frac{\tbinom{\ell(t)}{2}}{\tbinom{n}{2}}\right)
-      -\mu\,w(t),\quad t\notin{S},
+      -\mu\,w(t),\quad t\notin{B},
       \qquad
-      w(t) = \mu\,\frac{\wt(t)}{\tbinom{n}{2}},\quad t\in{S}.
+      w(t) = \frac{\mu}{\tbinom{n}{2}}\,\wt(t),\quad t\in{B}.
     \end{gathered}
   \end{equation}
 \end{mathsize}%
@@ -1214,7 +1260,35 @@ Integrating \cref{eq:moran-filter} and taking logarithms yields
   \label{eq:kingman}
   \log{w(T)}=k\,\log{\frac{\mu}{\tbinom{n}{2}}}-\frac{\mu}{\tbinom{n}{2}}\,\sum_{i=m-k}^{m}\!{\tbinom{i}{2}\,s^{}_i},
 \end{equation}
-where $k$ is the number of branch-points and the $s^{}_{i}\coloneq\int{\Indicator{\ell(t)=i}\,\dd{t}}$ are the durations of the \emph{coalescent intervals}, \ie intervals between successive branch-points.
+where $k=|B|$ is the number of branch-points in $[0,T]$ and the $s^{}_{i}\coloneq\int{\Indicator{\ell(t)=i}\,\dd{t}}$ are the durations of the \emph{coalescent intervals}, \ie intervals between successive branch-points.
 We recognize \cref{eq:kingman} as the expression for the \citet{Kingman1982a} coalescent \citep[\eg][]{Wakeley2008}.
+
+More generally, if in addition samples are taken through time at a per-capita rate $\psi(t)$ such that the set of sample-times in the genealogy is $S=S_0\cup{S_1}$, where $S_0$, $S_1$ are the sets of times of terminal and inline samples, respectively, then the filter equation reads
+\begin{mathsize}{10pt}{11pt}
+  \begin{equation}
+    \label[pluralequation]{eq:moran-filter2}
+    \begin{gathered}
+      w(0) = 1,
+      \qquad
+      \frac{\partial{w}}{\partial{t}}=
+      -\mu\,\frac{\tbinom{\ell(t)}{2}}{\tbinom{n}{2}}\,w(t),
+      \quad t\notin{S\cup{B}},
+      \qquad
+      w(t) = \frac{\mu}{\tbinom{n}{2}}\,\wt(t),\quad t\in{B},\\[8pt]
+      w(t) = \psi(t)\,\left(1-\frac{\ell(t)}{n}\right)\,\wt(t),\quad t\in{S_0},
+      \qquad
+      w(t) = \frac{\psi(t)}{n}\,\wt(t),\quad t\in{S_1}.
+    \end{gathered}
+  \end{equation}
+\end{mathsize}%
+Integrating \cref{eq:moran-filter2} yields
+\begin{equation}
+  \label{eq:mgp}
+  \log{w(T)}=
+  |B|\,\log{\frac{\mu}{\tbinom{n}{2}}}
+  +\sum_{t\in{S_0}}\log{\left[\psi(t)\,\left(1-\frac{\ell(t)}{n}\right)\right]}
+  +\sum_{t\in{S_1}}\log{\left[\frac{\psi(t)}{n}\right]}
+  -\frac{\mu}{\tbinom{n}{2}}\,\sum_{i=1}^{\infty}\!{\tbinom{i}{2}\,s^{}_i}.
+\end{equation}
 
 \end{document}
