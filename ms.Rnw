@@ -1205,15 +1205,20 @@ The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
 
 \subsection{Linear birth-death model}
 
+In this model, the state variable is the size, $N_t$, of a population at time $t$.
+All individuals face the same per-capita birth and death rates, which are $\lambda$ and $\mu$, respectively.
+The KFE is
 \begin{mathsize}{10pt}{11pt}
   \begin{equation*}
     \frac{\partial{v}}{\partial{t}}=
-    \lambda\,(N-1)\,v(t,N-1)
-    -\lambda\,N\,v(t,N)
-    +\mu\,(N+1)\,v(t,N+1)
-    -\mu\,N\,v(t,N)
+    \lambda\,(n-1)\,v(t,n-1)
+    -\lambda\,n\,v(t,n)
+    +\mu\,(n+1)\,v(t,n+1)
+    -\mu\,n\,v(t,n)
   \end{equation*}
 \end{mathsize}%
+\citet{Stadler2010} considered the case where samples are taken through time at a uniform per-capita rate $\psi$.
+In this case, the filter equation becomes
 
 \subsection{Moran model and the Kingman coalescent}
 
@@ -1239,8 +1244,8 @@ Its KFE is then
 
 Since there is only a single deme, and since nothing depends on the state, in writing the corresponding filter equation, we can take $w$ to be independent of both $x$ and $y$.
 
-In the classical \citet{Kingman1982a} case, $m$ samples are taken simultaneously at a single time, $T$.
-For this case, if $B$ is the set of branch-times and $\ell(t)$ is the number of lineages in the genealogy at time $t$, the filter equation reads
+In the classical case \citep{Kingman1982a}, $m$ samples are taken simultaneously at a single time, $T$.
+Then, if $B$ is the set of branch-times and $\ell(t)$ is the number of lineages in the genealogy at time $t$, the filter equation reads
 \begin{mathsize}{10pt}{11pt}
   \begin{equation}
     \label[pluralequation]{eq:moran-filter}
@@ -1263,7 +1268,7 @@ Integrating \cref{eq:moran-filter} and taking logarithms yields
 where $k=|B|$ is the number of branch-points in $[0,T]$ and the $s^{}_{i}\coloneq\int{\Indicator{\ell(t)=i}\,\dd{t}}$ are the durations of the \emph{coalescent intervals}, \ie intervals between successive branch-points.
 We recognize \cref{eq:kingman} as the expression for the \citet{Kingman1982a} coalescent \citep[\eg][]{Wakeley2008}.
 
-More generally, if in addition samples are taken through time at a per-capita rate $\psi(t)$ such that the set of sample-times in the genealogy is $S=S_0\cup{S_1}$, where $S_0$, $S_1$ are the sets of times of terminal and inline samples, respectively, then the filter equation reads
+More generally, if in addition samples are taken according to a rate-$\nu$ Poisson process such that the set of sample-times in the genealogy is $S=S_0\cup{S_1}$, where $S_0$, $S_1$ are the sets of times of terminal and inline samples, respectively, then the filter equation reads
 \begin{mathsize}{10pt}{11pt}
   \begin{equation}
     \label[pluralequation]{eq:moran-filter2}
@@ -1275,19 +1280,19 @@ More generally, if in addition samples are taken through time at a per-capita ra
       \quad t\notin{S\cup{B}},
       \qquad
       w(t) = \frac{\mu}{\tbinom{n}{2}}\,\wt(t),\quad t\in{B},\\[8pt]
-      w(t) = \psi(t)\,\left(1-\frac{\ell(t)}{n}\right)\,\wt(t),\quad t\in{S_0},
+      w(t) = \nu\,\left(1-\frac{\ell(t)}{n}\right)\,\wt(t),\quad t\in{S_0},
       \qquad
-      w(t) = \frac{\psi(t)}{n}\,\wt(t),\quad t\in{S_1}.
+      w(t) = \frac{\nu}{n}\,\wt(t),\quad t\in{S_1}.
     \end{gathered}
   \end{equation}
 \end{mathsize}%
 Integrating \cref{eq:moran-filter2} yields
 \begin{equation}
   \label{eq:mgp}
-  \log{w(T)}=
-  |B|\,\log{\frac{\mu}{\tbinom{n}{2}}}
-  +\sum_{t\in{S_0}}\log{\left[\psi(t)\,\left(1-\frac{\ell(t)}{n}\right)\right]}
-  +\sum_{t\in{S_1}}\log{\left[\frac{\psi(t)}{n}\right]}
+  \log{w(T)}-|S|\,\log{\nu}
+  =\sum_{t\in{S_0}}{\log{\left(1-\frac{\ell(t)}{n}\right)}}
+  -|S_1|\,\log{n}
+  +|B|\,\log{\frac{\mu}{\tbinom{n}{2}}}
   -\frac{\mu}{\tbinom{n}{2}}\,\sum_{i=1}^{\infty}\!{\tbinom{i}{2}\,s^{}_i}.
 \end{equation}
 
