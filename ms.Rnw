@@ -88,7 +88,7 @@ Extensions of this approach develop approximate likelihoods for the case when th
 The second idealization is the linear birth-death process, for which exact expressions for the likelihood are available \citep{Stadler2010}.
 Linearity in this context amounts to the assumption that distinct lineages do not interact:
 it is the resulting self-similarity of genealogies that renders the likelihood analytically tractable.
-Extensions of this approach develop approximations via linearization of nonlinear processes or restriction to scenarios in which population growth is nearly linear \citep{MacPherson2021}.
+Extensions of this approach develop approximations via linearization of nonlinear processes or restriction to scenarios in which population growth is nearly linear \citep[\eg]{MacPherson2021}.
 Although the tractability of these approaches are attractive, concern naturally arises as to validity of the approximations, the biases introduced by them, and the amount of information in data left unutilized by these approximate methods.
 
 %% Factorization of problem into two subproblems.
@@ -869,6 +869,8 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
 
 \section{Discussion}
 
+\citep{Alizon2024}
+
 This approach gives us the freedom to choose models with many demes.
 Moreover, there is freedom to choose the sampling model.
 
@@ -887,7 +889,7 @@ Filter equation formalism suggests approximations based on discretization of tim
 
 
 \bibliographystyle{preprint}
-\bibliography{phylopomp}
+\bibliography{ms}
 
 \appendix
 \setcounter{equation}{0}

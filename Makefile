@@ -2,9 +2,9 @@ default: ms.pdf ms.R
 
 FIGS=$(wildcard figs/*.tex)
 
-ms.pdf: ms.tex defs.tex header.tex $(FIGS)
+ms.pdf: ms.tex ms.bib defs.tex header.tex $(FIGS)
 
-slides.pdf handout.pdf notes.pdf: talk.tex defs.tex talk_header.tex beamer.tex $(FIGS)
+slides.pdf handout.pdf notes.pdf: talk.tex ms.bib defs.tex talk_header.tex beamer.tex $(FIGS)
 
 ms.tex: setup.R
 
