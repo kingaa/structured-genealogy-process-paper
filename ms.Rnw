@@ -70,25 +70,35 @@ With sufficiently dense sampling, it can be possible to reconstruct the detailed
 More typically, one can use relatively sparse samples to learn about these features via the estimation of a parsimonious model of the transmission process.
 In particular, one can formalize one or more mathematical models of transmission, estimate their parameters, and compare their ability to explain data, following standard statistical paradigms.
 This is known as \emph{phylodynamic} inference, the term being due to \citet{Grenfell2004}.
+\citet{Alizon2024} gives a good review of the history of the subject.
 
 The most common approach to phylodynamic inference rests upon a mathematical linkage between the tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among sampled genomes and a model of the dynamics of the transmission system.
 Various linkages are possible, but because it is maximally efficient (\ie loses the least information), it is desirable to be able to compute the likelihood function for models of interest.
 This is simply the probability density of a given genealogy conditional on a given model, viewed as a function of the parameters of that model.
-To date, however, computation of this likelihood function has been out of reach, except in several special cases.
+In particular, if $M$ represents a dynamic transmission model, $S$ a set of genome sequences, $\Phi$ a genealogical tree relating these sequences, and $E$ a model of sequence evolution along a tree,
+then the likelihood of $S$ is a function
+\begin{equation*}
+  f(S|M,E) = \int{f(S|\Phi,E)\,f(\Phi|M)\,\dd{\Phi}},
+\end{equation*}
+where we somewhat loosely use the functions $f$ to refer to distinct probability densities, the nature of each of which is clear from its arguments and the integral is taken over all possible genealogies relating the sequences $S$.
+In this expression, $f(S|\Phi,E)$ is the \citet{Felsenstein2004} likelihood.
+The function $f(\Phi|M)$, which links the phylogeny $\Phi$ to the dynamic model $M$, may be termed the \emph{phylodynamic likelihood}.
+In the Bayesian context, this same function is sometimes referred to as a \emph{tree prior} \citep{Moeller2018,Volz2018}.
+The computation of this function has remained out of reach, except in several special cases.
 
 %% Phylodynamic inference rests upon mathematical linkage between mathematical models of disease transmission at the population level and genome-sequence data collected from individual infected hosts.
 %% The tightest possible such linkage is effected by a computable likelihood function.
 %% The tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among the sequences.
 %% In particular, if one can determine the likelihood of any given genealogy given a model and also the likelihood of the data given a genealogy, then the likelihood of the data given the model is obtained by summing over the space of genealogies.
 
-In particular, existing approaches to likelihood-based phylodynamic inference have been based on one of two mathematical idealizations.
+In particular, existing approaches to the phylodynamic likelihood have been based on one of two mathematical idealizations.
 The first is the \citet{Kingman1982a} coalescent, by which likelihood of a given genealogy is computed via a reverse-time argument.
 This computation is exact when the population size is constant.
 Extensions of this approach develop approximate likelihoods for the case when the population size varies slowly \citep{Drummond2005} or when the sample fraction is negligible \citep{Volz2009a}.
 The second idealization is the linear birth-death process, for which exact expressions for the likelihood are available \citep{Stadler2010}.
 Linearity in this context amounts to the assumption that distinct lineages do not interact:
 it is the resulting self-similarity of genealogies that renders the likelihood analytically tractable.
-Extensions of this approach develop approximations via linearization of nonlinear processes or restriction to scenarios in which population growth is nearly linear \citep[\eg]{MacPherson2021}.
+Extensions of this approach develop approximations via linearization of nonlinear processes or restriction to scenarios in which population growth is nearly linear \citep[\eg][]{MacPherson2021}.
 Although the tractability of these approaches are attractive, concern naturally arises as to validity of the approximations, the biases introduced by them, and the amount of information in data left unutilized by these approximate methods.
 
 %% Factorization of problem into two subproblems.
@@ -868,8 +878,6 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
 %% It does away with the need for large sample-size and small sample-fraction approximations, the necessity of assuming slow changes in effective population size, and the need for linearization.
 
 \section{Discussion}
-
-\citep{Alizon2024}
 
 This approach gives us the freedom to choose models with many demes.
 Moreover, there is freedom to choose the sampling model.
