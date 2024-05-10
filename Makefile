@@ -1,10 +1,11 @@
 default: ms.pdf ms.R
 
 FIGS=$(wildcard figs/*.tex)
+BIBFILE=phylopomp.bib
 
-ms.pdf: ms.tex ms.bib defs.tex header.tex $(FIGS)
+ms.pdf: ms.tex defs.tex header.tex $(FIGS) $(BIBFILE)
 
-slides.pdf handout.pdf notes.pdf: talk.tex ms.bib defs.tex talk_header.tex beamer.tex $(FIGS)
+
 
 ms.tex: setup.R
 
