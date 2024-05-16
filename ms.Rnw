@@ -1253,9 +1253,9 @@ Its state vector is $x=(S,I,R)$ and its KFE is
 \begin{mathsize}{9pt}{10pt}
   \begin{equation*}
     \begin{split}
-      \frac{\partial{v}}{\partial{t}}(t,S,I,R)=
-      &\frac{\beta(t)\,(S+1)\,(I-1)}{N}\,v(t,S+1,I-1,R)
-      -\frac{\beta(t)\,S\,I}{N}\,v(t,S,I,R)\\
+      \frac{\partial{v}}{\partial{t}}(S,I,R)=
+      &\frac{\beta\,(S+1)\,(I-1)}{N}\,v(t,S+1,I-1,R)
+      -\frac{\beta\,S\,I}{N}\,v(t,S,I,R)\\
       &+\gamma\,(I+1)\,v(t,S,I+1,R-1)
       -\gamma\,I\,v(t,S,I,R)\\
       &+\omega\,(R+1)\,v(t,S-1,I,R+1)
@@ -1264,13 +1264,200 @@ Its state vector is $x=(S,I,R)$ and its KFE is
   \end{equation*}
 \end{mathsize}%
 Here $N=S+I+R$ is the host population size.
-Note that we have here allowed for the possibility that the transmission rate, $\beta$, depends on time.
+Note that, though the theory allows for time-dependent event rates, this example is time-homogenous.
+This model has one deme, $\Demes=\Set{\lab{I}}$, with occupancy function $n(x)=I$.
+There are four kinds of jumps:
+transmission, recovery, waning of immunity, and sampling.
+Accordingly, the marks are $\Jumps=\Set{\lab{Trans},\lab{Recov},\lab{Wane},\lab{Sample}}$.
+\Cref{tab:sirs_model_elements} gives $\alpha_u$, $r_u$, and the jump-type for each of these marks.
+
+\begin{table}
+  \caption{
+    \label{tab:sirs_model_elements}
+    Elements of the SIRS model pertinent to the genealogy process.
+  }
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{cclc}
+    \hline\hline
+    $u$ & $\alpha_u$ & Event type & $r_u$ \\
+    \hline
+    $\lab{Trans}$  & ${\beta\,S\,I}/{N}$  & pure birth  & 2 \\
+    $\lab{Recov}$  & $\gamma\,I$          & pure death  & 0 \\
+    $\lab{Wane}$   & $\omega\,R$          & neutral     & 0 \\
+    $\lab{Sample}$ & $\psi\,I$            & pure sample & 1 \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+
+Given an obscured genealogy $Z$, let $\event{Z}=B\cup{S_0}\cup{S_1}$, where $B$ is the set of branch-times, and $S_0$, $S_1$ are the sets of sample-times with saturations $0$ and $1$, respectively.
+Since there is only one deme, paintings of $Z$ can differ only in number and position of inline, internal nodes along branches.
+Each of these can only correspond to $u=\lab{Trans}$ with $s=1$.
+For $t\notin{\event{Z}}$, we can take the importance sampling distribution to be
+\begin{equation*}
+  \pi_u=\begin{cases}
+  c,                & u=\lab{Trans}, s=0, t\notin{\event{Z}},\\
+  \frac{1-c}{\ell}, & u=\lab{Trans}, s=1, t\notin{\event{Z}},\\
+  0,                & \text{otherwise}.
+  \end{cases}
+\end{equation*}
+Here $c$ is an arbitrary probability that does not affect the computation.
+The relevant binomial ratios are
+\begin{equation*}
+  \BinRatio{n}{\ell}{r}{s}=
+  \begin{cases}
+    \frac{(I-\ell)\,(I-\ell-1)}{I\,(I-1)}, & u=\lab{Trans}, s=0, \\[1ex]
+    \frac{2\,(I-\ell)}{I\,(I-1)}, & u=\lab{Trans}, s=1, \\[1ex]
+    \frac{2}{I\,(I-1)}, & u=\lab{Trans}, s=2, \\[1ex]
+    %% 1, & u=\lab{Recov}, I\ge{\ell}, \\[1ex]
+    %% 0, & u=\lab{Recov}, I=\ell, \\[1ex]
+    %% 1, & u=\lab{Wane}, \\[1ex]
+    \frac{I-\ell}{I}, & u=\lab{Sample}, s=0, \\[1ex]
+    \frac{1}{I}, & u=\lab{Sample}, s=1. \\[1ex]
+  \end{cases}
+\end{equation*}
+
+This leads, for $t\notin{\event{Z}}$, to the following regular part of the filter equation:
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{w}}{\partial{t}}=
+      &\frac{\beta\,(S+1)\,(I-1)}{N}\,\left(1-\frac{\tbinom{\ell(t)}{2}}{\tbinom{I}{2}}\right)\,w(t,S+1,I-1,R)
+      -\frac{\beta\,S\,I}{N}\,w(t,S,I,R)\\
+      &+\gamma\,(I+1)\,w(t,S,I+1,R-1)
+      -\gamma\,I\,w(t,S,I,R)\\
+      &+\omega\,(R+1)\,w(t,S-1,I,R+1)
+      -\omega\,R\,w(t,S,I,R)\\
+      &-\psi\,I\,w(t,S,I,R).
+    \end{split}
+  \end{equation*}
+\end{mathsize}%
+Here, we have summed over the various paintings for $u=\lab{Trans}$, $s<2$.
+Note the presence of the decay term proportional to $\psi$.
+At event-times $t\in\event{Z}$, the singular part of the filter equation reads
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation*}
+    w(t,S,I,R)=
+    \begin{cases}
+      \wt(t,S+1,I-1,R)\,\frac{2\,\beta\,(S+1)}{N\,I}, & t\in{B}, \\[1ex]
+      \wt(t,S,I,R)\,\psi\,(I-\ell(t)), & t\in{S_0}, \\[1ex]
+      \wt(t,S,I,R)\,\psi, & t\in{S_1}. \\[1ex]
+    \end{cases}
+  \end{equation*}
+\end{mathsize}%
+Finally, note that $w(t,S,I,R)=0$ for all $I<\ell(t)$.
+
+<<sirs3>>=
+bake(
+  file="sirs3a.rds",
+  seed=328168304L,
+  {
+    library(phylopomp)
+    runSIRS(
+      Beta=4,gamma=2,psi=1,omega=1,
+      S0=97,I0=3,R0=0,t0=0,time=40
+    )
+  }
+) -> x
+
+bake(
+  file="sirs3b.rds",
+  seed=621400057L,
+  {
+    expand_grid(
+      Beta=4,
+      ##      gamma=2,
+      gamma=seq(1.7,2.3,by=0.02),
+      psi=1,
+      omega=1,
+      ##      omega=seq(0.5,2,by=0.05),
+      S0=97,I0=3,R0=0,
+      t0=0,
+      rep=1:16,
+      Np=5000,
+      ) -> params
+
+    library(iterators)
+    library(doFuture)
+    plan(multicore)
+
+    foreach (
+      p=iter(params,"row"),
+      .combine=bind_rows,
+      .options.future=list(seed=TRUE)
+    ) %dofuture% {
+      library(pomp)
+      library(phylopomp)
+      p |>
+        with({
+          x |>
+            sirs_pomp(
+              Beta=Beta,gamma=gamma,psi=psi,omega=omega,
+              S0=S0,I0=I0,R0=R0,t0=0
+            ) |>
+            pfilter(Np=Np) |>
+            logLik()
+        }) -> ll
+      bind_cols(p,logLik=ll)
+    } -> params
+  }
+) -> params
+@
+
+\begin{figure}
+  \begin{center}
+    <<sirs3_plot,dependson="sirs1",fig.dim=c(8,2.8),out.width="100%">>=
+    plot_grid(
+      A=x |>
+        plot(points=FALSE,palette=c("#000000"))+
+        labs(x="time"),
+      B=params |>
+        group_by(Beta,gamma,psi,omega,S0,I0,R0,Np) |>
+        reframe(
+          name=c("logLik","logLik_se"),
+          value=logmeanexp(logLik,se=TRUE)
+        ) |>
+        ungroup() |>
+        pivot_wider() |>
+        mutate(
+          y=logLik,
+          ymax=logLik+2*logLik_se,
+          ymin=logLik-2*logLik_se
+        ) |>
+        filter(round(Beta,2)==4) |>
+        filter(logLik>max(logLik)-16) |>
+        ggplot(
+          aes(
+            x=gamma,
+            group=Np,
+            y=y,
+            ymin=ymin,
+            ymax=ymax
+          )
+        )+
+        geom_errorbar(position="dodge")+
+        geom_vline(xintercept=2,color="red")+
+        labs(
+          color=character(0),
+          y="log likelihood",
+          x=expression(gamma)
+        )+
+        theme_classic()+
+        theme(
+          legend.position=c(0.5,0.27)
+        ),
+      labels="AUTO",
+      nrow=1,
+      rel_widths=c(1,1)
+    )
+    @
+  \end{center}
+\end{figure}
 
 \subsection{SEIRS model}
 
 A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
 The state space is $\Rp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
-It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
+The KFE for the population process is
 \begin{mathsize}{9pt}{10pt}
   \begin{equation*}
     \begin{split}
@@ -1287,6 +1474,7 @@ It has two demes ($\Demes=\Set{\lab{E},\lab{I}}$) and the KFE
   \end{equation*}
 \end{mathsize}%
 where $N=S+E+I+R$ is the total population size.
+This model has two demes: $\Demes=\Set{\lab{E},\lab{I}}$ and four
 The deme occupancy function in this case is $n(x)=(E,I)$.
 Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
 
@@ -1350,6 +1538,163 @@ and the singular part is
   \end{equation}
 \end{mathsize}%
 \Cref{eq:filter-lbdp-reg,eq:filter-lbdp-sing} are supplemented by the ancillary condition $w(t,n)=0$ for $n<\ell(t)$.
+
+<<lbdp3>>=
+true.params <- data.frame(lambda=1.2,mu=0.8,psi=1,n0=5)
+
+bake(
+  file="lbdp3a.rds",
+  seed=505641575,  
+  true.params |>
+    with(
+      runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=5)
+    ) -> x
+) -> x
+
+bake(
+  file="lbdp3b.rds",
+  dependson=x,
+  seed=715604304,
+  {
+    expand_grid(
+      rep=1:10,
+      lambda=1.2,
+      mu=seq(0.3,2,by=0.1),
+      ## mu=0.8,
+      ## psi=seq(0.2,2.5,by=0.1),
+      psi=1,
+      time=3,
+      n0=5,
+      Np=c(1000,2000,4000,8000,16000,32000,64000,128000)
+    ) -> params
+
+    library(iterators)
+    library(doFuture)
+    plan(multicore)
+
+    foreach (
+      p=iter(params,"row"),
+      .combine=bind_rows,
+      .options.future=list(seed=TRUE)
+    ) %dofuture% {
+      p |>
+        with(
+          x |>
+            lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
+        ) -> ll1
+      p |>
+        with(
+          x |>
+            lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
+            pfilter(Np=Np) |>
+            logLik()
+        ) -> ll2
+      bind_cols(p,exact=ll1,pf=ll2)
+    }-> params
+  }
+) -> params
+
+params |>
+  mutate(
+    diff=(pf-exact)/exact
+  ) |>
+  group_by(Np) |>
+  summarize(
+    rmse=sqrt(mean(diff*diff)),
+    sd=sd(diff),
+    bias=abs(mean(pf-exact))
+  ) |>
+  ungroup() -> stats
+@
+
+\begin{figure}
+  \begin{center}
+    <<lbdp3_plot,fig.dim=c(8,5),out.width="100%">>=
+    pal <- c(viridis_pal(option="H",begin=0.1,end=0.8)(8),"#000000")
+    names(pal) <- c("1k","2k","4k","8k","16k","32k","64k","128k","exact")
+
+    plot_grid(
+      params |>
+        pivot_longer(c(exact,pf)) |>
+        unite(name,name,Np) |>
+        mutate(
+          name=if_else(grepl("exact",name),"exact",name),
+          name=gsub("pf_","",name),
+          name=gsub("000","k",name),
+          name=ordered(name,levels=names(pal))
+        ) |>
+        group_by(lambda,mu,psi,time,n0,name) |>
+        reframe(
+          type=c("logLik","logLik_se"),
+          value=logmeanexp(value,se=TRUE)
+        ) |>
+        ungroup() |>
+        pivot_wider(names_from=type) |>
+        mutate(
+          y=logLik,
+          ymax=logLik+2*logLik_se,
+          ymin=logLik-2*logLik_se
+        ) |>
+        filter(logLik>max(logLik)-16) |>
+        ggplot(aes(x=mu,group=name,color=name,
+          y=y,ymin=ymin,ymax=ymax))+
+        geom_errorbar(
+          position="dodge"
+        )+
+        geom_vline(xintercept=true.params$mu,linetype=2)+
+        geom_hline(
+          yintercept=max(params$exact)-
+            c(0,0.5*qchisq(p=0.95,df=1)),
+          linetype=2
+        )+
+        scale_color_manual(values=pal)+
+        labs(
+          color="effort",
+          y="log likelihood",
+          x=expression(mu)
+        )+
+        theme(
+          legend.position="inside",
+          legend.position.inside=c(0.5,0.4),
+          legend.background=element_rect(fill="white")
+        ),
+      plot_grid(
+        ##        x |> plot(points=TRUE),
+        stats |>
+          ggplot(aes(x=Np,y=rmse))+
+          geom_smooth(formula=y~x,method="lm")+
+          geom_point()+
+          scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+          scale_y_log10()+
+          coord_fixed(ratio=1)+
+          labs(x="effort",y="RMSE"),
+        stats |>
+          ggplot(aes(x=Np,y=sd))+
+          geom_smooth(formula=y~x,method="lm")+
+          geom_point()+
+          scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+          scale_y_log10()+
+          coord_fixed(ratio=1)+
+          labs(x="effort",y="SD"),
+        stats |>
+          ggplot(aes(x=Np,y=bias))+
+          geom_smooth(formula=y~x,method="lm")+
+          geom_point()+
+          scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+          scale_y_log10()+
+          coord_fixed(ratio=1)+
+          labs(x="effort",y="bias"),
+        ncol=1,
+        align="h",
+        axis="btlr",
+        rel_heights=c(1,1,1)
+      ),
+      nrow=1,
+      rel_widths=c(2,1)
+    )
+    @
+  \end{center}
+\end{figure}
 
 \subsection{Moran model and the Kingman coalescent}
 
