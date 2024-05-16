@@ -1293,59 +1293,12 @@ Note that the terms associated with sampling cancel each other in the KFE, since
 \subsection{Two-strain competition model}
 
 A simple model for the competition of two strains for susceptible hosts is depicted in \cref{fig:example_models}B.
-In this model, the state vector consists of seven numbers: $x=(S,E_1,E_2,I_1,I_2,R_1,R_2)$.
-There are four demes ($\Demes=\Set{\lab{E}_1,\lab{E}_2,\lab{I}_1,\lab{I}_2}$) and the occupancy function is $n(x)=(E_1,E_2,I_1,I_2)$.
-This model has KFE
-\begin{mathsize}{9pt}{10pt}
-  \begin{equation*}
-    \begin{split}
-      \frac{\partial{v}}{\partial{t}}=
-      &\frac{\beta_1(t)\,I_1\,(S+1)}{N}\,v(t,S+1,E_1-1,E_2,I_1,I_2,R_1,R_2)
-      -\frac{\beta_1(t)\,I_1\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\frac{\beta_2(t)\,I_2\,(S+1)}{N}\,v(t,S+1,E_1,E_2-1,I_1,I_2,R_1,R_2)
-      -\frac{\beta_2(t)\,I_2\,S}{N}\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\sigma_1\,(E_1+1)\,v(t,S,E_1+1,E_2,I_1-1,I_2,R_1,R_2)
-      -\sigma_1\,E_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\sigma_2\,(E_2+1)\,v(t,S,E_1,E_2+1,I_1,I_2-1,R_1,R_2)
-      -\sigma_2\,E_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\gamma_1\,(I_1+1)\,v(t,S,E_1,E_2,I_1+1,I_2,R_1-1,R_2)
-      -\gamma_1\,I_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\gamma_2\,(I_2+1)\,v(t,S,E_1,E_2,I_1,I_2+1,R_1,R_2-1)
-      -\gamma_2\,I_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\omega_1\,(R_1+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1+1,R_2)
-      -\omega_1\,R_1\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-      &+\omega_2\,(R_2+1)\,v(t,S-1,E_1,E_2,I_1,I_2,R_1,R_2+1)
-      -\omega_2\,R_2\,v(t,S,E_1,E_2,I_1,I_2,R_1,R_2)\\
-    \end{split}
-  \end{equation*}
-\end{mathsize}%
+This example will be completed in a forthcoming draft.
 
 \subsection{Superspreading model}
 
 \Cref{fig:example_models}D depicts a model of superspreading.
-There are three demes ($\Demes=\Set{\lab{E},\lab{I_L},\lab{I_H}}$).
-The state vector is $x=(S,E,I_L,I_H,R)$ and the KFE is
-\begin{mathsize}{9pt}{10pt}
-  \begin{equation*}
-    \begin{split}
-      \frac{\partial{v}}{\partial{t}}=
-      &\frac{\beta(t)\,(I_L+\theta\,I_H)\,(S+1)}{N}\,v(t,S+1,E-1,I_L,I_H,R)
-      -\frac{\beta(t)\,(I_L+\theta\,I_H)\,S}{N}\,v(t,S,E,I_L,I_H,R)\\
-      &\sigma\,(E+1)\,v(t,S,E+1,I_L-1,I_H,R)
-      -\sigma\,E\,v(t,S,E,I_L,I_H,R)\\
-      &\eps_{LH}\,(I_L+1)\,v(t,S,E,I_L+1,I_H-1,R)
-      -\eps_{LH}\,I_L\,v(t,S,E,I_L,I_H,R)\\
-      &\eps_{HL}\,(I_H+1)\,v(t,S,E,I_L-1,I_H+1,R)
-      -\eps_{HL}\,I_H\,v(t,S,E,I_L,I_H,R)\\
-      &\gamma\,(I_L+1)\,v(t,S,E,I_L+1,I_H,R-1)
-      -\gamma\,I_L\,v(t,S,E,I_L,I_H,R)\\
-      &\gamma\,(I_H+1)\,v(t,S,E,I_L,I_H+1,R-1)
-      -\gamma\,I_H\,v(t,S,E,I_L,I_H,R)\\
-      &\omega\,(R+1)\,v(t,S-1,E,I_L,I_H,R+1)
-      -\omega\,R\,v(t,S,E,I_L,I_H,R).\\
-    \end{split}
-  \end{equation*}
-\end{mathsize}%
+This example will be completed in a forthcoming draft.
 
 \subsection{Linear birth-death model}
 
