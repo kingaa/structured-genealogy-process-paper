@@ -52,6 +52,14 @@ stopifnot(getRversion() >= "4.3")
 stopifnot(packageVersion("pomp")>="5.5")
 stopifnot(packageVersion("phylopomp")>="0.10.3")
 theme_set(theme_bw(base_family="serif"))
+options(
+  width=150,
+  keep.source=TRUE,
+  encoding="UTF-8",
+  stringsAsFactors=FALSE,
+  dplyr.summarise.inform=FALSE,
+  pomp_archive_dir="results"
+)
 set.seed(1159254136)
 @
 
@@ -77,12 +85,12 @@ This is known as \emph{phylodynamic} inference, the term being due to \citet{Gre
 The most common approach to phylodynamic inference rests upon a mathematical linkage between the tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among sampled genomes and a model of the dynamics of the transmission system.
 Various linkages are possible, but because it is maximally efficient (\ie loses the least information), it is desirable to be able to compute the likelihood function for models of interest.
 This is simply the probability density of a given genealogy conditional on a given model, viewed as a function of the parameters of that model.
-In particular, if $S$ a set of genome sequences, $\Phi$ a genealogical tree relating these sequences, $E$ a model of sequence evolution, and $D$ a dynamic transmission model, then the likelihood of $S$ is
+In particular, if $S$ is a set of genome sequences, $\Phi$ a genealogical tree relating these sequences, $E$ a model of sequence evolution, and $D$ a dynamic transmission model, then the likelihood is
 \begin{equation*}
-  f(S|D,E) = \int{f(S|\Phi,E)\,f(\Phi|D)\,\dd{\Phi}},
+  \lik(D,E) = f(S|D,E) = \int{f(S|\Phi,E)\,f(\Phi|D)\,\dd{\Phi}},
 \end{equation*}
-where the integral is taken over all possible genealogies and we somewhat loosely use the functions $f$ to refer to distinct probability densities, the nature of each of which is clear from its arguments.
-In this expression, $f(S|\Phi,E)$ is the \citet{Felsenstein2004} phylodynamic likelihood.
+where the integral is taken over all possible genealogies and we somewhat loosely use the symbol $f$ for the various distinct probability densities, the nature of each of which is clear from its arguments.
+In this expression, $f(S|\Phi,E)$ is typically the \citet{Felsenstein2004} phylogenetic likelihood.
 The function $f(\Phi|D)$, which links the phylogeny to the dynamic model, may be termed the \emph{phylodynamic likelihood}.
 In the Bayesian context, this same function is sometimes referred to as a \emph{tree prior} \citep{Moeller2018,Volz2018}.
 The computation of this function has remained out of reach, except in several special cases.
@@ -126,6 +134,10 @@ Nonetheless, since it adds minimal additional structure, it is the natural assum
 In the following, we take as our starting point a transmission model in the form of a discretely structured, Markov process.
 We show how such a process uniquely induces each of several stochastic processes in the space of genealogies.
 We go on to derive expressions for the exact likelihoods of these genealogies.
+
+Code sufficient for the reproduction of all the results presented in this paper are freely available for download at \url{https://github.com/kingaa/phylopomp-project}.
+An archival version of these will be stored on Zotero upon publication of this paper.
+The open-source \pkg{R} package \pkg{phylopomp} (\url{https://github.com/kingaa/phylopomp}) implements the simulation and likelihood-computation algorithms employed here.
 
 %% In particular, while the constructions of \citet{Etheridge2019} can in principle accommodate.
 %% For structured but deterministic models, approach of \citet{Volz2012,Rasmussen2014a}, based on approximation as birth-death processes:
@@ -990,8 +1002,12 @@ QL acknowledges the support of the Michigan Institute for Data Science.
 
 \appendix
 \setcounter{equation}{0}
+\setcounter{figure}{0}
+\setcounter{table}{0}
 \titleformat{\section}[hang]{\large\bfseries}{Appendix \periodafter\thesection}{2ex}{\periodafter}{}
 \renewcommand{\theequation}{\thesection\arabic{equation}}
+\renewcommand{\thefigure}{\thesection\arabic{figure}}
+\renewcommand{\thetable}{\thesection\arabic{table}}
 
 \section{Filter equations}
 \label{sec:filter_eqns}
@@ -1245,7 +1261,7 @@ whenever $f$ is \cadlag\ and $-\infty\le{a}<{b}\le{\infty}$.
 \section{Examples}
 \label{sec:app-examples}
 
-\subsection{SIRS model}
+\subsection{SIRS model} %% SIRS
 
 \citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
 The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
@@ -1265,13 +1281,13 @@ Its state vector is $x=(S,I,R)$ and its KFE is
 \end{mathsize}%
 Here $N=S+I+R$ is the host population size.
 Note that, though the theory allows for time-dependent event rates, this example is time-homogenous.
-This model has one deme, $\Demes=\Set{\lab{I}}$, with occupancy function $n(x)=I$.
+This model has one deme and occupancy function $n(x)=I$.
 There are four kinds of jumps:
 transmission, recovery, waning of immunity, and sampling.
 Accordingly, the marks are $\Jumps=\Set{\lab{Trans},\lab{Recov},\lab{Wane},\lab{Sample}}$.
-\Cref{tab:sirs_model_elements} gives $\alpha_u$, $r_u$, and the jump-type for each of these marks.
+\Cref{tab:sirs_model_elements} gives $\alpha_u$, $r_u$, and the event type for each of these marks.
 
-\begin{table}
+\begin{table}[h!]
   \caption{
     \label{tab:sirs_model_elements}
     Elements of the SIRS model pertinent to the genealogy process.
@@ -1281,10 +1297,10 @@ Accordingly, the marks are $\Jumps=\Set{\lab{Trans},\lab{Recov},\lab{Wane},\lab{
     \hline\hline
     $u$ & $\alpha_u$ & Event type & $r_u$ \\
     \hline
-    $\lab{Trans}$  & ${\beta\,S\,I}/{N}$  & pure birth  & 2 \\
-    $\lab{Recov}$  & $\gamma\,I$          & pure death  & 0 \\
-    $\lab{Wane}$   & $\omega\,R$          & neutral     & 0 \\
-    $\lab{Sample}$ & $\psi\,I$            & pure sample & 1 \\
+    $\lab{Trans}$  & ${\beta S I}/{N}$ & pure birth  & 2 \\
+    $\lab{Recov}$  & $\gamma I$        & pure death  & 0 \\
+    $\lab{Wane}$   & $\omega R$        & neutral     & 0 \\
+    $\lab{Sample}$ & $\psi I$          & pure sample & 1 \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -1347,33 +1363,46 @@ At event-times $t\in\event{Z}$, the singular part of the filter equation reads
 Finally, note that $w(t,S,I,R)=0$ for all $I<\ell(t)$.
 
 <<sirs3>>=
+data.frame(
+  Beta=4,gamma=2,psi=1,omega=1,
+  S0=97,I0=3,R0=0,t0=0,time=40
+) -> sirs.params
+
 bake(
   file="sirs3a.rds",
   seed=328168304L,
+  dependson=sirs.params,
   {
     library(phylopomp)
-    runSIRS(
-      Beta=4,gamma=2,psi=1,omega=1,
-      S0=97,I0=3,R0=0,t0=0,time=40
-    )
+    sirs.params |>
+      with(
+        runSIRS(
+          Beta=Beta,gamma=gamma,psi=psi,omega=omega,
+          S0=S0,I0=I0,R0=R0,t0=t0,time=time
+        )
+      )
   }
-) -> x
+) -> sirs_tree
 
 bake(
   file="sirs3b.rds",
   seed=621400057L,
+  dependson=list(sirs_tree,sirs.params),
   {
-    expand_grid(
-      Beta=4,
-      ##      gamma=2,
-      gamma=seq(1.7,2.3,by=0.02),
-      psi=1,
-      omega=1,
-      ##      omega=seq(0.5,2,by=0.05),
-      S0=97,I0=3,R0=0,
-      t0=0,
-      rep=1:16,
-      Np=5000,
+    sirs.params |>
+      with(
+        expand_grid(
+          Beta=Beta,
+          ##      gamma=gamma,
+          gamma=seq(1.7,2.3,by=0.02),
+          psi=psi,
+          omega=omega,
+          ##      omega=seq(0.5,2,by=0.05),
+          S0=S0,I0=I0,R0=R0,
+          t0=t0,
+          rep=1:16,
+          Np=5000,
+          )
       ) -> params
 
     library(iterators)
@@ -1389,7 +1418,7 @@ bake(
       library(phylopomp)
       p |>
         with({
-          x |>
+          sirs_tree |>
             sirs_pomp(
               Beta=Beta,gamma=gamma,psi=psi,omega=omega,
               S0=S0,I0=I0,R0=R0,t0=0
@@ -1407,7 +1436,7 @@ bake(
   \begin{center}
     <<sirs3_plot,dependson="sirs1",fig.dim=c(8,2.8),out.width="100%">>=
     plot_grid(
-      A=x |>
+      A=sirs_tree |>
         plot(points=FALSE,palette=c("#000000"))+
         labs(x="time"),
       B=params |>
@@ -1435,7 +1464,7 @@ bake(
           )
         )+
         geom_errorbar(position="dodge")+
-        geom_vline(xintercept=2,color="red")+
+        geom_vline(xintercept=sirs.params$gamma,color="red")+
         labs(
           color=character(0),
           y="log likelihood",
@@ -1451,9 +1480,16 @@ bake(
     )
     @
   \end{center}
+  \caption{
+    \label{fig:sirs_example}
+    Likelihood computation for the SIRS model by sequential Monte Carlo.
+    (A)~A~simulated genealogy for $\beta=\Sexpr{sirs.params$Beta}$, $\gamma=\Sexpr{sirs.params$gamma}$, $\omega=\Sexpr{sirs.params$omega}$, $\psi=\Sexpr{sirs.params$psi}$, $(S_0,I_0,R_0)=(\Sexpr{with(sirs.params,c(S0,I0,R0))})$.
+    (B)~A~slice through the likelihood surface at the true parameters in the $\gamma$-direction.
+    Error bars show $\pm{2}$ s.d.\ of the Monte Carlo estimates.
+  }
 \end{figure}
 
-\subsection{SEIRS model}
+\subsection{SEIRS model} %% SEIRS
 
 A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
 The state space is $\Rp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
@@ -1474,21 +1510,160 @@ The KFE for the population process is
   \end{equation*}
 \end{mathsize}%
 where $N=S+E+I+R$ is the total population size.
-This model has two demes: $\Demes=\Set{\lab{E},\lab{I}}$ and four
-The deme occupancy function in this case is $n(x)=(E,I)$.
 Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
+
+This model has two demes: $\Demes=\Set{\lab{E},\lab{I}}$;
+its deme occupancy function is $n(x)=(E,I)$.
+There are five kinds of jumps:
+transmission, progression, recovery, waning of immunity, and sampling.
+The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab{Wane},\lab{Sample}}$.
+\Cref{tab:seirs_model_elements} gives $\alpha_u$, $r_u$, and the event type for each of these marks.
+
+\begin{table}[h!]
+  \caption{
+    \label{tab:seirs_model_elements}
+    Elements of the SEIRS model pertinent to the genealogy process.
+  }
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{cclc}
+    \hline\hline
+    $u$ & $\alpha_u$ & Event type & $r_u$ \\
+    \hline
+    $\lab{Trans}$  & ${\beta S I}/{N}$ & pure birth     & $(1,1)$ \\
+    $\lab{Prog}$   & $\sigma E$        & pure migration & $(0,1)$ \\
+    $\lab{Recov}$  & $\gamma I$        & pure death     & $(0,0)$ \\
+    $\lab{Wane}$   & $\omega R$        & neutral        & $(0,0)$ \\
+    $\lab{Sample}$ & $\psi I$          & pure sample    & $(0,1)$ \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+
+<<seirs3>>=
+seirs.params <- data.frame(
+  Beta=4,sigma=1,gamma=1,psi=1,omega=1,
+  S0=200,E0=3,I0=5,R0=100,
+  time=3
+)
+
+bake(
+  file="seirs3a.rds",
+  seed=831282841L,
+  dependson=seirs.params,
+  seirs.params |>
+    with(
+      runSEIR(
+        Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
+        S0=S0,E0=E0,I0=I0,R0=R0,
+        time=time
+      )
+    )
+) -> seirs_tree
+
+bake(
+  file="seirs3b.rds",
+  seed=831282841L,
+  dependson=list(seirs.params,seirs_tree),
+  {
+    library(phylopomp)
+    library(circumstance)
+    library(doFuture)
+    plan(multicore)
+
+    seirs.params |>
+      with(
+        seirs_tree |>
+          seirs_pomp(
+            Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
+            S0=S0,E0=E0,I0=I0,R0=R0
+          )
+      ) -> po
+
+    seq(0.2,2.5,by=0.1) |>
+      lapply(
+        \(s) {
+          x <- po
+          coef(x,"sigma") <- s
+          x
+        }
+      ) |>
+      concat() |>
+      pfilter(Np=20000,Nrep=10)
+  }
+) -> pfs
+
+left_join(
+  pfs |> coef() |> melt() |> pivot_wider(),
+  pfs |> logLik() |> melt() |> rename(logLik=value),
+  by=c(".id"="name")
+) -> params
+
+params |>
+  group_by(sigma) |>
+  summarize(
+    sd=sd(logLik),
+    logLik=logmeanexp(logLik),
+    hi=logLik+2*sd,
+    lo=logLik-2*sd
+  ) |>
+  ungroup() -> stats
+@
+
+\begin{figure}
+  \begin{center}
+    <<seirs3_plot,fig.dim=c(8,2.8),out.width="100%">>=
+    plot_grid(
+      A=seirs_tree |>
+        plot(points=TRUE,palette="#000000")+
+        labs(x="time"),
+      B=params |>
+        filter(logLik>max(logLik-16)) |>
+        ggplot(aes(x=sigma,y=logLik))+
+        geom_point()+
+        geom_smooth()+
+        geom_vline(xintercept=seirs.params$sigma,color="red")+
+        geom_hline(
+          yintercept=max(stats$logLik)-
+            c(0,0.5*qchisq(p=0.95,df=1)),
+          linetype=2
+        )+
+        labs(
+          color=character(0),
+          y="log likelihood",
+          x=expression(sigma)
+        )+
+        theme_classic(),
+      labels="AUTO",
+      nrow=1,
+      rel_widths=c(3,4)
+    )
+    @
+  \end{center}
+  \caption{
+    \label{fig:seirs_example}
+    Likelihood computation for the SEIRS model by sequential Monte Carlo.
+    (A)~Simulated genealogy for $\beta=\Sexpr{seirs.params$Beta}$,
+    $\sigma=\Sexpr{seirs.params$sigma}$,
+    $\gamma=\Sexpr{seirs.params$gamma}$,
+    $\psi=\Sexpr{seirs.params$psi}$,
+    $\omega=\Sexpr{seirs.params$omega}$,
+    $(S_0,E_0,I_0,R_0)=(\Sexpr{with(seirs.params,c(S0,E0,I0,R0))})$.
+    (B)~Likelihood slice in the $\sigma$-direction.
+    Each point represents the estimate of a distinct sequential Monte Carlo computation.
+  }
+\end{figure}
 
 \subsection{Two-strain competition model}
 
 A simple model for the competition of two strains for susceptible hosts is depicted in \cref{fig:example_models}B.
-This example will be completed in a forthcoming draft.
+This example will be included in a forthcoming draft.
 
 \subsection{Superspreading model}
 
 \Cref{fig:example_models}D depicts a model of superspreading.
-This example will be completed in a forthcoming draft.
+This example will be included in a forthcoming draft.
 
-\subsection{Linear birth-death model}
+
+\subsection{Linear birth-death model} %% LBDP
 
 In this model, the state variable is the size, $N_t$, of a population at time $t$.
 All individuals face the same per-capita birth and death rates, which are $\lambda$ and $\mu$, respectively.
@@ -1539,34 +1714,55 @@ and the singular part is
 \end{mathsize}%
 \Cref{eq:filter-lbdp-reg,eq:filter-lbdp-sing} are supplemented by the ancillary condition $w(t,n)=0$ for $n<\ell(t)$.
 
+\begin{table}[h!]
+  \caption{
+    \label{tab:lbdp_model_elements}
+    Elements of the linear birth-death-sampling model pertinent to the genealogy process.
+  }
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{cclc}
+    \hline\hline
+    $u$ & $\alpha_u$ & Event type & $r_u$ \\
+    \hline
+    $\lab{Birth}$  & $\lambda N$  & pure birth  & 2 \\
+    $\lab{Death}$  & $\gamma N$   & pure death  & 0 \\
+    $\lab{Sample}$ & $\psi N$     & pure sample & 1 \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+
 <<lbdp3>>=
-true.params <- data.frame(lambda=1.2,mu=0.8,psi=1,n0=5)
+lbdp.params <- data.frame(
+  lambda=1.2,mu=0.8,psi=1,n0=5,
+  time=10
+)
 
 bake(
   file="lbdp3a.rds",
-  seed=505641575,  
-  true.params |>
+  seed=915645370,
+  dependson=lbdp.params,
+  lbdp.params |>
     with(
-      runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=5)
-    ) -> x
-) -> x
+      runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=time)
+    )
+) -> lbdp_tree
 
 bake(
   file="lbdp3b.rds",
-  dependson=x,
-  seed=715604304,
+  seed=712604404,
+  dependson=list(lbdp_tree,lbdp.params),
   {
-    expand_grid(
-      rep=1:10,
-      lambda=1.2,
-      mu=seq(0.3,2,by=0.1),
-      ## mu=0.8,
-      ## psi=seq(0.2,2.5,by=0.1),
-      psi=1,
-      time=3,
-      n0=5,
-      Np=c(1000,2000,4000,8000,16000,32000,64000,128000)
-    ) -> params
+    lbdp.params |>
+      with(
+        expand_grid(
+          rep=1:10,
+          lambda=lambda,
+          mu=seq(0.5,1.1,by=0.05),
+          psi=psi,
+          n0=n0,
+          Np=1000*2^seq(0,7)
+        )
+      ) -> params
 
     library(iterators)
     library(doFuture)
@@ -1579,12 +1775,12 @@ bake(
     ) %dofuture% {
       p |>
         with(
-          x |>
+          lbdp_tree |>
             lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
         ) -> ll1
       p |>
         with(
-          x |>
+          lbdp_tree |>
             lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
             pfilter(Np=Np) |>
             logLik()
@@ -1596,71 +1792,87 @@ bake(
 
 params |>
   mutate(
-    diff=(pf-exact)/exact
+    diff=pf-exact
   ) |>
   group_by(Np) |>
   summarize(
     rmse=sqrt(mean(diff*diff)),
-    sd=sd(diff),
-    bias=abs(mean(pf-exact))
+    bias=abs(mean(diff)),
+    prec=sqrt(rmse^2-bias^2)
   ) |>
   ungroup() -> stats
 @
 
 \begin{figure}
   \begin{center}
-    <<lbdp3_plot,fig.dim=c(8,5),out.width="100%">>=
+    <<lbdp3_plot,fig.dim=c(9,7),out.width="100%">>=
     pal <- c(viridis_pal(option="H",begin=0.1,end=0.8)(8),"#000000")
     names(pal) <- c("1k","2k","4k","8k","16k","32k","64k","128k","exact")
 
     plot_grid(
-      params |>
-        pivot_longer(c(exact,pf)) |>
-        unite(name,name,Np) |>
-        mutate(
-          name=if_else(grepl("exact",name),"exact",name),
-          name=gsub("pf_","",name),
-          name=gsub("000","k",name),
-          name=ordered(name,levels=names(pal))
-        ) |>
-        group_by(lambda,mu,psi,time,n0,name) |>
-        reframe(
-          type=c("logLik","logLik_se"),
-          value=logmeanexp(value,se=TRUE)
-        ) |>
-        ungroup() |>
-        pivot_wider(names_from=type) |>
-        mutate(
-          y=logLik,
-          ymax=logLik+2*logLik_se,
-          ymin=logLik-2*logLik_se
-        ) |>
-        filter(logLik>max(logLik)-16) |>
-        ggplot(aes(x=mu,group=name,color=name,
-          y=y,ymin=ymin,ymax=ymax))+
-        geom_errorbar(
-          position="dodge"
-        )+
-        geom_vline(xintercept=true.params$mu,linetype=2)+
-        geom_hline(
-          yintercept=max(params$exact)-
-            c(0,0.5*qchisq(p=0.95,df=1)),
-          linetype=2
-        )+
-        scale_color_manual(values=pal)+
-        labs(
-          color="effort",
-          y="log likelihood",
-          x=expression(mu)
-        )+
-        theme(
-          legend.position="inside",
-          legend.position.inside=c(0.5,0.4),
-          legend.background=element_rect(fill="white")
-        ),
-      plot_grid(
-        ##        x |> plot(points=TRUE),
-        stats |>
+      ncol=1,
+      rel_heights=c(3,2),
+      AB=plot_grid(
+        labels=c("A","B"),
+        nrow=1,
+        rel_widths=c(3,5),
+        A=lbdp_tree |>
+          plot(points=FALSE,palette="#000000")+
+          labs(x="time"),
+        B=params |>
+          pivot_longer(c(exact,pf)) |>
+          unite(name,name,Np) |>
+          mutate(
+            name=if_else(grepl("exact",name),"exact",name),
+            name=gsub("pf_","",name),
+            name=gsub("000","k",name),
+            name=ordered(name,levels=names(pal))
+          ) |>
+          group_by(lambda,mu,psi,n0,name) |>
+          reframe(
+            type=c("logLik","logLik_se"),
+            value=logmeanexp(value,se=TRUE)
+          ) |>
+          ungroup() |>
+          pivot_wider(names_from=type) |>
+          mutate(
+            y=logLik,
+            ymax=logLik+2*logLik_se,
+            ymin=logLik-2*logLik_se
+          ) |>
+          filter(logLik>max(logLik)-16) |>
+          ggplot(
+            aes(
+              x=mu,group=name,color=name,
+              y=y,ymin=ymin,ymax=ymax
+            )
+          )+
+          geom_errorbar(
+            position="dodge"
+          )+
+          geom_vline(xintercept=lbdp.params$mu,color="red")+
+          geom_hline(
+            yintercept=max(params$exact)-
+              c(0,0.5*qchisq(p=0.95,df=1)),
+            linetype=2
+          )+
+          scale_color_manual(values=pal)+
+          labs(
+            color="effort",
+            y="log likelihood",
+            x=expression(mu)
+          )+
+          theme(
+            ## legend.position="inside",
+            ## legend.position.inside=c(0.5,0.4),
+            ## legend.background=element_rect(fill="white")
+          )
+      ),
+      CDE=plot_grid(
+        labels=c("C","D","E"),
+        nrow=1,
+        rel_widths=c(24,24,11),
+        C=stats |>
           ggplot(aes(x=Np,y=rmse))+
           geom_smooth(formula=y~x,method="lm")+
           geom_point()+
@@ -1668,32 +1880,36 @@ params |>
           scale_y_log10()+
           coord_fixed(ratio=1)+
           labs(x="effort",y="RMSE"),
-        stats |>
-          ggplot(aes(x=Np,y=sd))+
+        D=stats |>
+          ggplot(aes(x=Np,y=prec))+
           geom_smooth(formula=y~x,method="lm")+
           geom_point()+
           scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
           scale_y_log10()+
           coord_fixed(ratio=1)+
           labs(x="effort",y="SD"),
-        stats |>
+        E=stats |>
           ggplot(aes(x=Np,y=bias))+
           geom_smooth(formula=y~x,method="lm")+
           geom_point()+
           scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-          scale_y_log10()+
+          scale_y_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
           coord_fixed(ratio=1)+
-          labs(x="effort",y="bias"),
-        ncol=1,
-        align="h",
-        axis="btlr",
-        rel_heights=c(1,1,1)
-      ),
-      nrow=1,
-      rel_widths=c(2,1)
+          labs(x="effort",y=expression(group("|",bias,"|")))
+      )
     )
     @
   \end{center}
+  \caption{
+    \label{fig:lbdp_example}
+    Likelihood computation for the constant-parameter, linear birth-death-sampling model, according to \cref{thm:obsc_uncond} via sequential Monte Carlo.
+    Panel (A) shows the genealogy, simulated for $\lambda=\Sexpr{lbdp.params$lambda}$, $\mu=\Sexpr{lbdp.params$mu}$, $\psi=\Sexpr{lbdp.params$psi}$, $N_0=\Sexpr{lbdp.params$mu}$.
+    Panel (B) shows a likelihood slice, through the true parameters in the $\mu$ direction.
+    As computational effort (\ie number of particles) increases, the Monte Carlo estimates converge on the exact values, for which an explicit formula exists in this case.
+    The dashed horizontal lines show the approximate maximized likelihood and the 95\% critical value (under the likelihood-ratio test).
+    Panels (C--E) are log-log plots that show how the root-mean-square error (RMSE), imprecision (SD), and bias decrease with effort.
+    Note that the bias and the SD are roughly inversely proportional to the effort and its square-root, respectively, as expected.
+  }
 \end{figure}
 
 \subsection{Moran model and the Kingman coalescent}
