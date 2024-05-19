@@ -927,37 +927,6 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
 
 \Cref{lemma:monte_carlo} shows how this can be computed via Sequential Monte Carlo.
 
-%% \section{Examples}
-
-%% \subsection{SIRS}
-
-%% Was shown in an earlier paper.
-%% [Display filter equation and plot a curve.]
-
-%% \subsection{SEIRS}
-
-%% Display filter equation.
-%% Discuss the choice of $\pi$ and $q$.
-%% Present a likelihood curve.
-
-%% \subsection{Two-strain competition}
-
-%% Display filter equation.
-%% Discuss the choice of $\pi$ and $q$.
-%% Present a likelihood curve.
-
-%% \subsection{Superspreading model}
-
-%% Display filter equation.
-%% Discuss the choice of $\pi$ and $q$.
-%% Present a likelihood curve.
-
-%% \subsection{Linear birth-death and Moran models}
-
-%% Exact solution of the filtering equations is possible in the unstructured case, yielding precisely the likelihoods for these two models.
-%% This establishes that the present theory is a strict generalization of these cases.
-%% It does away with the need for large sample-size and small sample-fraction approximations, the necessity of assuming slow changes in effective population size, and the need for linearization.
-
 \section{Discussion}
 
 Importantly, because the theory presented here allows computation of the likelihood via strictly forward-in-time computations, it permits consideration of models for which time-reversal arguments are not available.
@@ -1292,15 +1261,15 @@ Accordingly, the marks are $\Jumps=\Set{\lab{Trans},\lab{Recov},\lab{Wane},\lab{
     \label{tab:sirs_model_elements}
     Elements of the SIRS model pertinent to the genealogy process.
   }
-  \renewcommand{\arraystretch}{1.2}
+  %% \renewcommand{\arraystretch}{1.2}
   \begin{tabular}{cclc}
     \hline\hline
     $u$ & $\alpha_u$ & Event type & $r_u$ \\
     \hline
-    $\lab{Trans}$  & ${\beta S I}/{N}$ & pure birth  & 2 \\
-    $\lab{Recov}$  & $\gamma I$        & pure death  & 0 \\
-    $\lab{Wane}$   & $\omega R$        & neutral     & 0 \\
-    $\lab{Sample}$ & $\psi I$          & pure sample & 1 \\
+    $\lab{Trans}$  & $\frac{\beta S I}{N}$ \bigstrut & pure birth  & 2 \\
+    $\lab{Recov}$  & $\gamma I$        \bigstrut & pure death  & 0 \\
+    $\lab{Wane}$   & $\omega R$        \bigstrut & neutral     & 0 \\
+    $\lab{Sample}$ & $\psi I$          \bigstrut & pure sample & 1 \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -1489,8 +1458,8 @@ The KFE for the population process is
   \begin{equation*}
     \begin{split}
       \frac{\partial{v}}{\partial{t}}(t,S,E,I,R)=
-      &\frac{\beta(t)\,(S+1)\,I}{N}\,v(t,S+1,E-1,I,R)
-      -\frac{\beta(t)\,S\,I}{N}\,v(t,S,E,I,R)\\
+      &\frac{\beta\,(S+1)\,I}{N}\,v(t,S+1,E-1,I,R)
+      -\frac{\beta\,S\,I}{N}\,v(t,S,E,I,R)\\
       &+\sigma\,(E+1)\,v(t,S,E+1,I-1,R)
       -\sigma\,E\,v(t,S,E,I,R)\\
       &+\gamma\,(I+1)\,v(t,S,E,I+1,R-1)
@@ -1510,24 +1479,114 @@ transmission, progression, recovery, waning of immunity, and sampling.
 The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab{Wane},\lab{Sample}}$.
 \Cref{tab:seirs_model_elements} gives $\alpha_u$, $r_u$, and the event type for each of these marks.
 
+\input{figs/seirs_events}
+
 \begin{table}[h!]
   \caption{
     \label{tab:seirs_model_elements}
     Elements of the SEIRS model pertinent to the genealogy process.
   }
-  \renewcommand{\arraystretch}{1.2}
+  %% \renewcommand{\arraystretch}{1.2}
   \begin{tabular}{cclc}
     \hline\hline
     $u$ & $\alpha_u$ & Event type & $r_u$ \\
     \hline
-    $\lab{Trans}$  & ${\beta S I}/{N}$ & pure birth     & $(1,1)$ \\
-    $\lab{Prog}$   & $\sigma E$        & pure migration & $(0,1)$ \\
-    $\lab{Recov}$  & $\gamma I$        & pure death     & $(0,0)$ \\
-    $\lab{Wane}$   & $\omega R$        & neutral        & $(0,0)$ \\
-    $\lab{Sample}$ & $\psi I$          & pure sample    & $(0,1)$ \\
+    $\lab{Trans}$  & $\frac{\beta S I}{N}$ \bigstrut & pure birth     & $(1,1)$ \\
+    $\lab{Prog}$   & $\sigma E$        \bigstrut & pure migration & $(0,1)$ \\
+    $\lab{Recov}$  & $\gamma I$        \bigstrut & pure death     & $(0,0)$ \\
+    $\lab{Wane}$   & $\omega R$        \bigstrut & neutral        & $(0,0)$ \\
+    $\lab{Sample}$ & $\psi I$          \bigstrut & pure sample    & $(0,1)$ \\
     \hline\hline
   \end{tabular}
 \end{table}
+
+\begin{table}[h!]
+  \caption{
+    \label{tab:seirs_integ}
+    Elements of a scheme for computing the likelihood under the SEIRS model.
+    The $y\mapsto{y'}$ column depicts the proposed painting schematically.
+    Blue is used for the $\lab{E}$ deme and yellow for the $\lab{I}$ deme.
+  }
+  %% \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{c c c c c c c | c}
+    \hline\hline
+    & $u$ & $s$ & $\BinRatio{n}{\ell}{r}{s}$ & $y\mapsto{y'}$ & $\pi$ & $Q$ & Line\\[2ex]
+    \hline
+    \multirow[c]{10}{*}[-1ex]{\rotatebox{90}{$t\notin{{B}\cup{S_0}\cup{S_1}}$}}
+    & \multirow{4}{*}{$\lab{Trans}$}
+    & $(0,0)$ & $\left(\frac{E-\ell_E}{E}\right)\left(\frac{I-\ell_I}{I}\right)$ \bigstrut & \unbroken \bigstrut & $\frac{I-\ell_I}{I}$ & $1$ & 1 \\
+    \cline{3-8}
+    && $(1,0)$ & $\frac{I-\ell_I}{E I}$ \bigstrut & \maizeblue \bigstrut & $\frac{1}{2 I}$ & $1$ & 2 \\
+    \cline{3-8}
+    && $(0,1)$ & $\frac{E-\ell_E}{E I}$ \bigstrut & \maizemaize \bigstrut & $\frac{1}{2 I}$ & $1$ & 3 \\
+    \cline{3-8}
+    && $(1,1)$ & --- & --- & 0 & $0$ & 4 \\
+    \cline{2-8}
+    &\multirow{2}{*}{$\lab{Prog}$}
+    & $(0,0)$ & $\frac{I-\ell_I}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \unbroken \bigstrut & $\frac{E-\ell_E}{E}\,\Indicator{E>\ell_E}$ \bigstrut & $1$ & 5 \\
+    \cline{3-8}
+    && $(0,1)$ & $\frac{1}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \bluemaize \bigstrut & $\frac{1}{E}\,\Indicator{E>\ell_E}$ \bigstrut & $1$ & 6 \\
+    \cline{2-8}
+    & $\lab{Recov}$ & $(0,0)$ & $\Indicator{I\ge\ell_I}$ \bigstrut & \unbroken \bigstrut & $\Indicator{I>\ell_I}$ \bigstrut & $1$ & 7 \\
+    \cline{2-8}
+    & $\lab{Wane}$ & $(0,0)$ & $1$ \bigstrut & \unbroken \bigstrut & $1$ & $1$ & 8 \\
+    \cline{2-8}
+    & $\lab{Sample}$ & $\ast$ & --- & --- & 0 & 0 & 9 \\
+    \hline
+    \multirow[c]{4}{*}[-3ex]{\rotatebox{90}{$t\in{B}$}}
+    & \multirow{4}{*}{$\lab{Trans}$}
+    & \multirow{4}{*}{$(1,1)$}
+    & $\frac{1}{E I}$ \bigstrut & \branchup \bigstrut & $\frac{1}{2}$ \bigstrut & $1$ & 10 \\
+    \cline{4-8}
+    &&& $\frac{1}{E I}$ \bigstrut & \branchdown \bigstrut & $\frac{1}{2}$ \bigstrut & $1$ & 11 \\
+    \cline{4-8}
+    &&& --- \bigstrut & \branchupnix \bigstrut & 0 & $0$ & 12 \\
+    \cline{4-8}
+    &&& --- \bigstrut & \branchdownnix \bigstrut & 0 & $0$ & 13 \\
+    \cline{2-8}
+    & $\ast$ & $\ast$ & --- \bigstrut & --- & 0 & $0$ & 14 \\
+    \hline
+    \multirow[c]{2}{*}[-2ex]{\rotatebox{90}{$t\in{S_0}$} \bigstrut}
+    & \multirow{2}{*}{$\lab{Sample}$}
+    & \multirow{2}{*}{$(0,0)$}
+    & $\frac{I-\ell_I}{I}$ \bigstrut & \samplezero & $1$ & $1$ & 15 \\
+    \cline{4-8}
+    &&& --- & \samplezeronix \bigstrut & 0 & 0 & 16 \\
+    \cline{2-8}
+    & $\ast$ & $\ast$ & --- & --- & 0 & $0$ & 19 \\
+    \hline
+    \multirow[c]{2}{*}[-2ex]{\rotatebox{90}{$t\in{S_1}$}}
+    & \multirow{2}{*}{$\lab{Sample}$}
+    & \multirow{2}{*}{$(0,1)$}
+    & $\frac{1}{I}$ \bigstrut & \sampleone \bigstrut & $1$ & $1$ & 17 \\
+    \cline{4-8}
+    &&& --- & \sampleonenix \bigstrut & 0 & 0 & 18 \\
+    \cline{2-8}
+    & $\ast$ & $\ast$ & --- & --- & 0 & $0$ & 19 \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+
+A variety of importance-sampling kernels are permissible under the terms of \cref{thm:obsc_uncond}.
+Given a particular choice of importance-sampling kernel, the filtering equation follows.
+For example, with the choices as in \cref{tab:seirs_integ}, the filtering equation is as follows.
+As previously, let $B$ be the set of branch times, $S_0$ be the set of tip-sample times, and $S_1$ be the set of inline sample times.
+Then for $t\notin{{B}\cup{S_0}\cup{S_1}}$, we have
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation*}
+    \begin{split}
+      \frac{\partial{w}}{\partial{t}}(t,S,E,I,R)=
+      &\frac{\beta\,(S+1)\,I}{N}\,w(t,S+1,E-1,I,R)
+      -\frac{\beta\,S\,I}{N}\,w(t,S,E,I,R)\\
+      &+\sigma\,(E+1)\,w(t,S,E+1,I-1,R)
+      -\sigma\,E\,w(t,S,E,I,R)\\
+      &+\gamma\,(I+1)\,w(t,S,E,I+1,R-1)
+      -\gamma\,I\,w(t,S,E,I,R)\\
+      &+\omega\,(R+1)\,w(t,S-1,E,I,R+1)
+      -\omega\,R\,w(t,S,E,I,R),
+    \end{split}
+  \end{equation*}
+\end{mathsize}%
 
 <<seirs3>>=
 seirs.params <- data.frame(

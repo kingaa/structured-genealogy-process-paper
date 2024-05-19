@@ -1,0 +1,193 @@
+\def\ysp{0.3}
+
+\def\unbroken{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \draw[deme1] (0,\ysp) -- (2,\ysp);
+      \draw[deme2] (0,0) -- (2,0);
+    \end{tikzpicture}%
+  }%
+}
+
+\def\maizemaize{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \draw[deme2] (0,\ysp) -- (2,\ysp);
+      \draw[deme1] (0,0) -- (2,0);
+      \node[event] at (1,\ysp) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\maizeblue{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \draw[deme2] (0,\ysp) -- (1,\ysp);
+      \draw[deme1] (1,\ysp) -- (2,\ysp);
+      \draw[deme1] (0,0) -- (2,0);
+      \node[event] at (1,\ysp) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\bluemaize{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \draw[deme1] (0,\ysp) -- (1,\ysp);
+      \draw[deme2] (1,\ysp) -- (2,\ysp);
+      \draw[deme2] (0,0) -- (2,0);
+      \node[event] at (1,\ysp) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\samplezero{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \tikzstyle{sample}=[text=royalblue, font=\Huge]
+      \draw[deme1] (0,\ysp) -- (2,\ysp);
+      \draw[deme2] (0,0) -- (1,0);
+      \node[sample] at (1,0) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\samplezeronix{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \tikzstyle{sample}=[text=royalblue, font=\Huge]
+      \draw[deme1] (0,\ysp) -- (1,\ysp);
+      \draw[deme2] (0,0) -- (2,0);
+      \node[sample] at (1,\ysp) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\sampleone{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \tikzstyle{sample}=[text=royalblue, font=\Huge]
+      \draw[deme1] (0,\ysp) -- (2,\ysp);
+      \draw[deme2] (0,0) -- (2,0);
+      \node[sample] at (1,0) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\sampleonenix{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \tikzstyle{sample}=[text=royalblue, font=\Huge]
+      \draw[deme1] (0,\ysp) -- (2,\ysp);
+      \draw[deme2] (0,0) -- (2,0);
+      \node[sample] at (1,\ysp) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\branchup{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-1ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \tikzstyle{sample}=[text=royalblue, font=\Huge]
+      \draw[deme2] (0,0) -- (1,0);
+      \draw[deme1] (1,0) -- (1,\ysp) -- (2,\ysp);
+      \draw[deme2] (1,0) -- (1,-\ysp) -- (2,-\ysp);
+      \node[event] at (1,0) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\branchupnix{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-1ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \tikzstyle{sample}=[text=royalblue, font=\Huge]
+      \draw[deme1] (0,0) -- (1,0);
+      \draw[deme1] (1,0) -- (1,\ysp) -- (2,\ysp);
+      \draw[deme2] (1,0) -- (1,-\ysp) -- (2,-\ysp);
+      \node[event] at (1,0) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\branchdown{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-1ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \tikzstyle{sample}=[text=royalblue, font=\Huge]
+      \draw[deme2] (0,0) -- (1,0);
+      \draw[deme2] (1,0) -- (1,\ysp) -- (2,\ysp);
+      \draw[deme1] (1,0) -- (1,-\ysp) -- (2,-\ysp);
+      \node[event] at (1,0) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
+
+\def\branchdownnix{%
+  \resizebox{3em}{!}{%
+    \begin{tikzpicture}[baseline=-1ex]
+      \tikzstyle{deme1}=[color=darkblue, line width=2pt]
+      \tikzstyle{deme1H}=[color=darkblue, line width=2pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=2pt]
+      \tikzstyle{deme2H}=[color=maize, line width=2pt, densely dotted]
+      \tikzstyle{event}=[text=darkgreen, font=\Huge]
+      \tikzstyle{sample}=[text=royalblue, font=\Huge]
+      \draw[deme1] (0,0) -- (1,0);
+      \draw[deme2] (1,0) -- (1,\ysp) -- (2,\ysp);
+      \draw[deme1] (1,0) -- (1,-\ysp) -- (2,-\ysp);
+      \node[event] at (1,0) {$\bullet$};
+    \end{tikzpicture}%
+  }%
+}
