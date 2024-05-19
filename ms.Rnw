@@ -461,9 +461,9 @@ These occur whenever the color changes along a branch, but can also occur withou
 
 Formally, we define a genealogy, $G$, to be a triple, $(T,Z,Y)$, where $T=\time(G)\in\Rp$ is the \emph{genealogy time}, $Z$ specifies the genealogy's \emph{tree structure}, and $Y$ gives the \emph{coloring}.
 In particular, let $\leaves$ be a countable set of labels and let $\part(\leaves)$ be the set of all collections of finite, mutually-disjoint subsets of $\leaves$.
-That is, an element $\zeta\in{\part(\leaves)}$ is a partition of the finite set $\bigcup\zeta\subseteq\leaves$.
+That is, an element $z\in{\part(\leaves)}$ is a partition of the finite set $\bigcup{z}\subseteq\leaves$.
 Partition \emph{fineness} defines a partial order on $\part(\leaves)$.
-Specifically, for $\zeta,\zeta'\in{\part(\leaves)}$, we say $\zeta\preceq{\zeta'}$ if and only if for every $b'\in{\zeta'}$ there is $b\in{\zeta}$ such that $b\supseteq{b'}$.
+Specifically, for $z,z'\in{\part(\leaves)}$, we say $z\preceq{z'}$ if and only if for every $b'\in{z'}$ there is $b\in{z}$ such that $b\supseteq{b'}$.
 The tree structure of $G$ is defined by a \cadlag\ map $Z:[0,T]\to\part(\leaves)$ that is monotone in the sense that $t_1\le{t_2}$ implies $Z_{t_1}\preceq{Z_{t_2}}$.
 An element $b\in{Z_t}$ is a set of labels;
 it represents the branch of the tree that bears the corresponding lineages.
@@ -742,11 +742,11 @@ The local structure of $P$ at $t$ is, in general, compatible with only a subset 
 For example, if the event in $P$ at $t$ is a branch node or a sample node, then it is compatible only with birth-type or sample-type jumps, respectively.
 Similarly, if the node in $P$ at time $t$ is one at which a lineage moves from deme $i$ to deme $i'$, then $u$ must be either of $i\to{i'}$ migration type or of a birth type with parent in $i$ and $r^u_{i'}>0$.
 To succinctly accommodate all possibilities, let us introduce the indicator function $Q$ such that $Q=1$ if the local genealogy structure---which is captured by the values of $P^{\lab{Y}}$ just before and after $t$---is compatible with an event of type $u$ and $Q=0$ otherwise.
-That is, $Q_u(\eta,\eta')=1$ if and only if
+That is, $Q_u(y,y')=1$ if and only if
 there is a feasible genealogy, $\G=(\T,\Z,\Y)$, and history, $\H$,
 and a $t\in{[0,\T]}$ such that,
 given $\Gr_\T=\G$ and $\Hr_\T=\H$,
-we have $\U_t=u$, $\Yt_t=\eta$, and $\Y_t=\eta'$.
+we have $\U_t=u$, $\Yt_t=y$, and $\Y_t=y'$.
 We refer to $Q$ as the \emph{compatibility indicator}.
 
 \subsubsection{Obscured genealogy}
@@ -796,7 +796,7 @@ Our first result will be an expression for the likelihood of a given pruned gene
 \end{proof}
 
 %% \begin{equation*}
-%%   \phi_u(\xi,\eta,\eta')\colonequals\BinRatio{n(\xi)}{\ell(\eta')}{r^u}{s(\eta,\eta')}\,Q_u(\eta,\eta').
+%%   \phi_u(\xi,y,y')\colonequals\BinRatio{n(\xi)}{\ell(y')}{r^u}{s(y,y')}\,Q_u(y,y').
 %% \end{equation*}
 
 Next, we show how the likelihood of a pruned genealogies, unconditional on the history, can be computed.
@@ -1430,6 +1430,11 @@ bake(
     } -> params
   }
 ) -> params
+
+params |>
+  with(
+    mcap(logLik,gamma)
+  ) -> mcap
 @
 
 \begin{figure}
@@ -1440,36 +1445,21 @@ bake(
         plot(points=FALSE,palette=c("#000000"))+
         labs(x="time"),
       B=params |>
-        group_by(Beta,gamma,psi,omega,S0,I0,R0,Np) |>
-        reframe(
-          name=c("logLik","logLik_se"),
-          value=logmeanexp(logLik,se=TRUE)
-        ) |>
-        ungroup() |>
-        pivot_wider() |>
-        mutate(
-          y=logLik,
-          ymax=logLik+2*logLik_se,
-          ymin=logLik-2*logLik_se
-        ) |>
-        filter(round(Beta,2)==4) |>
-        filter(logLik>max(logLik)-16) |>
-        ggplot(
-          aes(
-            x=gamma,
-            group=Np,
-            y=y,
-            ymin=ymin,
-            ymax=ymax
-          )
-        )+
-        geom_errorbar(position="dodge")+
+        ggplot(aes(x=gamma,y=logLik))+
+        geom_point(alpha=0.2)+
+        geom_line(data=mcap$fit,aes(x=parameter,y=smoothed),color="blue")+
         geom_vline(xintercept=sirs.params$gamma,color="red")+
+        geom_vline(xintercept=mcap$ci,linetype=2)+
+        geom_hline(
+          yintercept=max(mcap$fit$smoothed)-c(0,mcap$delta),
+          linetype=2
+        )+
         labs(
           color=character(0),
           y="log likelihood",
           x=expression(gamma)
         )+
+        ## lims(y=c(max(params$logLik)-16,NA))+
         theme_classic()+
         theme(
           legend.position=c(0.5,0.27)
@@ -1485,7 +1475,8 @@ bake(
     Likelihood computation for the SIRS model by sequential Monte Carlo.
     (A)~A~simulated genealogy for $\beta=\Sexpr{sirs.params$Beta}$, $\gamma=\Sexpr{sirs.params$gamma}$, $\omega=\Sexpr{sirs.params$omega}$, $\psi=\Sexpr{sirs.params$psi}$, $(S_0,I_0,R_0)=(\Sexpr{with(sirs.params,c(S0,I0,R0))})$.
     (B)~A~slice through the likelihood surface at the true parameters in the $\gamma$-direction.
-    Error bars show $\pm{2}$ s.d.\ of the Monte Carlo estimates.
+    Each point is a distinct Monte Carlo estimate.
+    The blue curve is a LOESS smooth; the dashed lines show Monte Carlo-adjusted 95\% confidence intervals \citep{Ionides2017}.
   }
 \end{figure}
 
@@ -1512,8 +1503,8 @@ The KFE for the population process is
 where $N=S+E+I+R$ is the total population size.
 Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
 
-This model has two demes: $\Demes=\Set{\lab{E},\lab{I}}$;
-its deme occupancy function is $n(x)=(E,I)$.
+This model has two demes: $\Demes=\Set{\lab{E},\lab{I}}$.
+Its deme occupancy function is $n(x)=(E,I)$.
 There are five kinds of jumps:
 transmission, progression, recovery, waning of immunity, and sampling.
 The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab{Wane},\lab{Sample}}$.
@@ -1598,14 +1589,9 @@ left_join(
 ) -> params
 
 params |>
-  group_by(sigma) |>
-  summarize(
-    sd=sd(logLik),
-    logLik=logmeanexp(logLik),
-    hi=logLik+2*sd,
-    lo=logLik-2*sd
-  ) |>
-  ungroup() -> stats
+  with(
+    mcap(logLik,sigma,span=0.25)
+  ) -> mcap
 @
 
 \begin{figure}
@@ -1616,16 +1602,16 @@ params |>
         plot(points=TRUE,palette="#000000")+
         labs(x="time"),
       B=params |>
-        filter(logLik>max(logLik-16)) |>
-        ggplot(aes(x=sigma,y=logLik))+
-        geom_point()+
-        geom_smooth()+
+        ggplot()+
+        geom_point(aes(x=sigma,y=logLik))+
+        geom_line(data=mcap$fit,aes(x=parameter,y=smoothed),color="blue")+
         geom_vline(xintercept=seirs.params$sigma,color="red")+
+        geom_vline(xintercept=mcap$ci,linetype=2)+
         geom_hline(
-          yintercept=max(stats$logLik)-
-            c(0,0.5*qchisq(p=0.95,df=1)),
+          yintercept=max(mcap$fit$smoothed)-c(0,mcap$delta),
           linetype=2
         )+
+        ##        lims(y=c(max(params$logLik)-12,NA))+
         labs(
           color=character(0),
           y="log likelihood",
@@ -1649,6 +1635,8 @@ params |>
     $(S_0,E_0,I_0,R_0)=(\Sexpr{with(seirs.params,c(S0,E0,I0,R0))})$.
     (B)~Likelihood slice in the $\sigma$-direction.
     Each point represents the estimate of a distinct sequential Monte Carlo computation.
+    The blue curve shows a LOESS smooth;
+    the dashed vertical lines enclose the Monte Carlo-adjusted 95\% confidence interval \citep{Ionides2017}.
   }
 \end{figure}
 
