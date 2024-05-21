@@ -49,8 +49,8 @@ library(cowplot)
 library(viridis)
 library(phylopomp)
 stopifnot(getRversion() >= "4.3")
-stopifnot(packageVersion("pomp")>="5.5")
-stopifnot(packageVersion("phylopomp")>="0.10.3")
+stopifnot(packageVersion("pomp")>="5.8")
+stopifnot(packageVersion("phylopomp")>="0.11")
 theme_set(theme_bw(base_family="serif"))
 options(
   width=150,
@@ -1262,14 +1262,14 @@ Accordingly, the marks are $\Jumps=\Set{\lab{Trans},\lab{Recov},\lab{Wane},\lab{
     Elements of the SIRS model pertinent to the genealogy process.
   }
   %% \renewcommand{\arraystretch}{1.2}
-  \begin{tabular}{cclc}
+  \begin{tabular}{cccl}
     \hline\hline
-    $u$ & $\alpha_u$ & Event type & $r_u$ \\
+    $u$ & $\alpha_u$ & $r_u$ & Event type \\
     \hline
-    $\lab{Trans}$  & $\frac{\beta S I}{N}$ \bigstrut & pure birth  & 2 \\
-    $\lab{Recov}$  & $\gamma I$        \bigstrut & pure death  & 0 \\
-    $\lab{Wane}$   & $\omega R$        \bigstrut & neutral     & 0 \\
-    $\lab{Sample}$ & $\psi I$          \bigstrut & pure sample & 1 \\
+    $\lab{Trans}$  & $\frac{\beta S I}{N}$ \bigstrut & 2 & pure birth \\
+    $\lab{Recov}$  & $\gamma I$ \bigstrut & 0 & pure death \\
+    $\lab{Wane}$   & $\omega R$ \bigstrut & 0 & neutral \\
+    $\lab{Sample}$ & $\psi I$ \bigstrut & 1 & pure sample \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -1487,15 +1487,15 @@ The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab
     Elements of the SEIRS model pertinent to the genealogy process.
   }
   %% \renewcommand{\arraystretch}{1.2}
-  \begin{tabular}{cclc}
+  \begin{tabular}{ccccl}
     \hline\hline
-    $u$ & $\alpha_u$ & Event type & $r_u$ \\
+    $u$ & $\alpha_u$ & $x\mapsto{x'}$ & $r_u$ & Event type \\
     \hline
-    $\lab{Trans}$  & $\frac{\beta S I}{N}$ \bigstrut & pure birth     & $(1,1)$ \\
-    $\lab{Prog}$   & $\sigma E$        \bigstrut & pure migration & $(0,1)$ \\
-    $\lab{Recov}$  & $\gamma I$        \bigstrut & pure death     & $(0,0)$ \\
-    $\lab{Wane}$   & $\omega R$        \bigstrut & neutral        & $(0,0)$ \\
-    $\lab{Sample}$ & $\psi I$          \bigstrut & pure sample    & $(0,1)$ \\
+    $\lab{Trans}$  & $\frac{\beta S I}{N}$ \bigstrut & $(S,E)\mapsto(S-1,E+1)$  \bigstrut & $(1,1)$ & pure birth \\
+    $\lab{Prog}$   & $\sigma E$ \bigstrut & $(E,I)\mapsto(E-1,I+1)$ \bigstrut & $(0,1)$ & pure migration \\
+    $\lab{Recov}$  & $\gamma I$ \bigstrut & $(I,R)\mapsto(I-1,R+1)$ \bigstrut & $(0,0)$ & pure death \\
+    $\lab{Wane}$   & $\omega R$ \bigstrut & $(S,R)\mapsto(S+1,R-1)$ \bigstrut & $(0,0)$ & neutral \\
+    $\lab{Sample}$ & $\psi I$ \bigstrut & $x\mapsto{x}$ \bigstrut & $(0,1)$ & pure sample \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -1508,61 +1508,61 @@ The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab
     Blue is used for the $\lab{E}$ deme and yellow for the $\lab{I}$ deme.
   }
   %% \renewcommand{\arraystretch}{1.2}
-  \begin{tabular}{c c c c c c c | c}
+  \begin{tabular}{c c c c c c c c | c}
     \hline\hline
-    & $u$ & $s$ & $\BinRatio{n}{\ell}{r}{s}$ & $y\mapsto{y'}$ & $\pi$ & $Q$ & Line\\[2ex]
+    & $u$ & $s$ & $\BinRatio{n}{\ell}{r}{s}$ & $y\mapsto{y'}$ & $\pi$ & n & $Q$ & Line\\[2ex]
     \hline
     \multirow[c]{10}{*}[-1ex]{\rotatebox{90}{$t\notin{{B}\cup{S_0}\cup{S_1}}$}}
     & \multirow{4}{*}{$\lab{Trans}$}
-    & $(0,0)$ & $\left(\frac{E-\ell_E}{E}\right)\left(\frac{I-\ell_I}{I}\right)$ \bigstrut & \unbroken \bigstrut & $\frac{I-\ell_I}{I}$ & $1$ & 1 \\
+    & $(0,0)$ & $\left(\frac{E-\ell_E}{E}\right)\left(\frac{I-\ell_I}{I}\right)$ \bigstrut & \unbroken \bigstrut & $\frac{I+1-\ell_I}{I+1}$ & 1 & 1 & 1 \\
     \cline{3-8}
-    && $(1,0)$ & $\frac{I-\ell_I}{E I}$ \bigstrut & \maizeblue \bigstrut & $\frac{1}{2 I}$ & $1$ & 2 \\
+    && $(1,0)$ & $\frac{I-\ell_I}{E I}$ \bigstrut & \maizeblue \bigstrut & $\frac{1}{2(I+1)}$ & $\ell_I$ & 1 & 2 \\
     \cline{3-8}
-    && $(0,1)$ & $\frac{E-\ell_E}{E I}$ \bigstrut & \maizemaize \bigstrut & $\frac{1}{2 I}$ & $1$ & 3 \\
+    && $(0,1)$ & $\frac{E-\ell_E}{E I}$ \bigstrut & \maizemaize \bigstrut & $\frac{1}{2(I+1)}$ & $\ell_I$ & 1 & 3 \\
     \cline{3-8}
-    && $(1,1)$ & --- & --- & 0 & $0$ & 4 \\
+    && $(1,1)$ & --- & --- & 0 & 0 & 0 & 4 \\
     \cline{2-8}
     &\multirow{2}{*}{$\lab{Prog}$}
-    & $(0,0)$ & $\frac{I-\ell_I}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \unbroken \bigstrut & $\frac{E-\ell_E}{E}\,\Indicator{E>\ell_E}$ \bigstrut & $1$ & 5 \\
+    & $(0,0)$ & $\frac{I-\ell_I}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \unbroken \bigstrut & $\frac{E+1-\ell_E}{E+1}\,\Indicator{E>\ell_E}$ \bigstrut & 1 & 1 & 5 \\
     \cline{3-8}
-    && $(0,1)$ & $\frac{1}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \bluemaize \bigstrut & $\frac{1}{E}\,\Indicator{E>\ell_E}$ \bigstrut & $1$ & 6 \\
+    && $(0,1)$ & $\frac{1}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \bluemaize \bigstrut & $\frac{1}{E+1}\,\Indicator{E>\ell_E}$ \bigstrut & $\ell_E$ & 1 & 6 \\
     \cline{2-8}
-    & $\lab{Recov}$ & $(0,0)$ & $\Indicator{I\ge\ell_I}$ \bigstrut & \unbroken \bigstrut & $\Indicator{I>\ell_I}$ \bigstrut & $1$ & 7 \\
+    & $\lab{Recov}$ & $(0,0)$ & $\Indicator{I\ge\ell_I}$ \bigstrut & \unbroken \bigstrut & $\Indicator{I>\ell_I}$ \bigstrut & 1 & 1 & 7 \\
     \cline{2-8}
-    & $\lab{Wane}$ & $(0,0)$ & $1$ \bigstrut & \unbroken \bigstrut & $1$ & $1$ & 8 \\
+    & $\lab{Wane}$ & $(0,0)$ & 1 \bigstrut & \unbroken \bigstrut & 1 & 1 & 1 & 8 \\
     \cline{2-8}
-    & $\lab{Sample}$ & $\ast$ & --- & --- & 0 & 0 & 9 \\
-    \hline
+    & $\lab{Sample}$ & $\ast$ & --- & --- & 1 & 0 & 0 & 9 \\
+    \cline{1-8}
     \multirow[c]{4}{*}[-3ex]{\rotatebox{90}{$t\in{B}$}}
     & \multirow{4}{*}{$\lab{Trans}$}
     & \multirow{4}{*}{$(1,1)$}
-    & $\frac{1}{E I}$ \bigstrut & \branchup \bigstrut & $\frac{1}{2}$ \bigstrut & $1$ & 10 \\
+    & $\frac{1}{E I}$ \bigstrut & \branchup \bigstrut & $\frac{1}{2}$ \bigstrut & 1 & 1 & 10 \\
     \cline{4-8}
-    &&& $\frac{1}{E I}$ \bigstrut & \branchdown \bigstrut & $\frac{1}{2}$ \bigstrut & $1$ & 11 \\
+    &&& $\frac{1}{E I}$ \bigstrut & \branchdown \bigstrut & $\frac{1}{2}$ \bigstrut & 1 & 1 & 11 \\
     \cline{4-8}
-    &&& --- \bigstrut & \branchupnix \bigstrut & 0 & $0$ & 12 \\
+    &&& --- \bigstrut & \branchupnix \bigstrut & 0 & 0 & 0 & 12 \\
     \cline{4-8}
-    &&& --- \bigstrut & \branchdownnix \bigstrut & 0 & $0$ & 13 \\
+    &&& --- \bigstrut & \branchdownnix \bigstrut & 0 & 0 & 0 & 13 \\
     \cline{2-8}
-    & $\ast$ & $\ast$ & --- \bigstrut & --- & 0 & $0$ & 14 \\
-    \hline
+    & $\ast$ & $\ast$ & --- \bigstrut & --- & 0 & 0 & 0 & 14 \\
+    \cline{1-8}
     \multirow[c]{2}{*}[-2ex]{\rotatebox{90}{$t\in{S_0}$} \bigstrut}
     & \multirow{2}{*}{$\lab{Sample}$}
     & \multirow{2}{*}{$(0,0)$}
-    & $\frac{I-\ell_I}{I}$ \bigstrut & \samplezero & $1$ & $1$ & 15 \\
+    & $\frac{I-\ell_I}{I}$ \bigstrut & \samplezero & 1 & 1 & 1 & 15 \\
     \cline{4-8}
-    &&& --- & \samplezeronix \bigstrut & 0 & 0 & 16 \\
+    &&& --- & \samplezeronix \bigstrut & 0 & 0 & 0 & 16 \\
     \cline{2-8}
-    & $\ast$ & $\ast$ & --- & --- & 0 & $0$ & 19 \\
-    \hline
+    & $\ast$ & $\ast$ & --- & --- & 0 & 0 & 0 & 17 \\
+    \cline{1-8}
     \multirow[c]{2}{*}[-2ex]{\rotatebox{90}{$t\in{S_1}$}}
     & \multirow{2}{*}{$\lab{Sample}$}
     & \multirow{2}{*}{$(0,1)$}
-    & $\frac{1}{I}$ \bigstrut & \sampleone \bigstrut & $1$ & $1$ & 17 \\
+    & $\frac{1}{I}$ \bigstrut & \sampleone \bigstrut & 1 & 1 & 1 & 18 \\
     \cline{4-8}
-    &&& --- & \sampleonenix \bigstrut & 0 & 0 & 18 \\
+    &&& --- & \sampleonenix \bigstrut & 0 & 0 & 0 & 19 \\
     \cline{2-8}
-    & $\ast$ & $\ast$ & --- & --- & 0 & $0$ & 19 \\
+    & $\ast$ & $\ast$ & --- & --- & 0 & 0 & 0 & 20 \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -1572,18 +1572,47 @@ Given a particular choice of importance-sampling kernel, the filtering equation 
 For example, with the choices as in \cref{tab:seirs_integ}, the filtering equation is as follows.
 As previously, let $B$ be the set of branch times, $S_0$ be the set of tip-sample times, and $S_1$ be the set of inline sample times.
 Then for $t\notin{{B}\cup{S_0}\cup{S_1}}$, we have
-\begin{mathsize}{9pt}{10pt}
+\begin{mathsize}{8pt}{9pt}
   \begin{equation*}
     \begin{split}
-      \frac{\partial{w}}{\partial{t}}(t,S,E,I,R)=
-      &\frac{\beta\,(S+1)\,I}{N}\,w(t,S+1,E-1,I,R)
-      -\frac{\beta\,S\,I}{N}\,w(t,S,E,I,R)\\
-      &+\sigma\,(E+1)\,w(t,S,E+1,I-1,R)
-      -\sigma\,E\,w(t,S,E,I,R)\\
-      &+\gamma\,(I+1)\,w(t,S,E,I+1,R-1)
-      -\gamma\,I\,w(t,S,E,I,R)\\
-      &+\omega\,(R+1)\,w(t,S-1,E,I,R+1)
-      -\omega\,R\,w(t,S,E,I,R),
+      \frac{\partial{w}}{\partial{t}}(t,S,E,I,R,y)=
+      %% &\frac{\beta\,(S+1)\,I}{N}\,\frac{I-\ell_I}{I}\,\frac{E-\ell_E}{E}\,w(t,S+1,E-1,I,R,y)\\
+      %% &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\frac{1}{I}\,\frac{I-\ell_I}{E}\,w(t,S+1,E-1,I,R,\leftlim{y}_2)\\
+      %% &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\frac{1}{I}\,\frac{E-\ell_E}{E}\,w(t,S+1,E-1,I,R,\leftlim{y}_3)
+      %% -\frac{\beta\,S\,I}{N}\,w(t,S,E,I,R,y)\\
+      %% &+\sigma\,(E+1)\frac{E+1-\ell_E}{E+1}\,\Indicator{E\ge{\ell_E}}\,\frac{I-\ell_I}{I}\,\frac{E+1}{E+1-\ell_E}\,w(t,S,E+1,I-1,R,y)\\
+      %% &+\sum_{k=1}^{\ell_E}\sigma\,(E+1)\frac{1}{E+1}\,\Indicator{E\ge{\ell_E}}\,\frac{E+1}{I}\,w(t,S,E+1,I-1,R,\leftlim{y}_6)
+      %% -\sigma\,E\,w(t,S,E,I,R,y)\\
+      %% &+\gamma\,(I+1)\,\Indicator{I\ge\ell_I}\,w(t,S,E,I+1,R-1,y)
+      %% -\gamma\,I\,w(t,S,E,I,R,y)\\
+      %% &+\omega\,(R+1)\,w(t,S-1,E,I,R+1,y)
+      %% -\omega\,R\,w(t,S,E,I,R,y)
+      %% -\psi\,I\,w(t,S,E,I,R,y).
+      %%
+      &\frac{\beta\,(S+1)\,I}{N}\,\left(1-\frac{\ell_I}{I}\right)\,\left(1-\frac{\ell_E}{E}\right)\,w(t,S+1,E-1,I,R,y)\\
+      &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\,\frac{1}{E}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_2^k)\\
+      &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\frac{1}{I}\,\left(1-\frac{\ell_E}{E}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_3^k)
+      -\frac{\beta\,S\,I}{N}\,w(t,S,E,I,R,y)\\
+      &+\sigma\,(E+1)\,\Indicator{E\ge{\ell_E}}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S,E+1,I-1,R,y)\\
+      &+\sum_{k=1}^{\ell_E}\sigma\,(E+1)\,\Indicator{E\ge{\ell_E}}\,\frac{1}{I}\,w(t,S,E+1,I-1,R,\leftlim{y}_6^k)
+      -\sigma\,E\,w(t,S,E,I,R,y)\\
+      &+\gamma\,(I+1)\,\Indicator{I\ge\ell_I}\,w(t,S,E,I+1,R-1,y)
+      -\gamma\,I\,w(t,S,E,I,R,y)\\
+      &+\omega\,(R+1)\,w(t,S-1,E,I,R+1,y)
+      -\omega\,R\,w(t,S,E,I,R,y)
+      -\psi\,I\,w(t,S,E,I,R,y).
+      %%
+      %% &\frac{\beta\,(S+1)\,I}{N}\,\left(1-\frac{\ell_E}{E}\right)\,w(t,S+1,E-1,I,R,y)\\
+      %% &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\,\frac{1}{E}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_2^k)
+      %% -\frac{\beta\,S\,I}{N}\,w(t,S,E,I,R,y)\\
+      %% &+\sigma\,(E+1)\,\Indicator{E\ge{\ell_E}}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S,E+1,I-1,R,y)\\
+      %% &+\sum_{k=1}^{\ell_E}\sigma\,(E+1)\,\Indicator{E\ge{\ell_E}}\,\frac{1}{I}\,w(t,S,E+1,I-1,R,\leftlim{y}_6^k)
+      %% -\sigma\,E\,w(t,S,E,I,R,y)\\
+      %% &+\gamma\,(I+1)\,\Indicator{I\ge\ell_I}\,w(t,S,E,I+1,R-1,y)
+      %% -\gamma\,I\,w(t,S,E,I,R,y)\\
+      %% &+\omega\,(R+1)\,w(t,S-1,E,I,R+1,y)
+      %% -\omega\,R\,w(t,S,E,I,R,y)
+      %% -\psi\,I\,w(t,S,E,I,R,y).
     \end{split}
   \end{equation*}
 \end{mathsize}%
@@ -1649,13 +1678,13 @@ left_join(
 
 params |>
   with(
-    mcap(logLik,sigma,span=0.25)
+    mcap(logLik,sigma,span=0.5)
   ) -> mcap
 @
 
 \begin{figure}
   \begin{center}
-    <<seirs3_plot,fig.dim=c(8,2.8),out.width="100%">>=
+    <<seirs3_plot,fig.dim=c(8,2.8),out.width="100%",dependon="seirs3">>=
     plot_grid(
       A=seirs_tree |>
         plot(points=TRUE,palette="#000000")+
@@ -1767,13 +1796,13 @@ and the singular part is
     Elements of the linear birth-death-sampling model pertinent to the genealogy process.
   }
   \renewcommand{\arraystretch}{1.2}
-  \begin{tabular}{cclc}
+  \begin{tabular}{cccl}
     \hline\hline
-    $u$ & $\alpha_u$ & Event type & $r_u$ \\
+    $u$ & $\alpha_u$ & $r_u$ & Event type \\
     \hline
-    $\lab{Birth}$  & $\lambda N$  & pure birth  & 2 \\
-    $\lab{Death}$  & $\gamma N$   & pure death  & 0 \\
-    $\lab{Sample}$ & $\psi N$     & pure sample & 1 \\
+    $\lab{Birth}$  & $\lambda N$ & 2 & pure birth \\
+    $\lab{Death}$  & $\gamma N$ & 0 & pure death \\
+    $\lab{Sample}$ & $\psi N$ & 1 & pure sample \\
     \hline\hline
   \end{tabular}
 \end{table}
