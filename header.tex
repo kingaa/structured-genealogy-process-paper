@@ -8,6 +8,9 @@
 \usetikzlibrary{arrows.meta,positioning,decorations,calc,math}
 \graphicspath{{figs/}}
 
+\usepackage{tcolorbox}
+\newtcolorbox[auto counter]{bluebox}[2][]{label type=textbox,colback=blue!4,colframe=blue!40!black,fonttitle=\bfseries,title=Box~\thetcbcounter: #2,#1}
+
 \input{defs}
 
 \setcounter{tocdepth}{3}
@@ -71,6 +74,8 @@
 \newcommand\ELI[1]{\textcolor{brown!70!black}{#1}}
 
 \usepackage[sort&compress]{cleveref}
+\crefname{textbox}{Box}{Boxes}
+\Crefname{textbox}{Box}{Boxes}
 \crefname{figure}{Fig.}{Figs.}
 \Crefname{figure}{Fig.}{Figs.}
 \crefname{table}{Table}{Tables}
