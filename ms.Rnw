@@ -765,12 +765,12 @@ Our first result will be an expression for the likelihood of a given pruned gene
   Suppose $\P=(\T,\Z,\Y)$ is a given pruned genealogy.
   Define
   \begin{equation}\label{eq:phidef}
-    \phi_u(x,y,y')\coloneq\BinRatio{n(x)}{\ell(y')}{r^{u}}{s(y,y')}\,Q_{u}(y,y'),
+    \phi^{}_u(x,y,y')\coloneq\BinRatio{n(x)}{\ell(y')}{r^{u}}{s(y,y')}\,Q_{u}(y,y'),
   \end{equation}
   where $n$ is the deme occupancy (\cref{sec:demes}), $r^u$ is the production (\cref{sec:production}), $\ell$ and $s$ are the lineage-count and saturation functions, respectively (\cref{sec:ells}), $Q$ is the compatibility indicator (\cref{sec:compatibility}), and the binomial ratio is as defined in \cref{sec:binomial_ratio}.
   Then
   \begin{equation*}
-    \CondProb{\Pr_\T=\P}{\Hr_\T=\H}=\Indicator{\event{\H}\supseteq{\event{\P}}}\,\prod_{t\in\event{\H}}{\phi_{\U_t}(\X_t,\Yt_t,\Y_t)}.
+    \CondProb{\Pr_\T=\P}{\Hr_\T=\H}=\Indicator{\event{\H}\supseteq{\event{\P}}}\,\prod_{t\in\event{\H}}{\phi^{}_{\U_t}\!(\X_t,\Yt_t,\Y_t)}.
   \end{equation*}
 \end{thm}
 \begin{proof}
@@ -795,10 +795,6 @@ Our first result will be an expression for the likelihood of a given pruned gene
   Returning to the possibility that $\H$ is incompatible with $\P$, since $\Prob{\Pr_\T=\P}=0$ if either any $Q^{}_{\U_t}=0$ or $\event{\P}\nsubseteq\event{\H}$, we obtain the result.
 \end{proof}
 
-%% \begin{equation*}
-%%   \phi_u(\xi,y,y')\colonequals\BinRatio{n(\xi)}{\ell(y')}{r^u}{s(y,y')}\,Q_u(y,y').
-%% \end{equation*}
-
 Next, we show how the likelihood of a pruned genealogies, unconditional on the history, can be computed.
 For this, we use the filter equation technology developed in \cref{sec:filter_eqns}.
 In particular, the following theorem follows immediately from \cref{lemma:sing-filt}.
@@ -810,10 +806,10 @@ In particular, the following theorem follows immediately from \cref{lemma:sing-f
   \begin{equation}
     \begin{aligned}
       \frac{\partial{w}}{\partial{t}}(t,x)=
-      &\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi_u(x,\Yt_t,\Y_t)\,\dd{x'}}}
+      &\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi^{}_u(x,\Yt_t,\Y_t)\,\dd{x'}}}
       -\sum_u{\int{w(t,x)\,\alpha_u(t,x,x')\,\dd{x'}}},
       &t\notin{\event{\P}},\\
-      w(t,x)=&\sum_u{\int{\wt(t,x')\,\alpha_u(t,x',x)\,\phi_u(x,\Yt_t,\Y_t)\,\dd{x'}}},
+      w(t,x)=&\sum_u{\int{\wt(t,x')\,\alpha_u(t,x',x)\,\phi^{}_u(x,\Yt_t,\Y_t)\,\dd{x'}}},
       &t\in{\event{\P}},
     \end{aligned}
   \end{equation}
@@ -850,7 +846,7 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
   Then there is a stochastic jump process $\yr_t$ with sample paths in $\func{Y}(\Z)$ such that $(\Xr_t,\Ur_t,\yr_t)$ is Markov and
   \begin{equation*}
     \CondProb{\Pr^{\lab{Z}}_\T=\Z}{\Hr_\T=\H}=
-    \Indicator{\event{\H}\supseteq\event{\Z}}\,\Expect{\frac{1}{q(X_0,\yr_0)}\,\prod_{t\in\event{\H}}{\frac{\phi_{\U_t}(\X_t,\yrt_t,\yr_t)}{\pi_{\U_t}(t,\Xt_t,\X_t,\yrt_t,\yr_t)}}},
+    \Indicator{\event{\H}\supseteq\event{\Z}}\,\Expect{\frac{1}{q(X_0,\yr_0)}\,\prod_{t\in\event{\H}}{\frac{\phi^{}_{\U_t}(\X_t,\yrt_t,\yr_t)}{\pi_{\U_t}(t,\Xt_t,\X_t,\yrt_t,\yr_t)}}},
   \end{equation*}
   where $\phi$ is defined in \cref{eq:phidef} and
   the expectation is taken over the sample paths of $\yr_t$.
@@ -903,7 +899,7 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
   \begin{equation*}
     \begin{gathered}
       \beta_u(t,x,x',y,y')=\alpha_u(t,x,x')\,\pi_u(t,x,x',y,y'),\qquad
-      \psi_u(t,x,x',y,y')=\frac{\phi_u(x',y,y')}{\pi_u(t,x,x',y,y')},
+      \varPsi_u(t,x,x',y,y')=\frac{\phi^{}_u(x',y,y')}{\pi_u(t,x,x',y,y')},
     \end{gathered}
   \end{equation*}
   and if $w=w(t,x,y)$ satisfies
@@ -912,10 +908,10 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
   \begin{equation*}
     \begin{aligned}
       &\frac{\partial{w}}{\partial{t}}=
-      \sum_{uy'}{\int{w(t,x',y')\,\beta_u(t,x',x,y',y)\,\psi_u(t,x',x,y',y)\,\dd{x'}}}
+      \sum_{uy'}{\int{w(t,x',y')\,\beta_u(t,x',x,y',y)\,\varPsi_u(t,x',x,y',y)\,\dd{x'}}}
       -\sum_{uy'}{\int{w(t,x,y)\,\beta_u(t,x,x',y,y')\,\dd{x'}}},
       &t\in{\event{\Z}},\\
-      &w(t,x,y)=\sum_{uy'}{\int{\wt(t,x',y')\,\beta_u(t,x',x,y',y)\,\psi_u(t,x',x,y',y)\,\dd{x'}}},
+      &w(t,x,y)=\sum_{uy'}{\int{\wt(t,x',y')\,\beta_u(t,x',x,y',y)\,\varPsi_u(t,x',x,y',y)\,\dd{x'}}},
       &t\in{\event{\Z}},
     \end{aligned}
   \end{equation*}
@@ -981,7 +977,7 @@ QL acknowledges the support of the Michigan Institute for Data Science.
 \renewcommand{\thetable}{\thesection\arabic{table}}
 %%\renewcommand{\thetcbcounter}{\thesection\arabic{tcbcounter}}
 
-\section{filter equations}
+\section{Filter equations}
 \label{sec:filter_eqns}
 
 The likelihoods that appear in \cref{thm:pruned_uncond,thm:obsc_uncond} are integrals over large sets of histories.
@@ -1515,65 +1511,65 @@ The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab
     An event with mark $u$ and saturation $s$ has the boost given by the binomial ratio shown (third column).
     The $y\mapsto{y'}$ column depicts the proposed painting schematically, and $\pi$ is the probability of that proposal.
     Blue is used for the $\lab{E}$ deme and yellow for the $\lab{I}$ deme.
-    The filter equation contains $n$ terms of each type.
+    For each line, the filter equation contains $m$ terms.
     An asterisk ($\ast$) stands for cases not explicitly mentioned.
   }
   %% \renewcommand{\arraystretch}{1.2}
   \begin{tabular}{c c c c c c c c | c}
     \hline\hline
-    & $u$ & $s$ & $\BinRatio{n}{\ell}{r}{s}$ & $y\mapsto{y'}$ & $\pi$ & n & $Q$ & Line\\[2ex]
+    & $u$ & $s$ & $Q$ & $\BinRatio{n}{\ell}{r}{s}$ & $y\mapsto{y'}$ & $\pi$ & $m$ & Line\\[2ex]
     \hline
     \multirow[c]{10}{*}[-1ex]{\rotatebox{90}{$t\notin{{B}\cup{S_0}\cup{S_1}}$}}
     & \multirow{4}{*}{$\lab{Trans}$}
-    & $(0,0)$ & $\left(\frac{E-\ell_E}{E}\right)\left(\frac{I-\ell_I}{I}\right)$ \bigstrut & \unbroken \bigstrut & $\frac{I+1-\ell_I}{I+1}$ & 1 & 1 & 1 \\
+    & $(0,0)$ & 1 & $\left(\frac{E-\ell_E}{E}\right)\left(\frac{I-\ell_I}{I}\right)$ \bigstrut & \unbroken \bigstrut & $\frac{I+1-\ell_I}{I+1}$ & 1 & 1 \\
     \cline{3-8}
-    && $(1,0)$ & $\frac{I-\ell_I}{E I}$ \bigstrut & \maizeblue \bigstrut & $\frac{1}{2(I+1)}$ & $\ell_I$ & 1 & 2 \\
+    && $(1,0)$ & 1 & $\frac{I-\ell_I}{E I}$ \bigstrut & \maizeblue \bigstrut & $\frac{1}{2(I+1)}$ & $\ell_I$ & 2 \\
     \cline{3-8}
-    && $(0,1)$ & $\frac{E-\ell_E}{E I}$ \bigstrut & \maizemaize \bigstrut & $\frac{1}{2(I+1)}$ & $\ell_I$ & 1 & 3 \\
+    && $(0,1)$ & 1 & $\frac{E-\ell_E}{E I}$ \bigstrut & \maizemaize \bigstrut & $\frac{1}{2(I+1)}$ & $\ell_I$ & 3 \\
     \cline{3-8}
-    && $(1,1)$ & --- & --- & 0 & 0 & 0 & 4 \\
+    && $(1,1)$ & 0 & & & & 0 & 4 \\
     \cline{2-8}
     &\multirow{2}{*}{$\lab{Prog}$}
-    & $(0,0)$ & $\frac{I-\ell_I}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \unbroken \bigstrut & $\frac{E+1-\ell_E}{E+1}\,\Indicator{E>\ell_E}$ \bigstrut & 1 & 1 & 5 \\
+    & $(0,0)$ & 1 & $\frac{I-\ell_I}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \unbroken \bigstrut & $\frac{E+1-\ell_E}{E+1}\,\Indicator{E>\ell_E}$ \bigstrut & 1 & 5 \\
     \cline{3-8}
-    && $(0,1)$ & $\frac{1}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \bluemaize \bigstrut & $\frac{1}{E+1}\,\Indicator{E>\ell_E}$ \bigstrut & $\ell_E$ & 1 & 6 \\
+    && $(0,1)$ & 1 & $\frac{1}{I}\,\Indicator{E\ge\ell_E}$ \bigstrut & \bluemaize \bigstrut & $\frac{1}{E+1}\,\Indicator{E>\ell_E}$ \bigstrut & $\ell_E$ & 6 \\
     \cline{2-8}
-    & $\lab{Recov}$ & $(0,0)$ & $\Indicator{I\ge\ell_I}$ \bigstrut & \unbroken \bigstrut & $\Indicator{I>\ell_I}$ \bigstrut & 1 & 1 & 7 \\
+    & $\lab{Recov}$ & $(0,0)$ & 1 & $\Indicator{I\ge\ell_I}$ \bigstrut & \unbroken \bigstrut & $\Indicator{I>\ell_I}$ \bigstrut & 1 & 7 \\
     \cline{2-8}
-    & $\lab{Wane}$ & $(0,0)$ & 1 \bigstrut & \unbroken \bigstrut & 1 & 1 & 1 & 8 \\
+    & $\lab{Wane}$ & $(0,0)$ & 1 & 1 \bigstrut & \unbroken \bigstrut & 1 & 1 & 8 \\
     \cline{2-8}
-    & $\lab{Sample}$ & $\ast$ & --- & --- & 1 & 0 & 0 & 9 \\
+    & $\lab{Sample}$ & $\ast$ & 0 &  &  & & 0 & 9 \\
     \cline{1-8}
     \multirow[c]{4}{*}[-3ex]{\rotatebox{90}{$t\in{B}$}}
     & \multirow{4}{*}{$\lab{Trans}$}
     & \multirow{4}{*}{$(1,1)$}
-    & $\frac{1}{E I}$ \bigstrut & \branchup \bigstrut & $\frac{1}{2}$ \bigstrut & 1 & 1 & 10 \\
+    & 1 & $\frac{1}{E I}$ \bigstrut & \branchup \bigstrut & $\frac{1}{2}$ \bigstrut & 1 & 10 \\
     \cline{4-8}
-    &&& $\frac{1}{E I}$ \bigstrut & \branchdown \bigstrut & $\frac{1}{2}$ \bigstrut & 1 & 1 & 11 \\
+    &&& 1 & $\frac{1}{E I}$ \bigstrut & \branchdown \bigstrut & $\frac{1}{2}$ \bigstrut & 1 & 11 \\
     \cline{4-8}
-    &&& --- \bigstrut & \branchupnix \bigstrut & 0 & 0 & 0 & 12 \\
+    &&& 0 &  \bigstrut & \branchupnix \bigstrut & & 0 & 12 \\
     \cline{4-8}
-    &&& --- \bigstrut & \branchdownnix \bigstrut & 0 & 0 & 0 & 13 \\
+    &&& 0 &  \bigstrut & \branchdownnix \bigstrut & & 0 & 13 \\
     \cline{2-8}
-    & $\ast$ & $\ast$ & --- \bigstrut & --- & 0 & 0 & 0 & 14 \\
+    & $\ast$ & $\ast$ & 0 &  \bigstrut &  & & 0 & 14 \\
     \cline{1-8}
     \multirow[c]{2}{*}[-2ex]{\rotatebox{90}{$t\in{S_0}$} \bigstrut}
     & \multirow{2}{*}{$\lab{Sample}$}
     & \multirow{2}{*}{$(0,0)$}
-    & $\frac{I-\ell_I}{I}$ \bigstrut & \samplezero & 1 & 1 & 1 & 15 \\
+    & 1 & $\frac{I-\ell_I}{I}$ \bigstrut & \samplezero & 1 & 1 & 15 \\
     \cline{4-8}
-    &&& --- & \samplezeronix \bigstrut & 0 & 0 & 0 & 16 \\
+    &&& 0 &  & \samplezeronix \bigstrut & & 0 & 16 \\
     \cline{2-8}
-    & $\ast$ & $\ast$ & --- & --- & 0 & 0 & 0 & 17 \\
+    & $\ast$ & $\ast$ & 0 &  &  & & 0 & 17 \\
     \cline{1-8}
     \multirow[c]{2}{*}[-2ex]{\rotatebox{90}{$t\in{S_1}$}}
     & \multirow{2}{*}{$\lab{Sample}$}
     & \multirow{2}{*}{$(0,1)$}
-    & $\frac{1}{I}$ \bigstrut & \sampleone \bigstrut & 1 & 1 & 1 & 18 \\
+    & 1 & $\frac{1}{I}$ \bigstrut & \sampleone \bigstrut & 1 & 1 & 18 \\
     \cline{4-8}
-    &&& --- & \sampleonenix \bigstrut & 0 & 0 & 0 & 19 \\
+    &&& 0 &  & \sampleonenix \bigstrut & & 0 & 19 \\
     \cline{2-8}
-    & $\ast$ & $\ast$ & --- & --- & 0 & 0 & 0 & 20 \\
+    & $\ast$ & $\ast$ & 0 &  &  & & 0 & 20 \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -1588,9 +1584,10 @@ Some numerical results are presented in \cref{fig:seirs_example}.
   As previously, given an obscured genealogy, let $B$ be the set of its branch times, $S_0$ be the set of tip-sample times, and $S_1$ be the set of inline sample times.
   Then for $t\notin{{B}\cup{S_0}\cup{S_1}}$, the filter equation reads:
   \begin{mathsize}{9pt}{10pt}
-    \begin{equation*}
+    \begin{equation}
+      \label{eq:seirs_filter_reg}
       \begin{split}
-        \frac{\partial{w}}{\partial{t}}(t,S,E,I,R,y)=&
+        \frac{\partial{w}}{\partial{t}}(t,S,&E,I,R,y)=
         \frac{\beta\,(S+1)\,I}{N}\,\left(1-\frac{\ell_E}{E}\right)\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S+1,E-1,I,R,y)\\
         &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\,\frac{1}{E}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_2^k)\\
         &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\frac{1}{I}\,\left(1-\frac{\ell_E}{E}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_3^k)
@@ -1604,14 +1601,15 @@ Some numerical results are presented in \cref{fig:seirs_example}.
         -\omega\,R\,w(t,S,E,I,R,y)
         -\psi\,I\,w(t,S,E,I,R,y).
       \end{split}
-    \end{equation*}
+    \end{equation}
   \end{mathsize}%
   Here, $\leftlim{y}_j^k$ refers to the coloring of the tree immediately preceding the proposal indicated on line $j$ of \cref{tab:seirs_integ}.
   The integer $k$ specifies the particular branch on which the change occurs.
 
   The singular portion of the filter equation has one component for each distinct type of genealogical event:
   \begin{mathsize}{9pt}{10pt}
-    \begin{equation*}
+    \begin{equation}
+      \label{eq:seirs_filter_sing}
       w(t,S,E,I,R,y)=
       \begin{cases}
         \frac{\beta\,(S+1)\,I}{N}\,\frac{1}{E I}\,\wt(t,S+1,E-1,I,R,\leftlim{y}_{10})\\[2ex]
@@ -1619,8 +1617,10 @@ Some numerical results are presented in \cref{fig:seirs_example}.
         \psi\,\left(I-\ell_I\right)\,\wt(t,S,E,I,R,\leftlim{y}_{15}), & t\in{S_0},\\[2ex]
         \psi\,\wt(t,S,E,I,R,\leftlim{y}_{18}), & t\in{S_1}.
       \end{cases}
-    \end{equation*}
+    \end{equation}
   \end{mathsize}%
+
+  In addition to \cref{eq:seirs_filter_reg,eq:seirs_filter_sing}, the quantity $w$ should satisfy the condition $w(t,S,E,I,R,y)=0$ whenever $E<\ell_E$ or $I<\ell_I$.
 
   A variety of importance-sampling kernels are permissible under the terms of \cref{thm:obsc_uncond}.
   With a particular choice of importance-sampling kernel, the filter equation uniquely specifies a sequential Monte Carlo algorithm for estimating the likelihood.
@@ -1989,7 +1989,7 @@ params |>
   \caption{
     \label{fig:lbdp_example}
     Likelihood computation for the constant-parameter, linear birth-death-sampling model, according to \cref{thm:obsc_uncond} via sequential Monte Carlo.
-    Panel (A) shows the genealogy, simulated for $\lambda=\Sexpr{lbdp.params$lambda}$, $\mu=\Sexpr{lbdp.params$mu}$, $\psi=\Sexpr{lbdp.params$psi}$, $N_0=\Sexpr{lbdp.params$mu}$.
+    Panel (A) shows the genealogy, simulated for $\lambda=\Sexpr{lbdp.params$lambda}$, $\mu=\Sexpr{lbdp.params$mu}$, $\psi=\Sexpr{lbdp.params$psi}$, $N_0=\Sexpr{lbdp.params$n0}$.
     Panel (B) shows a likelihood slice, through the true parameters in the $\mu$ direction.
     As computational effort (\ie number of particles) increases, the Monte Carlo estimates converge on the exact values, for which an explicit formula exists in this case.
     The dashed horizontal lines show the approximate maximized likelihood and the 95\% critical value (under the likelihood-ratio test).
