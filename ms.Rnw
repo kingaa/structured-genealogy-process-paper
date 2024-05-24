@@ -2,7 +2,7 @@
 
 \input{header}
 
-\title[Exact Phylodynamics]{Exact Phylodynamics via Structured Markov Genealogy Processes}
+\title[Exact Phylodynamic Likelihood]{Exact Phylodynamic Likelihood\\ via Structured Markov Genealogy Processes}
 \author[King]{Aaron~A.~King}
 \address{
   A.~A.~King,
@@ -33,7 +33,7 @@
 }
 \date{\today}
 
-\hypersetup{pdftitle={Exact Phylodynamics via Structured Markov Genealogy Processes}}
+\hypersetup{pdftitle={Exact Phylodynamic Likelihood via Structured Markov Genealogy Processes}}
 \hypersetup{pdfauthor={A.A. King, Q.-Y. Lin, E.L. Ionides}}
 \hypersetup{urlcolor=blue,citecolor=blue,linkcolor=blue,filecolor=blue}
 
@@ -66,20 +66,21 @@ set.seed(1159254136)
 \begin{document}
 
 \begin{abstract}
-  We show how each member of a broad class of Markov population models uniquely induces a stochastic process on the space of genealogies.
-  We then derive exact expressions for the likelihood of an observed genealogy in terms of filter equations, which can be integrated using standard Monte Carlo methods.
-  The class of population models that can be accommodated includes essentially all compartmental models.
+  We consider genealogies arising from a Markov population process in which individuals are categorized into a discrete collection of compartments, with the requirement that individuals within the same compartment are statistically exchangeable.
+  When equipped with a sampling process, each such population process induces a time-evolving tree-valued process defined as the genealogy of all sampled individuals.
+  We provide a construction of this genealogy process and derive exact expressions for the likelihood of an observed genealogy in terms of filter equations.
+  These filter equations can be numerically solved using standard Monte Carlo integration methods.
+  Thus, we obtain statistically efficient likelihood-based inference for essentially arbitrary compartment models based on an observed genealogy of individuals sampled from the population.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
 
-When an infectious agent mutates quickly enough so that information on the history of its passage through hosts accumulates in its genome, yet not so quickly that this information is dissipated, it is possible to extract this information from sampled genomes to gain insight into key determinants of infectious disease transmission.
-With sufficiently dense sampling, it can be possible to reconstruct the detailed history of who infected whom, which can aid identification of the correlates of transmission and immunity and the properties of infections.
-More typically, one can use relatively sparse samples to learn about these features via the estimation of a parsimonious model of the transmission process.
-In particular, one can formalize one or more mathematical models of transmission, estimate their parameters, and compare their ability to explain data, following standard statistical paradigms.
-This is known as \emph{phylodynamic} inference, the term being due to \citet{Grenfell2004}.
+When the genome of an infectious agent accumulates mutations on timescales similar to those of transmission and infection progression, the resulting pattern of differences among genomes contains information on the history of the pathogen's passage through individual hosts and the host population.
+As \citet{Grenfell2004} observed, one can extract this information to gain insight into the structure and dynamics of the host-pathogen system.
+In particular, one can formalize mathematical models of transmission, estimate their parameters, and compare their ability to explain data, following standard statistical paradigms.
+This is known as \emph{phylodynamic} inference.
 \citet{Alizon2024} gives a good review of the history of the subject.
 
 The most common approach to phylodynamic inference rests upon a mathematical linkage between the tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among sampled genomes and a model of the dynamics of the transmission system.
@@ -101,9 +102,9 @@ This paper presents theory that enables its computation for a very broad range o
 %% The tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among the sequences.
 %% In particular, if one can determine the likelihood of any given genealogy given a model and also the likelihood of the data given a genealogy, then the likelihood of the data given the model is obtained by summing over the space of genealogies.
 
-In particular, existing approaches to the phylodynamic likelihood have been based on one of two mathematical idealizations.
-The first is the \citet{Kingman1982a} coalescent, by which likelihood of a given genealogy is computed via a reverse-time argument.
-This computation is exact when the population size is constant.
+Existing approaches to the phylodynamic likelihood have been based on one of two mathematical idealizations.
+The first is the \citet{Kingman1982a} coalescent, by which likelihood of a given genealogy is computed using a reverse-time argument.
+Thiis computation provides the exact likelihood for a genealogy resulting from a particular, constant population-size, dynamic model \citep[the Moran model, \eg][]{Moran1958,Kingman1982b,Moehle2000}.
 Extensions of this approach develop approximate likelihoods for the case when the population size varies as a function of time \citep{Griffiths1994,Drummond2005} or according to an SIR process \citep{Volz2009a,Rasmussen2011}, as long as the population size is large and the sample-fraction remains negligible.
 The second idealization is the linear birth-death process, for which exact expressions for the likelihood are available \citep{Stadler2010}.
 Linearity in this context amounts to the assumption that distinct lineages do not interact:
@@ -117,12 +118,16 @@ For this reason, there is interest in improved phylodynamic inference techniques
 
 What would an ideal phylodynamic inference method look like?
 First, it would afford exact computation of the phylodynamic likelihood, so that comparisons among parameterizations and models could be made on a sound basis.
-Second, because nonlinearity, nonstationarity, noise, and measurement error are so prominent and ubiquitous in epidemiology, it would accommodate nonlinear, time-inhomogeneous, stochastic transmission models.
-Third, because many of the most important uncertainties concern heterogeneities in transmission rates and the susceptibility, behavior, age, and location of hosts, it would accommodate host populations structured by these factors.
+Second, because nonlinearity, nonstationarity, noise, and measurement error are prominent and ubiquitous in epidemiology, it would accommodate nonlinear, time-inhomogeneous, stochastic transmission models.
+Third, because many of the most scientifically important uncertainties concern heterogeneities in transmission rates and the susceptibility, behavior, age, and location of hosts, it would accommodate host populations structured by these factors.
 While some structuring factors (\eg age, spatial location) are most naturally expressed in terms of continuous variables, discretely structured models have repeatedly proved their value in epidemiology.
 In particular, compartmental models are extremely flexible and have often been used as approximations when continuous structure leads to uncomfortably high model dimension.
 Finally, because there is typically uncertainty not only in the parameters, but also in the structure, of a host-pathogen system, an improved phylodynamic inference methodology would place minimal restrictions on the form of the models that it can accommodate.
 This paper demonstrates how these desiderata can be achieved---at least for models with discrete structure---including arbitrary nonlinear compartmental models with a countable number of compartments.
+%% \ELI{[For the claim of generality, should we give a disclaimer that model complexity is limited in practice by both the limited amount of information in data to fit the model, and the numerical tractability of the integration.
+%%     Some idea of the largest size which has been tested to date (say, 5 compartments and 1000 sequences?) would be helpful to the reader.
+%%     Readers may naturally be skeptical about the practical scope of the methods.
+%%     For example, familiar Monte Carlo methods such as BEAST have theoretical guarantees going far beyond their practical applicability.]}
 
 To connect a model at the level of a population with genealogies based on samples taken from individual hosts, it is necessary to make assumptions about the individuals in the population.
 The simplest such assumption is that the individuals that are identical with respect to the population dynamics are indeed statistically identical.
@@ -135,7 +140,7 @@ In the following, we take as our starting point a transmission model in the form
 We show how such a process uniquely induces each of several stochastic processes in the space of genealogies.
 We go on to derive expressions for the exact likelihoods of these genealogies.
 
-Code sufficient for the reproduction of all the results presented in this paper are freely available for download at \url{https://github.com/kingaa/phylopomp-project}.
+Code sufficient for the reproduction of all the results presented in this paper are freely available for download at \url{https://github.com/kingaa/structured-genealogy-process-paper}.
 An archival version of these will be stored on Zotero upon publication of this paper.
 The open-source \pkg{R} package \pkg{phylopomp} (\url{https://github.com/kingaa/phylopomp}) implements the simulation and likelihood-computation algorithms employed here.
 
@@ -165,7 +170,7 @@ The open-source \pkg{R} package \pkg{phylopomp} (\url{https://github.com/kingaa/
 %% Population process induces Markov history and genealogy processes.
 %% Using these, we derive equations for the likelihood of a genealogy conditional on the history.
 %% We then integrate out the history to obtain nonlinear filter equations, the solution of which yields the likelihood.
-%% These readily lend themselves to a family of sequential Monte Carlo algorithms for computing the likelihood.
+%% These readily lend themselves to a family of Sequential Monte Carlo algorithms for computing the likelihood.
 %% We demonstrate with several examples.
 
 \section{Mathematical preliminaries}
@@ -375,7 +380,7 @@ $\Xr_t$ represents the size of a population and $n(X_t)=X_t$.
 
 \paragraph{Moran model and the Kingman coalescent}
 
-The \citep{Kingman1982a} coalescent is another workhorse in existing phylodynamic approaches.
+The \citet{Kingman1982a} coalescent is another workhorse in existing phylodynamic approaches.
 It is the ancestral process for the Moran model, in which a fixed population of $n$ lineages experiences events at times distributed according to a rate-$\mu$ Poisson process.
 At each such event, an individual lineage selected uniformly at random dies and is replaced by the offspring of a second randomly selected lineage.
 
@@ -925,10 +930,12 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
 
 \section{Discussion}
 
-Importantly, because the theory presented here allows computation of the likelihood via strictly forward-in-time computations, it permits consideration of models for which time-reversal arguments are not available.
+The theory presented here represents a strict generalization of the existing coalescent and birth-death process approaches to phylodynamic inference.
+In \cref{sec:app-examples}, we demonstrate that both of the latter processes are special cases of the genealogical processes constructed here.
+Importantly, because the theory allows computation of the likelihood via strictly forward-in-time computations, it permits consideration of models for which time-reversal arguments are not available.
 Moreover, inasmuch as the formulae of \cref{thm:obsc_uncond} can be efficiently computed via sequential Monte Carlo, explicit expressions for transition probabilities are not needed:
 it is sufficient to be able to simulate from the population process.
-This feature of the algorithms---known as the \emph{plug-and-play property}---expands the set of population models that can be confronted with data still further.
+This feature of the algorithms---known as the \emph{plug-and-play property} \citep{He2010}---further expands the class of population models that can be confronted with data.
 
 In particular, the theory gives us the freedom to choose models with many demes.
 For deterministic population models, \citet{Volz2012} and \citet{Rasmussen2014a} showed how one could accommodate discrete population structure.
@@ -943,16 +950,16 @@ It is also possible to condition on the existence of samples.
 If Sequential Monte Carlo algorithms are used to compute the likelihoods of \cref{thm:obsc_uncond}, then it is straightforward to simultaneously assimilate information from both time-series and genealogical data.
 One can therefore supplement traditional incidence, disease, or mortality time series with genealogical data in an inferential exercise.
 
-The theory presented here represents a strict generalization of the existing coalescent and birth-death process approaches to phylodynamic inference.
-Both of the latter processes represent special cases of the genealogical processes constructed here.
-In \cref{sec:app-examples}, this is demonstrated.
-
-A limitation of the theory presented here is that the population models are assumed to be pure jump processes, which allows consideration of demographic stochasticity and some kinds of environmental stochasticity.
+A limitation of the theory is that the population models are assumed to be pure jump processes, which allows consideration of demographic stochasticity and environmental stochasticity modeled by jumps involving multiple individuals \citep{Breto2011}, but disallows stochastic processes with a diffusive component.
 It should be possible to incorporate of the full range of Markovian environmental stochasticity via extension of this theory to population models containing both diffusion and jump components.
 
-The price of the theory's flexibility is primarily computational:
-Monte Carlo variability in the likelihood estimate depends on computational effort in the usual way.
-However, the substantial freedom one has in the choice of the importance-sampling distribution $\pi$ (\cref{thm:obsc_uncond}) can be exploited to diminish Monte Carlo error.
+The price of the theory's flexibility is primarily computational.
+When Sequential Monte Carlo is used to evaluate the likelihood in \cref{thm:obsc_uncond}, the computational effort scales linearly with the number of samples.
+In its most straightforward implementation---using an event-driven algorithm \citep[\eg][]{Gillespie1977a}---it scales nonlinearly with population size in general.
+However, stochastic simulation schemes are available that scale independently of population size \citep{Higham2008}.
+On the other hand, the importance sampling underlying \cref{thm:obsc_uncond} will in general require effort that is exponential in the number of demes.
+For models with many demes, therefore, approaches for ameliorating or circumventing this curse of dimensionality may be necessary.
+Critically, the substantial freedom one has in the choice of the importance-sampling distribution $\pi$ can be exploited for this purpose.
 In particular, since it is permissible to ``borrow information'' from the future by means of the importance sampling, there is hope for highly efficient algorithmic computation.
 
 \section*{Acknowledgments}
@@ -1441,11 +1448,12 @@ params |>
   \end{center}
   \caption{
     \label{fig:sirs_example}
-    Likelihood computation for the SIRS model by sequential Monte Carlo.
+    Likelihood computation for the SIRS model by Sequential Monte Carlo.
     (A)~A~simulated genealogy for $\beta=\Sexpr{sirs.params$Beta}$, $\gamma=\Sexpr{sirs.params$gamma}$, $\omega=\Sexpr{sirs.params$omega}$, $\psi=\Sexpr{sirs.params$psi}$, $(S_0,I_0,R_0)=(\Sexpr{with(sirs.params,c(S0,I0,R0))})$.
     (B)~A~slice through the likelihood surface at the true parameters in the $\gamma$-direction.
     Each point is a distinct Monte Carlo estimate.
-    The blue curve is a LOESS smooth; the dashed lines show Monte Carlo-adjusted 95\% confidence intervals \citep{Ionides2017}.
+    The blue curve is a LOESS smooth;
+    the dashed lines bound the Monte Carlo-adjusted 95\% confidence interval \citep{Ionides2017}.
   }
 \end{figure}
 
@@ -1623,7 +1631,7 @@ Some numerical results are presented in \cref{fig:seirs_example}.
   In addition to \cref{eq:seirs_filter_reg,eq:seirs_filter_sing}, the quantity $w$ should satisfy the condition $w(t,S,E,I,R,y)=0$ whenever $E<\ell_E$ or $I<\ell_I$.
 
   A variety of importance-sampling kernels are permissible under the terms of \cref{thm:obsc_uncond}.
-  With a particular choice of importance-sampling kernel, the filter equation uniquely specifies a sequential Monte Carlo algorithm for estimating the likelihood.
+  With a particular choice of importance-sampling kernel, the filter equation uniquely specifies a Sequential Monte Carlo algorithm for estimating the likelihood.
   The choices made in \cref{tab:seirs_integ} underlie the results displayed in \cref{fig:seirs_example}.
 \end{bluebox}
 
@@ -1724,7 +1732,7 @@ params |>
   \end{center}
   \caption{
     \label{fig:seirs_example}
-    Likelihood computation for the SEIRS model by sequential Monte Carlo, using the scheme of \cref{box:SEIRS}.
+    Likelihood computation for the SEIRS model by Sequential Monte Carlo, using the scheme of \cref{box:SEIRS}.
     (A)~Simulated genealogy for $\beta=\Sexpr{seirs.params$Beta}$,
     $\sigma=\Sexpr{seirs.params$sigma}$,
     $\gamma=\Sexpr{seirs.params$gamma}$,
@@ -1732,7 +1740,7 @@ params |>
     $\omega=\Sexpr{seirs.params$omega}$,
     $(S_0,E_0,I_0,R_0)=(\Sexpr{with(seirs.params,c(S0,E0,I0,R0))})$.
     (B)~Likelihood slice in the $\sigma$-direction.
-    Each point represents the estimate of an independent sequential Monte Carlo computation.
+    Each point represents the estimate of an independent Sequential Monte Carlo computation.
     The blue curve shows a LOESS smooth;
     the dashed vertical lines enclose the Monte Carlo-adjusted 95\% confidence interval \citep{Ionides2017}.
   }
@@ -1957,7 +1965,7 @@ params |>
       CDE=plot_grid(
         labels=c("C","D","E"),
         nrow=1,
-        rel_widths=c(24,24,11),
+        rel_widths=c(24,24,17),
         C=stats |>
           ggplot(aes(x=Np,y=rmse))+
           geom_smooth(formula=y~x,method="lm")+
@@ -1988,7 +1996,7 @@ params |>
   \end{center}
   \caption{
     \label{fig:lbdp_example}
-    Likelihood computation for the constant-parameter, linear birth-death-sampling model, according to \cref{thm:obsc_uncond} via sequential Monte Carlo.
+    Likelihood computation for the constant-parameter, linear birth-death-sampling model, according to \cref{thm:obsc_uncond} via Sequential Monte Carlo.
     Panel (A) shows the genealogy, simulated for $\lambda=\Sexpr{lbdp.params$lambda}$, $\mu=\Sexpr{lbdp.params$mu}$, $\psi=\Sexpr{lbdp.params$psi}$, $N_0=\Sexpr{lbdp.params$n0}$.
     Panel (B) shows a likelihood slice, through the true parameters in the $\mu$ direction.
     As computational effort (\ie number of particles) increases, the Monte Carlo estimates converge on the exact values, for which an explicit formula exists in this case.
