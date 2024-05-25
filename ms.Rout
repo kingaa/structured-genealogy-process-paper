@@ -1,0 +1,498 @@
+
+R version 4.4.0 (2024-04-24) -- "Puppy Cup"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## ----packages,include=FALSE,cache=FALSE---------------------------------------
+> library(tidyverse)
+> library(ggtree)
+> library(pomp)
+> library(cowplot)
+> library(viridis)
+> library(phylopomp)
+> stopifnot(getRversion() >= "4.3")
+> stopifnot(packageVersion("pomp")>="5.8")
+> stopifnot(packageVersion("phylopomp")>="0.12.0.1")
+> theme_set(theme_bw(base_family="serif"))
+> options(
++   width=150,
++   keep.source=TRUE,
++   encoding="UTF-8",
++   stringsAsFactors=FALSE,
++   dplyr.summarise.inform=FALSE,
++   pomp_archive_dir="results"
++ )
+> set.seed(1159254136)
+> 
+> 
+> ## ----geneal,fig.dim=c(4,2),out.width="50%"------------------------------------
+> freeze(
++   seed=382490723,
++   simulate(
++     "SEIR",
++     Beta=3,sigma=0.5,gamma=0.2,psi=0.3,omega=0.5,
++     S0=15,E0=1,I0=2,R0=0,
++     time=10
++   )
++ ) -> x
+> 
+> pal <- c("#00274CFF","#FFCB05FF")
+> 
+> x |> plot(points=TRUE,prune=FALSE,obscure=FALSE,palette=pal)+
++   geom_vline(xintercept=10,linewidth=0.2,color="black")
+> 
+> 
+> ## ----upo,fig.dim=c(4,6),out.width="50%"---------------------------------------
+> freeze(
++   seed=522390503,
++   simulate(
++     "SEIR",
++     Beta=1,sigma=0.5,gamma=0.1,psi=0.4,omega=0.1,
++     S0=10,E0=1,I0=1,R0=0,
++     time=10
++   )
++ ) -> x
+> 
+> pal <- c("#00274CFF","#FFCB05FF")
+> 
+> plot_grid(
++   A=x |>
++     plot(
++       points=TRUE,prune=FALSE,obscure=FALSE,
++       ladderize=FALSE,palette=pal
++     )+
++     geom_vline(xintercept=10,linewidth=0.2,color="black"),
++   B=x |>
++     plot(
++       points=TRUE,prune=TRUE,obscure=FALSE,
++       ladderize=FALSE,palette=pal
++     )+
++     geom_vline(xintercept=10,linewidth=0.2,color="black"),
++   C=x |>
++     plot(
++       points=TRUE,prune=TRUE,obscure=TRUE,
++       ladderize=FALSE,palette="#B3B3B3FF"
++     )+
++     geom_vline(xintercept=10,linewidth=0.2,color="black"),
++   ncol=1,
++   align="hv",axis="tblr",
++   labels="AUTO"
++ )
+> 
+> 
+> ## ----sirs3--------------------------------------------------------------------
+> data.frame(
++   Beta=4,gamma=2,psi=1,omega=1,
++   S0=97,I0=3,R0=0,t0=0,time=40
++ ) -> sirs.params
+> 
+> bake(
++   file="sirs3a.rds",
++   seed=328168304L,
++   dependson=sirs.params,
++   {
++     library(phylopomp)
++     sirs.params |>
++       with(
++         runSIRS(
++           Beta=Beta,gamma=gamma,psi=psi,omega=omega,
++           S0=S0,I0=I0,R0=R0,t0=t0,time=time
++         )
++       )
++   }
++ ) -> sirs_tree
+> 
+> bake(
++   file="sirs3b.rds",
++   seed=621400057L,
++   dependson=list(sirs_tree,sirs.params),
++   {
++     sirs.params |>
++       with(
++         expand_grid(
++           Beta=Beta,
++           ##      gamma=gamma,
++           gamma=seq(1.7,2.3,by=0.02),
++           psi=psi,
++           omega=omega,
++           ##      omega=seq(0.5,2,by=0.05),
++           S0=S0,I0=I0,R0=R0,
++           t0=t0,
++           rep=1:16,
++           Np=5000,
++           )
++       ) -> params
++ 
++     library(iterators)
++     library(doFuture)
++     plan(multicore)
++ 
++     foreach (
++       p=iter(params,"row"),
++       .combine=bind_rows,
++       .options.future=list(seed=TRUE)
++     ) %dofuture% {
++       library(pomp)
++       library(phylopomp)
++       p |>
++         with({
++           sirs_tree |>
++             sirs_pomp(
++               Beta=Beta,gamma=gamma,psi=psi,omega=omega,
++               S0=S0,I0=I0,R0=R0,t0=0
++             ) |>
++             pfilter(Np=Np) |>
++             logLik()
++         }) -> ll
++       bind_cols(p,logLik=ll)
++     } -> params
++   }
++ ) -> params
+> 
+> params |>
++   with(
++     mcap(logLik,gamma)
++   ) -> mcap
+> 
+> 
+> ## ----sirs3_plot,dependson="sirs1",fig.dim=c(8,2.8),out.width="100%"-----------
+> plot_grid(
++   A=sirs_tree |>
++     plot(points=FALSE,palette=c("#000000"))+
++     labs(x="time"),
++   B=params |>
++     ggplot(aes(x=gamma,y=logLik))+
++     geom_point(alpha=0.2)+
++     geom_line(data=mcap$fit,aes(x=parameter,y=smoothed),color="blue")+
++     geom_vline(xintercept=sirs.params$gamma,color="red")+
++     geom_vline(xintercept=mcap$ci,linetype=2)+
++     geom_hline(
++       yintercept=max(mcap$fit$smoothed)-c(0,mcap$delta),
++       linetype=2
++     )+
++     labs(
++       color=character(0),
++       y="log likelihood",
++       x=expression(gamma)
++     )+
++     ## lims(y=c(max(params$logLik)-16,NA))+
++     theme_classic()+
++     theme(
++       legend.position=c(0.5,0.27)
++     ),
++   labels="AUTO",
++   nrow=1,
++   rel_widths=c(1,1)
++ )
+> 
+> 
+> ## ----seirs3-------------------------------------------------------------------
+> seirs.params <- data.frame(
++   Beta=4,sigma=1,gamma=1,psi=1,omega=1,
++   S0=200,E0=3,I0=5,R0=100,
++   time=3
++ )
+> 
+> bake(
++   file="seirs3a.rds",
++   seed=831282841L,
++   dependson=seirs.params,
++   seirs.params |>
++     with(
++       runSEIR(
++         Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
++         S0=S0,E0=E0,I0=I0,R0=R0,
++         time=time
++       )
++     )
++ ) -> seirs_tree
+> 
+> bake(
++   file="seirs3b.rds",
++   seed=831282841L,
++   dependson=list(seirs.params,seirs_tree),
++   {
++     library(phylopomp)
++     library(circumstance)
++     library(doFuture)
++     plan(multicore)
++ 
++     seirs.params |>
++       with(
++         seirs_tree |>
++           seirs_pomp(
++             Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
++             S0=S0,E0=E0,I0=I0,R0=R0
++           )
++       ) -> po
++ 
++     seq(0.2,2.5,by=0.1) |>
++       lapply(
++         \(s) {
++           x <- po
++           coef(x,"sigma") <- s
++           x
++         }
++       ) |>
++       concat() |>
++       pfilter(Np=20000,Nrep=10)
++   }
++ ) -> pfs
+> 
+> left_join(
++   pfs |> coef() |> melt() |> pivot_wider(),
++   pfs |> logLik() |> melt() |> rename(logLik=value),
++   by=c(".id"="name")
++ ) -> params
+> 
+> params |>
++   with(
++     mcap(logLik,sigma,span=0.5)
++   ) -> mcap
+> 
+> 
+> ## ----seirs3_plot,fig.dim=c(8,2.8),out.width="100%",dependon="seirs3"----------
+> plot_grid(
++   A=seirs_tree |>
++     plot(points=TRUE,palette="#000000")+
++     labs(x="time"),
++   B=params |>
++     ggplot()+
++     geom_point(aes(x=sigma,y=logLik))+
++     geom_line(data=mcap$fit,aes(x=parameter,y=smoothed),color="blue")+
++     geom_vline(xintercept=seirs.params$sigma,color="red")+
++     geom_vline(xintercept=mcap$ci,linetype=2)+
++     geom_hline(
++       yintercept=max(mcap$fit$smoothed)-c(0,mcap$delta),
++       linetype=2
++     )+
++     ##        lims(y=c(max(params$logLik)-12,NA))+
++     labs(
++       color=character(0),
++       y="log likelihood",
++       x=expression(sigma)
++     )+
++     theme_classic(),
++   labels="AUTO",
++   nrow=1,
++   rel_widths=c(3,4)
++ )
+> 
+> 
+> ## ----lbdp3--------------------------------------------------------------------
+> lbdp.params <- data.frame(
++   lambda=1.2,mu=0.8,psi=1,n0=5,
++   time=10
++ )
+> 
+> bake(
++   file="lbdp3a.rds",
++   seed=915645370,
++   dependson=lbdp.params,
++   lbdp.params |>
++     with(
++       runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=time)
++     )
++ ) -> lbdp_tree
+> 
+> bake(
++   file="lbdp3b.rds",
++   seed=712604404,
++   dependson=list(lbdp_tree,lbdp.params),
++   {
++     lbdp.params |>
++       with(
++         expand_grid(
++           rep=1:10,
++           lambda=lambda,
++           mu=seq(0.5,1.1,by=0.05),
++           psi=psi,
++           n0=n0,
++           Np=1000*2^seq(0,7)
++         )
++       ) -> params
++ 
++     library(iterators)
++     library(doFuture)
++     plan(multicore)
++ 
++     foreach (
++       p=iter(params,"row"),
++       .combine=bind_rows,
++       .options.future=list(seed=TRUE)
++     ) %dofuture% {
++       p |>
++         with(
++           lbdp_tree |>
++             lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
++         ) -> ll1
++       p |>
++         with(
++           lbdp_tree |>
++             lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
++             pfilter(Np=Np) |>
++             logLik()
++         ) -> ll2
++       bind_cols(p,exact=ll1,pf=ll2)
++     }-> params
++   }
++ ) -> params
+> 
+> params |>
++   mutate(
++     diff=pf-exact
++   ) |>
++   group_by(Np) |>
++   summarize(
++     rmse=sqrt(mean(diff*diff)),
++     bias=abs(mean(diff)),
++     prec=sqrt(rmse^2-bias^2)
++   ) |>
++   ungroup() -> stats
+> 
+> 
+> ## ----lbdp3_plot,fig.dim=c(9,7),out.width="100%"-------------------------------
+> pal <- c(viridis_pal(option="H",begin=0.1,end=0.8)(8),"#000000")
+> names(pal) <- c("1k","2k","4k","8k","16k","32k","64k","128k","exact")
+> 
+> plot_grid(
++   ncol=1,
++   rel_heights=c(3,2),
++   AB=plot_grid(
++     labels=c("A","B"),
++     nrow=1,
++     rel_widths=c(3,5),
++     A=lbdp_tree |>
++       plot(points=FALSE,palette="#000000")+
++       labs(x="time"),
++     B=params |>
++       pivot_longer(c(exact,pf)) |>
++       unite(name,name,Np) |>
++       mutate(
++         name=if_else(grepl("exact",name),"exact",name),
++         name=gsub("pf_","",name),
++         name=gsub("000","k",name),
++         name=ordered(name,levels=names(pal))
++       ) |>
++       group_by(lambda,mu,psi,n0,name) |>
++       reframe(
++         type=c("logLik","logLik_se"),
++         value=logmeanexp(value,se=TRUE)
++       ) |>
++       ungroup() |>
++       pivot_wider(names_from=type) |>
++       mutate(
++         y=logLik,
++         ymax=logLik+2*logLik_se,
++         ymin=logLik-2*logLik_se
++       ) |>
++       filter(logLik>max(logLik)-16) |>
++       ggplot(
++         aes(
++           x=mu,group=name,color=name,
++           y=y,ymin=ymin,ymax=ymax
++         )
++       )+
++       geom_errorbar(
++         position="dodge"
++       )+
++       geom_vline(xintercept=lbdp.params$mu,color="red")+
++       geom_hline(
++         yintercept=max(params$exact)-
++           c(0,0.5*qchisq(p=0.95,df=1)),
++         linetype=2
++       )+
++       scale_color_manual(values=pal)+
++       labs(
++         color="effort",
++         y="log likelihood",
++         x=expression(mu)
++       )+
++       theme(
++         ## legend.position="inside",
++         ## legend.position.inside=c(0.5,0.4),
++         ## legend.background=element_rect(fill="white")
++       )
++   ),
++   CDE=plot_grid(
++     labels=c("C","D","E"),
++     nrow=1,
++     rel_widths=c(24,24,17),
++     C=stats |>
++       ggplot(aes(x=Np,y=rmse))+
++       geom_smooth(formula=y~x,method="lm")+
++       geom_point()+
++       scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
++       scale_y_log10()+
++       coord_fixed(ratio=1)+
++       labs(x="effort",y="RMSE"),
++     D=stats |>
++       ggplot(aes(x=Np,y=prec))+
++       geom_smooth(formula=y~x,method="lm")+
++       geom_point()+
++       scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
++       scale_y_log10()+
++       coord_fixed(ratio=1)+
++       labs(x="effort",y="SD"),
++     E=stats |>
++       ggplot(aes(x=Np,y=bias))+
++       geom_smooth(formula=y~x,method="lm")+
++       geom_point()+
++       scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
++       scale_y_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
++       coord_fixed(ratio=1)+
++       labs(x="effort",y=expression(group("|",bias,"|")))
++   )
++ )
+> 
+> 
+> ## ----sessioninfo,include=FALSE,purl=TRUE--------------------------------------
+> sessionInfo()
+R version 4.4.0 (2024-04-24)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 22.04.4 LTS
+
+Matrix products: default
+BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8    LC_NUMERIC=C            LC_TIME=en_GB.UTF-8     LC_COLLATE=C            LC_MONETARY=en_US.UTF-8 LC_MESSAGES=en_US.UTF-8
+ [7] LC_PAPER=en_US.UTF-8    LC_NAME=C               LC_ADDRESS=C            LC_TELEPHONE=C          LC_MEASUREMENT=C.UTF-8  LC_IDENTIFICATION=C    
+
+time zone: America/Detroit
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] phylopomp_0.12.0.1 viridis_0.6.5      viridisLite_0.4.2  cowplot_1.1.3      pomp_5.8.3.0       ggtree_3.12.0      lubridate_1.9.3   
+ [8] forcats_1.0.0      stringr_1.5.1      dplyr_1.1.4        purrr_1.0.2        readr_2.1.5        tidyr_1.3.1        tibble_3.2.1      
+[15] ggplot2_3.5.1      tidyverse_2.0.0   
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.5       lattice_0.22-6     tzdb_0.4.0         vctrs_0.6.5        tools_4.4.0        generics_0.1.3     yulab.utils_0.1.4 
+ [8] curl_5.2.1         parallel_4.4.0     fansi_1.0.6        pkgconfig_2.0.3    Matrix_1.7-0       data.table_1.15.4  ggplotify_0.1.2   
+[15] lifecycle_1.0.4    farver_2.1.2       compiler_4.4.0     treeio_1.28.0      munsell_0.5.1      codetools_0.2-20   ggfun_0.1.4       
+[22] yaml_2.3.8         lazyeval_0.2.2     pillar_1.9.0       cachem_1.1.0       iterators_1.0.14   foreach_1.5.2      nlme_3.1-164      
+[29] tidyselect_1.2.1   aplot_0.2.2        digest_0.6.35      mvtnorm_1.2-5      stringi_1.8.4      splines_4.4.0      labeling_0.4.3    
+[36] fastmap_1.2.0      grid_4.4.0         colorspace_2.1-0   cli_3.6.2          magrittr_2.0.3     patchwork_1.2.0    utf8_1.2.4        
+[43] ape_5.8            withr_3.0.0        scales_1.3.0       timechange_0.3.0   aakmisc_0.32-2     gridExtra_2.3      deSolve_1.40      
+[50] hms_1.1.3          memoise_2.0.1      coda_0.19-4.1      RPostgreSQL_0.7-6  mgcv_1.9-1         gridGraphics_0.5-1 rlang_1.1.3       
+[57] Rcpp_1.0.12        DBI_1.2.2          glue_1.7.0         tidytree_0.4.6     jsonlite_1.8.8     R6_2.5.1           fs_1.6.4          
+> 
+> 
