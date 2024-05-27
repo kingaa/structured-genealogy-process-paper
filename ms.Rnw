@@ -104,7 +104,7 @@ This paper presents theory that enables its computation for a very broad range o
 
 Existing approaches to the phylodynamic likelihood have been based on one of two mathematical idealizations.
 The first is the \citet{Kingman1982a} coalescent, by which likelihood of a given genealogy is computed using a reverse-time argument.
-Thiis computation provides the exact likelihood for a genealogy resulting from a particular, constant population-size, dynamic model \citep[the Moran model, \eg][]{Moran1958,Kingman1982b,Moehle2000}.
+This computation provides the exact likelihood for a genealogy resulting from a particular, constant population-size, dynamic model \citep[the Moran model, \eg][]{Moran1958,Kingman1982b,Moehle2000}.
 Extensions of this approach develop approximate likelihoods for the case when the population size varies as a function of time \citep{Griffiths1994,Drummond2005} or according to an SIR process \citep{Volz2009a,Rasmussen2011}, as long as the population size is large and the sample-fraction remains negligible.
 The second idealization is the linear birth-death process, for which exact expressions for the likelihood are available \citep{Stadler2010}.
 Linearity in this context amounts to the assumption that distinct lineages do not interact:
@@ -699,7 +699,7 @@ Given a genealogy $G$, one obtains the \emph{pruned genealogy}, $P=\prune(G)$ by
 In a pruned genealogy only internal and sample nodes remain, and sample nodes are found at all of the leaves and possibly some of the interior nodes of the genealogy.
 Observe that a pruned genealogy is a colored genealogy:
 it retains information about where among the demes each of its lineages was through time (\cref{fig:upo}B).
-Note also that a pruned genealogy $P$ is characterized by its time, $\time(P)$ and the functions $P^{\lab{Y}}$ and $P^{\lab{Z}}$ just as an un-pruned genealogy is.
+Note also that a pruned genealogy $P$ is characterized by its time, $\time(P)$ and the functions $P^{\lab{Y}}$ and $P^{\lab{Z}}$ just as an unpruned genealogy is.
 Finally, observe that, since it contains within itself all of its past history, the pruned genealogy process $\Pr_t=\prune(\Gr_t)$ is Markov, even though the unpruned genealogy process, $\Gr_t$, is not.
 
 \subsubsection{Lineage count and saturation}
@@ -782,7 +782,7 @@ Our first result will be an expression for the likelihood of a given pruned gene
   If $\event{\H}\nsupseteq\event{\P}$, then $\H$ and $\P$ are incompatible and $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}=0$.
   Similarly, if any event of $\H$ is incompatible with the local structure of $\P$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}=0$.
   Let us therefore suppose that neither of these conditions hold.
-  Conditional on $\Hr_\T=\H$, at each time $t\in\event{\H}$, a jump of mark $\U_t$ occured, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
+  Conditional on $\Hr_\T=\H$, at each time $t\in\event{\H}$, a jump of mark $\U_t$ occurred, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
   In $\P$, at time $t$, there are $\ell_i=\ell_i(\Y_t)$ lineages in deme $i$, of which $s_i=s_i(\Yt_t,\Y_t)$ are emergent.
   By assumption, at each genealogical event, lineages within a deme are exchangeable:
   each has an identical probability of being involved.
@@ -791,7 +791,7 @@ Our first result will be an expression for the likelihood of a given pruned gene
   \begin{equation*}
     \frac{\binom{n_i-\ell_i}{r_i-s_i}\,\binom{\ell_i}{s_i}}{\binom{n_i}{r_i}}.
   \end{equation*}
-  Because our lineages are labelled, each of the $\tbinom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct;
+  Because our lineages are labeled, each of the $\tbinom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct;
   just one of these is the one present in $\P$.
   Moreover, since, again conditional on $\Hr_\T=\H$, the identities of the lineages involved in a genealogical event are random and independent of the identities selected at all other events, we have established that
   \begin{equation*}
@@ -1255,7 +1255,7 @@ Its state vector is $x=(S,I,R)$ and its KFE is
   \end{equation*}
 \end{mathsize}%
 Here $N=S+I+R$ is the host population size.
-Note that, though the theory allows for time-dependent event rates, this example is time-homogenous.
+Note that, though the theory allows for time-dependent event rates, this example is time-homogeneous.
 This model has one deme and occupancy function $n(x)=I$.
 There are four kinds of jumps:
 transmission, recovery, waning of immunity, and sampling.

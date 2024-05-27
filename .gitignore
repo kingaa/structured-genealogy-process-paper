@@ -1,6 +1,7 @@
-grant
 tmp
+arXiv
 .Rhistory
+.DS_Store
 *.aux
 *.bbl
 *.blg
@@ -9,7 +10,6 @@ tmp
 *.o
 *.so
 *.tex
-.DS_Store
 *.nav
 *.snm
 *.toc
