@@ -171,10 +171,7 @@ plot_grid(
       x=expression(gamma)
     )+
     ## lims(y=c(max(params$logLik)-16,NA))+
-    theme_classic()+
-    theme(
-      legend.position=c(0.5,0.27)
-    ),
+    theme_classic(),
   labels="AUTO",
   nrow=1,
   rel_widths=c(1,1)
@@ -402,11 +399,6 @@ plot_grid(
         color="effort",
         y="log likelihood",
         x=expression(mu)
-      )+
-      theme(
-        ## legend.position="inside",
-        ## legend.position.inside=c(0.5,0.4),
-        ## legend.background=element_rect(fill="white")
       )
   ),
   CDE=plot_grid(
