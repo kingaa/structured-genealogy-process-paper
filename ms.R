@@ -79,15 +79,15 @@ plot_grid(
 data.frame(
   Beta=4,gamma=2,psi=1,omega=1,
   S0=97,I0=3,R0=0,t0=0,time=40
-) -> sirs.params
+) -> sirs_params
 
 bake(
   file="sirs3a.rds",
   seed=328168304L,
-  dependson=sirs.params,
+  dependson=sirs_params,
   {
     library(phylopomp)
-    sirs.params |>
+    sirs_params |>
       with(
         runSIRS(
           Beta=Beta,gamma=gamma,psi=psi,omega=omega,
@@ -97,35 +97,31 @@ bake(
   }
 ) -> sirs_tree
 
+sirs_params |>
+  with(
+    expand_grid(
+      Beta=Beta,
+      gamma=seq(1.7,2.3,by=0.02),
+      psi=psi,
+      omega=omega,
+      S0=S0,I0=I0,R0=R0,
+      t0=t0,
+      rep=seq_len(8),
+      Np=10000,
+      )
+  ) -> params
+
 bake(
   file="sirs3b.rds",
   seed=621400057L,
-  dependson=list(sirs_tree,sirs.params),
+  dependson=list(sirs_tree,sirs_params,params),
   {
-    sirs.params |>
-      with(
-        expand_grid(
-          Beta=Beta,
-          ##      gamma=gamma,
-          gamma=seq(1.7,2.3,by=0.02),
-          psi=psi,
-          omega=omega,
-          ##      omega=seq(0.5,2,by=0.05),
-          S0=S0,I0=I0,R0=R0,
-          t0=t0,
-          rep=1:16,
-          Np=5000,
-          )
-      ) -> params
-
     library(iterators)
     library(doFuture)
     plan(multicore)
 
     foreach (
-      p=iter(params,"row"),
-      .combine=bind_rows,
-      .options.future=list(seed=TRUE)
+      p=iter(params,"row")
     ) %dofuture% {
       library(pomp)
       library(phylopomp)
@@ -136,12 +132,16 @@ bake(
               Beta=Beta,gamma=gamma,psi=psi,omega=omega,
               S0=S0,I0=I0,R0=R0,t0=0
             ) |>
-            pfilter(Np=Np) |>
-            logLik()
-        }) -> ll
-      bind_cols(p,logLik=ll)
-    } -> params
-  }
+            pfilter(Np=Np)
+        })
+    } %seed% TRUE |>
+      concat()
+  }) -> pfs
+
+left_join(
+  pfs |> coef() |> melt() |> pivot_wider(),
+  pfs |> logLik() |> melt() |> rename(logLik=value),
+  by=c(".id"="name")
 ) -> params
 
 params |>
@@ -157,9 +157,9 @@ plot_grid(
     labs(x="time"),
   B=params |>
     ggplot(aes(x=gamma,y=logLik))+
-    geom_point(alpha=0.2)+
+    geom_point(alpha=0.4)+
     geom_line(data=mcap$fit,aes(x=parameter,y=smoothed),color="blue")+
-    geom_vline(xintercept=sirs.params$gamma,color="red")+
+    geom_vline(xintercept=sirs_params$gamma,color="red")+
     geom_vline(xintercept=mcap$ci,linetype=2)+
     geom_hline(
       yintercept=max(mcap$fit$smoothed)-c(0,mcap$delta),
@@ -170,7 +170,7 @@ plot_grid(
       y="log likelihood",
       x=expression(gamma)
     )+
-    ## lims(y=c(max(params$logLik)-16,NA))+
+    lims(y=c(max(params$logLik)-12,NA))+
     theme_classic(),
   labels="AUTO",
   nrow=1,
@@ -179,17 +179,17 @@ plot_grid(
 
 
 ## ----seirs3-------------------------------------------------------------------
-seirs.params <- data.frame(
-  Beta=4,sigma=1,gamma=1,psi=1,omega=1,
-  S0=200,E0=3,I0=5,R0=100,
-  time=3
+seirs_params <- data.frame(
+  Beta=3,sigma=1,gamma=0.5,psi=0.02,omega=0.08,
+  S0=70,E0=1,I0=0,R0=50,
+  time=400
 )
 
 bake(
   file="seirs3a.rds",
-  seed=831282841L,
-  dependson=seirs.params,
-  seirs.params |>
+  dependson=seirs_params,
+  seed=509673338,
+  seirs_params |>
     with(
       runSEIR(
         Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
@@ -197,19 +197,23 @@ bake(
         time=time
       )
     )
-) -> seirs_tree
+)-> seirs_tree
+
+seirs_params |>
+  select(-sigma,-time) |>
+  expand_grid(
+    sigma=seq(0.4,2.4,length.out=25),
+    rep=seq_len(8)
+  ) |>
+  mutate(N=S0+E0+I0+R0) |>
+  collect() -> params
 
 bake(
   file="seirs3b.rds",
-  seed=831282841L,
-  dependson=list(seirs.params,seirs_tree),
+  dependson=list(params,seirs_params,seirs_tree),
+  seed=751601556,
   {
-    library(phylopomp)
-    library(circumstance)
-    library(doFuture)
-    plan(multicore)
-
-    seirs.params |>
+    seirs_params |>
       with(
         seirs_tree |>
           seirs_pomp(
@@ -218,16 +222,17 @@ bake(
           )
       ) -> po
 
-    seq(0.2,2.5,by=0.1) |>
-      lapply(
-        \(s) {
-          x <- po
-          coef(x,"sigma") <- s
-          x
-        }
-      ) |>
-      concat() |>
-      pfilter(Np=20000,Nrep=10)
+    library(iterators)
+    library(doFuture)
+    plan(multicore)
+    foreach (
+      p=iter(params,"row")
+    ) %dofuture% {
+      library(phylopomp)
+      po |>
+        pfilter(params=p,Np=1e4)
+    } %seed% TRUE |>
+      concat()
   }
 ) -> pfs
 
@@ -246,19 +251,19 @@ params |>
 ## ----seirs3_plot,fig.dim=c(8,2.8),out.width="100%",dependon="seirs3"----------
 plot_grid(
   A=seirs_tree |>
-    plot(points=TRUE,palette="#000000")+
+    plot(points=FALSE,palette="#000000")+
     labs(x="time"),
   B=params |>
     ggplot()+
     geom_point(aes(x=sigma,y=logLik))+
     geom_line(data=mcap$fit,aes(x=parameter,y=smoothed),color="blue")+
-    geom_vline(xintercept=seirs.params$sigma,color="red")+
+    geom_vline(xintercept=seirs_params$sigma,color="red")+
     geom_vline(xintercept=mcap$ci,linetype=2)+
     geom_hline(
-      yintercept=max(mcap$fit$smoothed)-c(0,mcap$delta),
+      yintercept=with(mcap,max(fit$smoothed)-c(0,delta)),
       linetype=2
     )+
-    ##        lims(y=c(max(params$logLik)-12,NA))+
+    lims(y=c(max(params$logLik)-12,NA))+
     labs(
       color=character(0),
       y="log likelihood",
