@@ -6,8 +6,8 @@ library(cowplot)
 library(viridis)
 library(phylopomp)
 stopifnot(getRversion() >= "4.4")
-stopifnot(packageVersion("pomp")>="5.9")
-stopifnot(packageVersion("phylopomp")>="0.13.2")
+stopifnot(packageVersion("pomp")>="5.9.1")
+stopifnot(packageVersion("phylopomp")>="0.14.2.3")
 theme_set(theme_bw(base_family="serif"))
 options(
   width=150,
@@ -21,15 +21,13 @@ set.seed(1159254136)
 
 
 ## ----geneal,fig.dim=c(4,2),out.width="50%"------------------------------------
-freeze(
-  seed=382490723,
-  simulate(
-    "SEIR",
-    Beta=3,sigma=0.5,gamma=0.2,psi=0.3,omega=0.5,
-    S0=15,E0=1,I0=2,R0=0,
-    time=10
-  )
-) -> x
+simulate(
+  "SEIR",
+  Beta=3,sigma=0.5,gamma=0.2,psi=0.3,omega=0.5,
+  S0=15,E0=1,I0=2,R0=0,
+  time=10
+) |>
+  freeze(seed=382490723) -> x
 
 pal <- c("#00274CFF","#FFCB05FF")
 
@@ -38,15 +36,13 @@ x |> plot(points=TRUE,prune=FALSE,obscure=FALSE,palette=pal)+
 
 
 ## ----upo,fig.dim=c(4,6),out.width="50%"---------------------------------------
-freeze(
-  seed=522390503,
-  simulate(
-    "SEIR",
-    Beta=1,sigma=0.5,gamma=0.1,psi=0.4,omega=0.1,
-    S0=10,E0=1,I0=1,R0=0,
-    time=10
-  )
-) -> x
+simulate(
+  "SEIR",
+  Beta=1,sigma=0.5,gamma=0.1,psi=0.4,omega=0.1,
+  S0=10,E0=1,I0=1,R0=0,
+  time=10
+) |>
+  freeze(seed=522390503) -> x
 
 pal <- c("#00274CFF","#FFCB05FF")
 
