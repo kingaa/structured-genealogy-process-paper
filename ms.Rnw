@@ -86,6 +86,7 @@ This is known as \emph{phylodynamic} inference.
 The most common approach to phylodynamic inference rests upon a mathematical linkage between the tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among sampled genomes and a model of the dynamics of the transmission system.
 Various linkages are possible, but because it is maximally efficient (\ie loses the least information), it is desirable to be able to compute the likelihood function for models of interest.
 This is simply the probability density of a given genealogy conditional on a given model, viewed as a function of the parameters of that model.
+%% Include other data, $Y$, in the expression?
 In particular, if $S$ is a set of genome sequences, $\Phi$ a genealogical tree relating these sequences, $E$ a model of sequence evolution, and $D$ a dynamic transmission model, then the likelihood is
 \begin{equation*}
   \lik(D,E) = f(S|D,E) = \int{f(S|\Phi,E)\,f(\Phi|D)\,\dd{\Phi}},
@@ -123,11 +124,14 @@ Third, because many of the most scientifically important uncertainties concern h
 While some structuring factors (\eg age, spatial location) are most naturally expressed in terms of continuous variables, discretely structured models have repeatedly proved their value in epidemiology.
 In particular, compartmental models are extremely flexible and have often been used as approximations when continuous structure leads to uncomfortably high model dimension.
 Finally, because there is typically uncertainty not only in the parameters, but also in the structure, of a host-pathogen system, an improved phylodynamic inference methodology would place minimal restrictions on the form of the models that it can accommodate.
-This paper demonstrates how these desiderata can be achieved---at least for models with discrete structure---including arbitrary nonlinear compartmental models with a countable number of compartments.
-%% \ELI{[For the claim of generality, should we give a disclaimer that model complexity is limited in practice by both the limited amount of information in data to fit the model, and the numerical tractability of the integration.
-%%     Some idea of the largest size which has been tested to date (say, 5 compartments and 1000 sequences?) would be helpful to the reader.
-%%     Readers may naturally be skeptical about the practical scope of the methods.
-%%     For example, familiar Monte Carlo methods such as BEAST have theoretical guarantees going far beyond their practical applicability.]}
+This paper demonstrates how these desiderata can be achieved---at least for models with discrete structure---including arbitrary nonlinear compartmental models.
+
+Of course, practical considerations play an important role as well.
+In practice, data availability typically places strong limits on the degree of model complexity that can be supported by data.
+In addition, computational expense typically grows with model complexity and this can also limit the utility of otherwise attractive models and inference methods.
+Nevertheless, in the present paper we confine ourselves to theoretical considerations.
+The results we present could form the basis for a variety of distinct algorithms the relative value of which will depend on the questions asked, models proposed, and data available, and in any case remains to be seen.
+Moreover, although the theory we present is valid for models with even a countably infinite number of compartments, lack of data and computational resources will in practice require that the models that can effectively be employed may be much simpler than desired.
 
 To connect a model at the level of a population with genealogies based on samples taken from individual hosts, it is necessary to make assumptions about the individuals in the population.
 The simplest such assumption is that the individuals that are identical with respect to the population dynamics are indeed statistically identical.
@@ -141,7 +145,7 @@ We show how such a process uniquely induces each of several stochastic processes
 We go on to derive expressions for the exact likelihoods of these genealogies.
 
 Code sufficient for the reproduction of all the results presented in this paper are freely available for download at \url{https://github.com/kingaa/structured-genealogy-process-paper}.
-An archival version of these will be stored on Zotero upon publication of this paper.
+An archival version of these will be stored on Zotero upon publication of a peer-reviewed version of this paper.
 The open-source \pkg{R} package \pkg{phylopomp} (\url{https://github.com/kingaa/phylopomp}) implements the simulation and likelihood-computation algorithms employed here.
 
 %% In particular, while the constructions of \citet{Etheridge2019} can in principle accommodate.
@@ -625,6 +629,7 @@ It is very important to note that, conditional on $(\Xrh_k,\Urh_k)$, the number 
 Moreover, by assumption, the lineages within each deme are exchangeable:
 any lineage within a deme is as likely as any other lineage in that deme to be selected as a parent or for death, sampling, or migration.
 Finally, note that $\Gr_t$ does not have the Markov property, though $(\Xr_t,\Ur_t,\Gr_t)$ and $(\Xr_t,\Gr_t)$ do.
+Observe in passing that, if instead of dropping tip nodes at death events we were to retain them as we do samples, the resulting genealogy---which we might call the ``complete'' genealogy---would have the Markov property.
 
 \subsection{Pruned and obscured genealogies}
 
