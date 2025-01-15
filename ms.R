@@ -6,8 +6,8 @@ library(cowplot)
 library(viridis)
 library(phylopomp)
 stopifnot(getRversion() >= "4.4")
-stopifnot(packageVersion("pomp")>="5.9.1")
-stopifnot(packageVersion("phylopomp")>="0.14.2.3")
+stopifnot(packageVersion("pomp")>="6.1")
+stopifnot(packageVersion("phylopomp")>="0.14.8")
 theme_set(theme_bw(base_family="serif"))
 options(
   width=150,

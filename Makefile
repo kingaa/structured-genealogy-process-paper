@@ -3,9 +3,7 @@ default: ms.pdf ms.R
 FIGS=$(wildcard figs/*.tex)
 BIBFILE=phylopomp.bib
 
-ms.pdf: ms.tex defs.tex header.tex $(FIGS) $(BIBFILE)
-
-
+ms.pdf: ms.tex defs.tex ms_header.tex $(FIGS) $(BIBFILE)
 
 ms.tex: setup.R
 

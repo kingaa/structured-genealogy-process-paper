@@ -1,6 +1,6 @@
 \documentclass[10pt,leqno,final]{amsart}
 
-\input{header}
+\input{ms_header}
 
 \title[Exact Phylodynamic Likelihood]{Exact Phylodynamic Likelihood\\ via Structured Markov Genealogy Processes}
 \author[King]{Aaron~A.~King}
@@ -49,8 +49,8 @@ library(cowplot)
 library(viridis)
 library(phylopomp)
 stopifnot(getRversion() >= "4.4")
-stopifnot(packageVersion("pomp")>="5.9.1")
-stopifnot(packageVersion("phylopomp")>="0.14.2.3")
+stopifnot(packageVersion("pomp")>="6.1")
+stopifnot(packageVersion("phylopomp")>="0.14.8")
 theme_set(theme_bw(base_family="serif"))
 options(
   width=150,
@@ -916,7 +916,7 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
       &\frac{\partial{w}}{\partial{t}}=
       \sum_{uy'}{\int{w(t,x',y')\,\beta_u(t,x',x,y',y)\,\varPsi_u(t,x',x,y',y)\,\dd{x'}}}
       -\sum_{uy'}{\int{w(t,x,y)\,\beta_u(t,x,x',y,y')\,\dd{x'}}},
-      &t\in{\event{\Z}},\\
+      &t\notin{\event{\Z}},\\
       &w(t,x,y)=\sum_{uy'}{\int{\wt(t,x',y')\,\beta_u(t,x',x,y',y)\,\varPsi_u(t,x',x,y',y)\,\dd{x'}}},
       &t\in{\event{\Z}},
     \end{aligned}
