@@ -71,6 +71,30 @@ plot_grid(
 )
 
 
+## ----upo2b,results="hide"-----------------------------------------------------
+plot_grid(
+  x |>
+    curtail(time=7.7,prune=FALSE,obscure=FALSE) |>
+    plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
+    expand_limits(x=9,y=3)+
+    theme(axis.line=element_line(color=grey(0.8)))+
+    labs(title=expression(P[8])),
+  x |>
+    curtail(time=8,prune=FALSE,obscure=FALSE) |>
+    plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
+    expand_limits(x=9,y=3)+
+    theme(axis.line=element_line(color=grey(0.8)))+
+    labs(title=expression(P[9])),
+  x |>
+    curtail(time=8.8,prune=FALSE,obscure=FALSE) |>
+    plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
+    expand_limits(x=9,y=3)+
+    theme(axis.line=element_line(color=grey(0.8)))+
+    labs(title=expression(P[10])),
+  ncol=1
+)
+
+
 ## ----sirs3--------------------------------------------------------------------
 data.frame(
   Beta=4,gamma=2,psi=1,omega=1,
@@ -272,166 +296,166 @@ plot_grid(
 )
 
 
-## ----lbdp3--------------------------------------------------------------------
-lbdp.params <- data.frame(
-  lambda=1.2,mu=0.8,psi=1,n0=5,
-  time=10
-)
+## ----lbdp3,eval=FALSE---------------------------------------------------------
+# lbdp.params <- data.frame(
+#   lambda=1.2,mu=0.8,psi=1,n0=5,
+#   time=10
+# )
+# 
+# bake(
+#   file="lbdp3a.rds",
+#   seed=915645370,
+#   dependson=lbdp.params,
+#   lbdp.params |>
+#     with(
+#       runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=time)
+#     )
+# ) -> lbdp_tree
+# 
+# bake(
+#   file="lbdp3b.rds",
+#   seed=712604404,
+#   dependson=list(lbdp_tree,lbdp.params),
+#   {
+#     lbdp.params |>
+#       with(
+#         expand_grid(
+#           rep=1:10,
+#           lambda=lambda,
+#           mu=seq(0.5,1.1,by=0.05),
+#           psi=psi,
+#           n0=n0,
+#           Np=1000*2^seq(0,7)
+#         )
+#       ) -> params
+# 
+#     library(iterators)
+#     library(doFuture)
+#     plan(multicore)
+# 
+#     foreach (
+#       p=iter(params,"row"),
+#       .combine=bind_rows,
+#       .options.future=list(seed=TRUE)
+#     ) %dofuture% {
+#       p |>
+#         with(
+#           lbdp_tree |>
+#             lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
+#         ) -> ll1
+#       p |>
+#         with(
+#           lbdp_tree |>
+#             lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
+#             pfilter(Np=Np) |>
+#             logLik()
+#         ) -> ll2
+#       bind_cols(p,exact=ll1,pf=ll2)
+#     }-> params
+#   }
+# ) -> params
+# 
+# params |>
+#   mutate(
+#     diff=pf-exact
+#   ) |>
+#   group_by(Np) |>
+#   summarize(
+#     rmse=sqrt(mean(diff*diff)),
+#     bias=abs(mean(diff)),
+#     prec=sqrt(rmse^2-bias^2)
+#   ) |>
+#   ungroup() -> stats
 
-bake(
-  file="lbdp3a.rds",
-  seed=915645370,
-  dependson=lbdp.params,
-  lbdp.params |>
-    with(
-      runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=time)
-    )
-) -> lbdp_tree
 
-bake(
-  file="lbdp3b.rds",
-  seed=712604404,
-  dependson=list(lbdp_tree,lbdp.params),
-  {
-    lbdp.params |>
-      with(
-        expand_grid(
-          rep=1:10,
-          lambda=lambda,
-          mu=seq(0.5,1.1,by=0.05),
-          psi=psi,
-          n0=n0,
-          Np=1000*2^seq(0,7)
-        )
-      ) -> params
-
-    library(iterators)
-    library(doFuture)
-    plan(multicore)
-
-    foreach (
-      p=iter(params,"row"),
-      .combine=bind_rows,
-      .options.future=list(seed=TRUE)
-    ) %dofuture% {
-      p |>
-        with(
-          lbdp_tree |>
-            lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
-        ) -> ll1
-      p |>
-        with(
-          lbdp_tree |>
-            lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
-            pfilter(Np=Np) |>
-            logLik()
-        ) -> ll2
-      bind_cols(p,exact=ll1,pf=ll2)
-    }-> params
-  }
-) -> params
-
-params |>
-  mutate(
-    diff=pf-exact
-  ) |>
-  group_by(Np) |>
-  summarize(
-    rmse=sqrt(mean(diff*diff)),
-    bias=abs(mean(diff)),
-    prec=sqrt(rmse^2-bias^2)
-  ) |>
-  ungroup() -> stats
-
-
-## ----lbdp3_plot,fig.dim=c(9,7),out.width="100%"-------------------------------
-pal <- c(viridis_pal(option="H",begin=0.1,end=0.8)(8),"#000000")
-names(pal) <- c("1k","2k","4k","8k","16k","32k","64k","128k","exact")
-
-plot_grid(
-  ncol=1,
-  rel_heights=c(3,2),
-  AB=plot_grid(
-    labels=c("A","B"),
-    nrow=1,
-    rel_widths=c(3,5),
-    A=lbdp_tree |>
-      plot(points=FALSE,palette="#000000")+
-      labs(x="time"),
-    B=params |>
-      pivot_longer(c(exact,pf)) |>
-      unite(name,name,Np) |>
-      mutate(
-        name=if_else(grepl("exact",name),"exact",name),
-        name=gsub("pf_","",name),
-        name=gsub("000","k",name),
-        name=ordered(name,levels=names(pal))
-      ) |>
-      group_by(lambda,mu,psi,n0,name) |>
-      reframe(
-        type=c("logLik","logLik_se"),
-        value=logmeanexp(value,se=TRUE)
-      ) |>
-      ungroup() |>
-      pivot_wider(names_from=type) |>
-      mutate(
-        y=logLik,
-        ymax=logLik+2*logLik_se,
-        ymin=logLik-2*logLik_se
-      ) |>
-      filter(logLik>max(logLik)-16) |>
-      ggplot(
-        aes(
-          x=mu,group=name,color=name,
-          y=y,ymin=ymin,ymax=ymax
-        )
-      )+
-      geom_errorbar(
-        position="dodge"
-      )+
-      geom_vline(xintercept=lbdp.params$mu,color="red")+
-      geom_hline(
-        yintercept=max(params$exact)-
-          c(0,0.5*qchisq(p=0.95,df=1)),
-        linetype=2
-      )+
-      scale_color_manual(values=pal)+
-      labs(
-        color="effort",
-        y="log likelihood",
-        x=expression(mu)
-      )
-  ),
-  CDE=plot_grid(
-    labels=c("C","D","E"),
-    nrow=1,
-    rel_widths=c(24,24,17),
-    C=stats |>
-      ggplot(aes(x=Np,y=rmse))+
-      geom_smooth(formula=y~x,method="lm")+
-      geom_point()+
-      scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-      scale_y_log10()+
-      coord_fixed(ratio=1)+
-      labs(x="effort",y="RMSE"),
-    D=stats |>
-      ggplot(aes(x=Np,y=prec))+
-      geom_smooth(formula=y~x,method="lm")+
-      geom_point()+
-      scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-      scale_y_log10()+
-      coord_fixed(ratio=1)+
-      labs(x="effort",y="SD"),
-    E=stats |>
-      ggplot(aes(x=Np,y=bias))+
-      geom_smooth(formula=y~x,method="lm")+
-      geom_point()+
-      scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-      scale_y_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-      coord_fixed(ratio=1)+
-      labs(x="effort",y=expression(group("|",bias,"|")))
-  )
-)
+## ----lbdp3_plot,fig.dim=c(9,7),out.width="100%",eval=FALSE--------------------
+# pal <- c(viridis_pal(option="H",begin=0.1,end=0.8)(8),"#000000")
+# names(pal) <- c("1k","2k","4k","8k","16k","32k","64k","128k","exact")
+# 
+# plot_grid(
+#   ncol=1,
+#   rel_heights=c(3,2),
+#   AB=plot_grid(
+#     labels=c("A","B"),
+#     nrow=1,
+#     rel_widths=c(3,5),
+#     A=lbdp_tree |>
+#       plot(points=FALSE,palette="#000000")+
+#       labs(x="time"),
+#     B=params |>
+#       pivot_longer(c(exact,pf)) |>
+#       unite(name,name,Np) |>
+#       mutate(
+#         name=if_else(grepl("exact",name),"exact",name),
+#         name=gsub("pf_","",name),
+#         name=gsub("000","k",name),
+#         name=ordered(name,levels=names(pal))
+#       ) |>
+#       group_by(lambda,mu,psi,n0,name) |>
+#       reframe(
+#         type=c("logLik","logLik_se"),
+#         value=logmeanexp(value,se=TRUE)
+#       ) |>
+#       ungroup() |>
+#       pivot_wider(names_from=type) |>
+#       mutate(
+#         y=logLik,
+#         ymax=logLik+2*logLik_se,
+#         ymin=logLik-2*logLik_se
+#       ) |>
+#       filter(logLik>max(logLik)-16) |>
+#       ggplot(
+#         aes(
+#           x=mu,group=name,color=name,
+#           y=y,ymin=ymin,ymax=ymax
+#         )
+#       )+
+#       geom_errorbar(
+#         position="dodge"
+#       )+
+#       geom_vline(xintercept=lbdp.params$mu,color="red")+
+#       geom_hline(
+#         yintercept=max(params$exact)-
+#           c(0,0.5*qchisq(p=0.95,df=1)),
+#         linetype=2
+#       )+
+#       scale_color_manual(values=pal)+
+#       labs(
+#         color="effort",
+#         y="log likelihood",
+#         x=expression(mu)
+#       )
+#   ),
+#   CDE=plot_grid(
+#     labels=c("C","D","E"),
+#     nrow=1,
+#     rel_widths=c(24,24,17),
+#     C=stats |>
+#       ggplot(aes(x=Np,y=rmse))+
+#       geom_smooth(formula=y~x,method="lm")+
+#       geom_point()+
+#       scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+#       scale_y_log10()+
+#       coord_fixed(ratio=1)+
+#       labs(x="effort",y="RMSE"),
+#     D=stats |>
+#       ggplot(aes(x=Np,y=prec))+
+#       geom_smooth(formula=y~x,method="lm")+
+#       geom_point()+
+#       scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+#       scale_y_log10()+
+#       coord_fixed(ratio=1)+
+#       labs(x="effort",y="SD"),
+#     E=stats |>
+#       ggplot(aes(x=Np,y=bias))+
+#       geom_smooth(formula=y~x,method="lm")+
+#       geom_point()+
+#       scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+#       scale_y_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+#       coord_fixed(ratio=1)+
+#       labs(x="effort",y=expression(group("|",bias,"|")))
+#   )
+# )
 
 
 ## ----sessioninfo,include=FALSE,purl=TRUE--------------------------------------

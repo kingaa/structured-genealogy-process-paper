@@ -325,12 +325,16 @@ FUNCTION {bibinfo.warn}
 FUNCTION {write.url}
 {
   doi empty$
-    { "\href{" url "}{\texttt{" url "}}" * }
-    { "\href{https://doi.org/" doi "}{DOI:~\texttt{" doi "}}" * }
+    { url empty$
+	{ url }
+	{ "\url{" url "}" * * }
+      if$
+    }
+    { "\href{https://doi.org/" doi "}{DOI:~\texttt{" doi "}}" * * * * }
   if$
   duplicate$ empty$
     { pop$ }
-    { newline$ * * * write$ newline$ }
+    { newline$ write$ newline$ }
   if$
 }
 

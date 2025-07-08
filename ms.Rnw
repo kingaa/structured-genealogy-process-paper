@@ -66,11 +66,11 @@ set.seed(1159254136)
 \begin{document}
 
 \begin{abstract}
-  We consider genealogies arising from a Markov population process in which individuals are categorized into a discrete collection of compartments, with the requirement that individuals within the same compartment are statistically exchangeable.
-  When equipped with a sampling process, each such population process induces a time-evolving tree-valued process defined as the genealogy of all sampled individuals.
-  We provide a construction of this genealogy process and derive exact expressions for the likelihood of an observed genealogy in terms of filter equations.
-  These filter equations can be numerically solved using standard Monte Carlo integration methods.
-  Thus, we obtain statistically efficient likelihood-based inference for essentially arbitrary compartment models based on an observed genealogy of individuals sampled from the population.
+  We show that each member of a broad class of Markovian population models induces a unique stochastic process on the space of genealogies.
+  We construct this genealogy process and derive exact expressions for the likelihood of an observed genealogy in terms of a filter equation, the structure of which is completely determined by the population model.
+  We show that existing phylodynamic methods based on either the coalescent or the linear birth-death processes are special cases.
+  We derive some properties of filter equations and describe a class of algorithms that can be used to numerically solve them.
+  Our results open the door to statistically efficient likelihood-based phylodynamic inference for a much wider class of models than is currently possible.
 \end{abstract}
 
 \maketitle
@@ -80,102 +80,91 @@ set.seed(1159254136)
 When the genome of an infectious agent accumulates mutations on timescales similar to those of transmission and infection progression, the resulting pattern of differences among genomes contains information on the history of the pathogen's passage through individual hosts and the host population.
 As \citet{Grenfell2004} observed, one can extract this information to gain insight into the structure and dynamics of the host-pathogen system.
 In particular, one can formalize mathematical models of transmission, estimate their parameters, and compare their ability to explain data, following standard statistical paradigms.
-This is known as \emph{phylodynamic} inference.
-\citet{Alizon2024} gives a good review of the history of the subject.
+This collection of tasks is known as \emph{phylodynamic} inference;
+\citet{Alizon2024} provides a recent review.
 
-The most common approach to phylodynamic inference rests upon a mathematical linkage between the tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among sampled genomes and a model of the dynamics of the transmission system.
-Various linkages are possible, but because it is maximally efficient (\ie loses the least information), it is desirable to be able to compute the likelihood function for models of interest.
-This is simply the probability density of a given genealogy conditional on a given model, viewed as a function of the parameters of that model.
-%% Include other data, $Y$, in the expression?
-In particular, if $S$ is a set of genome sequences, $\Phi$ a genealogical tree relating these sequences, $E$ a model of sequence evolution, and $D$ a dynamic transmission model, then the likelihood is
+A common approach to phylodynamic inference involves building a mathematical linkage between the tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among sampled genomes and a model of the dynamics of the transmission system.
+Various linkages are possible, but, to attain maximal statistical efficiency (\ie lose the least information), it is desirable to be able to compute the likelihood function for models of interest.
+The likelihood function is the probability density of a given set of data, conditional on a given model, viewed as a function of the parameters of that model.
+While various kinds of data may be available, we focus here on the case where the data are a set of genomic sequences.
+Notationally, if the data, $S$, is a set of genome sequences, $\Phi$ a genealogical tree relating these sequences, $E$ a model of sequence evolution, and $D$ a dynamic transmission model, then the full likelihood is
 \begin{equation*}
   \lik(D,E) = f(S|D,E) = \int{f(S|\Phi,E)\,f(\Phi|D)\,\dd{\Phi}},
 \end{equation*}
 where the integral is taken over all possible genealogies and we somewhat loosely use the symbol $f$ for the various distinct probability densities, the nature of each of which is clear from its arguments.
 In this expression, $f(S|\Phi,E)$ is typically the \citet{Felsenstein2004} phylogenetic likelihood.
-The function $f(\Phi|D)$, which links the phylogeny to the dynamic model, may be termed the \emph{phylodynamic likelihood}.
-In the Bayesian context, this same function is sometimes referred to as a \emph{tree prior} \citep{Moeller2018,Volz2018}.
-The computation of this function has remained out of reach, except in several special cases.
-This paper presents theory that enables its computation for a very broad range of dynamic models.
+The function $f(\Phi|D)$, which links the phylogeny to the dynamic model, is the \emph{phylodynamic likelihood}.
+%% Although we suppress the dependencies here, the likelihoods $\lik$, $f(S|\Phi,E)$, and $f(\Phi|D)$ are to be viewed as functions of the parameters that specify the models $D$ and $E$.
+In the Bayesian context, the phylodynamic likelihood is sometimes referred to as a \emph{tree prior} \citep{Moeller2018,Volz2018}.
+Its computation has remained out of reach, except in several special cases.
+This paper presents theory that facilitates its computation for a very broad range of dynamic models.
 
 %% Phylodynamic inference rests upon mathematical linkage between mathematical models of disease transmission at the population level and genome-sequence data collected from individual infected hosts.
 %% The tightest possible such linkage is effected by a computable likelihood function.
 %% The tree-like \emph{genealogy} or \emph{phylogeny} that expresses the relationships of shared ancestry among the sequences.
 %% In particular, if one can determine the likelihood of any given genealogy given a model and also the likelihood of the data given a genealogy, then the likelihood of the data given the model is obtained by summing over the space of genealogies.
 
-Existing approaches to the phylodynamic likelihood have been based on one of two mathematical idealizations.
-The first is the \citet{Kingman1982a} coalescent, by which likelihood of a given genealogy is computed using a reverse-time argument.
-This computation provides the exact likelihood for a genealogy resulting from a particular, constant population-size, dynamic model \citep[the Moran model, \eg][]{Moran1958,Kingman1982b,Moehle2000}.
+With few exceptions, existing approaches to the phylodynamic likelihood have been based on one of two mathematical idealizations.
+The first is the \citet{Kingman1982a} coalescent, by which the likelihood of a given genealogy is computed using a reverse-time argument.
+This computation provides the exact likelihood for a genealogy resulting from a particular, constant population-size, dynamic model \citep[the Moran model, \eg][]{Moran1958,Kingman1982b,Moehle2000,King2020,King2022}.
 Extensions of this approach develop approximate likelihoods for the case when the population size varies as a function of time \citep{Griffiths1994,Drummond2005} or according to an SIR process \citep{Volz2009a,Rasmussen2011}, as long as the population size is large and the sample-fraction remains negligible.
-The second idealization is the linear birth-death process, for which exact expressions for the likelihood are available \citep{Stadler2010}.
+The second idealization is the linear birth-death process, for which the likelihood is available in closed form \citep{Stadler2010}.
 Linearity in this context amounts to the assumption that distinct lineages do not interact:
 it is the resulting self-similarity of genealogies that renders the likelihood analytically tractable.
 Extensions of this approach develop approximations via linearization of nonlinear processes or restriction to scenarios in which population growth is nearly linear \citep[\eg][]{MacPherson2021}.
-Although the tractability of these approaches makes them attractive, concern naturally arises as to validity of the approximations in specific cases, the biases introduced by them, and the amount of information in data left unutilized by these approximate methods.
+Although the tractability of these approaches is appealing, concern naturally arises as to validity of the approximations in specific cases, the biases introduced by them, and the amount of information in data left uncaptured by these approximate methods.
 For this reason, there is interest in improved phylodynamic inference techniques.
 
-%% Factorization of problem into two subproblems.
-%% Problems with this approach \citep{Smith2017}.
-
 What would an ideal phylodynamic inference method look like?
-First, it would afford exact computation of the phylodynamic likelihood, so that comparisons among parameterizations and models could be made on a sound basis.
-Second, because nonlinearity, nonstationarity, noise, and measurement error are prominent and ubiquitous in epidemiology, it would accommodate nonlinear, time-inhomogeneous, stochastic transmission models.
-Third, because many of the most scientifically important uncertainties concern heterogeneities in transmission rates and the susceptibility, behavior, age, and location of hosts, it would accommodate host populations structured by these factors.
-While some structuring factors (\eg age, spatial location) are most naturally expressed in terms of continuous variables, discretely structured models have repeatedly proved their value in epidemiology.
-In particular, compartmental models are extremely flexible and have often been used as approximations when continuous structure leads to uncomfortably high model dimension.
-Finally, because there is typically uncertainty not only in the parameters, but also in the structure, of a host-pathogen system, an improved phylodynamic inference methodology would place minimal restrictions on the form of the models that it can accommodate.
-This paper demonstrates how these desiderata can be achieved---at least for models with discrete structure---including arbitrary nonlinear compartmental models.
+First, it would allow us to ask the questions we wish to ask.
+Since the set of scientifically interesting hypotheses is not contained within the set of statistically convenient models, an ideal phylodynamic inference methodology would put no restrictions on the form of the models that it can accommodate.
+%% Since the sets of scientific method can lead us to hypothesize models , an ideal phylodynamic inference methodology would put no restrictions on the form of the models that it can accommodate.
+In particular, since nonlinearity, nonstationarity, noise, and measurement error are prominent and ubiquitous in epidemiology, such a method would accommodate nonlinear, time-inhomogeneous, stochastic transmission models.
+Moreover, because many of the most scientifically and practically important uncertainties concern heterogeneities in transmission rates and the susceptibility, behavior, age, and location of hosts, it would accommodate host populations structured by these and other factors.
+Second, it would be both statistically efficient and robust to model misspecification.
+In particular, it would achieve maximal statistical efficiency by being based on the exact phylodynamic likelihood, which would also facilitate objective comparison among parameterizations and models.
+At the same time, model predictions would be robust to small deviations from the model assumptions.
+Finally, an ideal inference method would be computationally efficient.
+If numerical computations were absolutely required for its use, these would scale well with model complexity and data volume.
 
-Of course, practical considerations play an important role as well.
-In practice, data availability typically places strong limits on the degree of model complexity that can be supported by data.
-In addition, computational expense typically grows with model complexity and this can also limit the utility of otherwise attractive models and inference methods.
-Nevertheless, in the present paper we confine ourselves to theoretical considerations.
-The results we present could form the basis for a variety of distinct algorithms the relative value of which will depend on the questions asked, models proposed, and data available, and in any case remains to be seen.
-Moreover, although the theory we present is valid for models with even a countably infinite number of compartments, lack of data and computational resources will in practice require that the models that can effectively be employed may be much simpler than desired.
+Of course, there is no hope for the realization of such an ideal method.
+In particular, in selecting methodology, one must navigate trade-offs between statistical efficiency and robustness, and between computational expense and fidelity of model to question.
+With respect to these trade-offs, far more attention has been paid to date on relatively inexpensive approaches that are restricted to models that can only approximate the motivating questions to a greater or lesser extent.
+The present paper offers a complementary perspective:
+we develop mathematical expressions, and corresponding numerical algorithms, for the phylodynamic likelihood of almost arbitrarily complex models.
+Our focus on the exact likelihood offers maximum information capture, even as the computations it involves are somewhat delicate.
+Numerical examples are postponed to \cref{sec:app-examples}, and computational scalability is discussed in \cref{sec:discussion}.
+
+While the theory presented here greatly expands the class of models for which exact likelihood is computable, it is limited to models with \emph{discrete structure}.
+Thus, while structuring factors such as age, stage of infection progression, and spatial location are most naturally expressed in terms of continuous variables, to apply the results presented here, one would have to discretize these factors.
+We suspect that this limitation may often be relatively painless in practice, since discretely structured models have repeatedly proved their value in epidemiology.
+In particular, compartmental models offer great flexibility and have often been used as approximations when continuous structure leads to uncomfortably high model dimension.
 
 To connect a model at the level of a population with genealogies based on samples taken from individual hosts, it is necessary to make assumptions about the individuals in the population.
-The simplest such assumption is that the individuals that are identical with respect to the population dynamics are indeed statistically identical.
+The simplest such assumption is that the individuals that are identical with respect to the population dynamics are fully statistically identical.
 That is, that they are \emph{exchangeable}.
 In a compartmental model, this is tantamount to the assumption that the residence times of the individuals within each compartment are identically distributed, though not independent.
 Although exchangeability is indeed an additional assumption, it is so natural that it is frequently unrecognized as such, and one often reads statements to the effect that exchangeability of individuals is a consequence of the Markovian assumption.
 Nonetheless, since it adds minimal additional structure, it is the natural assumption, and the one we will make in this paper.
 
-In the following, we take as our starting point a transmission model in the form of a discretely structured, Markov process.
-We show how such a process uniquely induces each of several stochastic processes in the space of genealogies.
-We go on to derive expressions for the exact likelihoods of these genealogies.
+From the mathematical point of view, the essential difficulty in determining expressions for the likelihood of a genealogy generated by a given population process is the fact that a genealogy's structure is determined by events occurring at widely separated times.
+Existing approaches to phylodynamic inference employ one of a few tricks to get around this non-locality.
+In particular, both coalescent- and linear birth-death process-based approaches construct arguments in reverse time that depend on restrictions on the form of the population process.
+The main mathematical contribution of the present paper is to show how one can reformulate the phylodynamic likelihood in such a way that all needed computations are time-localized without placing restrictive assumptions on the population process.
+In particular, models for which forward simulation is possible but reversal of transition densities is intractable can be treated in this way.
 
-Code sufficient for the reproduction of all the results presented in this paper are freely available for download at \url{https://github.com/kingaa/structured-genealogy-process-paper}.
+In the following, we take as our starting point a population model in the form of a discretely structured continuous-time Markov process.
+We show how such a process uniquely induces several stochastic processes in the space of genealogies.
+We go on to show that exact likelihoods for these genealogies can be computed by solving a filter equation.
+In particular, for each given population-level model there is a specific filter equation.
+We then show that our approach generalizes both the coalescent- and linear birth-death-process-based approaches.
+Indeed, the filter equations for the models on which these approaches are based can be solved to obtain the familiar likelihood formulae.
+In appendices, we develop the properties of filter equations generally, provide a sequential Monte Carlo algorithm that can be used when numerical integration is needed for their solution, and work out the filter equations and their solutions in two examples.
+
+Code sufficient for the reproduction of all the figures in this paper are freely available for download at \url{https://github.com/kingaa/structured-genealogy-process-paper}.
 An archival version of these will be stored on Zotero upon publication of a peer-reviewed version of this paper.
 The open-source \pkg{R} package \pkg{phylopomp} (\url{https://github.com/kingaa/phylopomp}) implements the simulation and likelihood-computation algorithms employed here.
 
-%% In particular, while the constructions of \citet{Etheridge2019} can in principle accommodate.
-%% For structured but deterministic models, approach of \citet{Volz2012,Rasmussen2014a}, based on approximation as birth-death processes:
-%% approximation no longer needed.
-
-
-%% Because there is commonly broad uncertainty regarding the structure of the transmission process, for example due to heterogeneities in transmission rates and susceptibilities, complex behavior patterns, etc., methods that have the plug-and-play property are particularly useful.
-%% Such techniques for inference based on time series are well understood and widely used.
-%% When the data lie in some Euclidean space, they can commonly be modeled as draws from some error distribution conditional on the latent state of the transmission process.
-%% However, when the data are genealogies (also called phylogenies) representing the relationships of shared ancestry among genomic samples, the data-space is non-Euclidean and the appropriate models connecting the data to the latent state are non-trivial.
-
-%% Modeling of the sampling process.
-
-%% Extension of previous results \citep{King2022}.
-%% Broader class of state-spaces.
-%% Accommodating discrete structure.
-
-%% In an \emph{unstructured} Markov population process, every lineage is exactly like every other.
-%% \citet{King2022} showed how every such process induces an unstructured Markov genealogy process.
-%% Here, our aim is to expand the theory considerably by allowing our population of lineages to have discrete structure.
-
-%% Classes of Markov processes.
-%% Utility and flexibility of Markov assumptions.
-
-%% Population process induces Markov history and genealogy processes.
-%% Using these, we derive equations for the likelihood of a genealogy conditional on the history.
-%% We then integrate out the history to obtain nonlinear filter equations, the solution of which yields the likelihood.
-%% These readily lend themselves to a family of Sequential Monte Carlo algorithms for computing the likelihood.
-%% We demonstrate with several examples.
 
 \section{Mathematical preliminaries}
 
@@ -184,17 +173,19 @@ The open-source \pkg{R} package \pkg{phylopomp} (\url{https://github.com/kingaa/
 Throughout the paper, we will adopt the convention that a bold-face symbol (\eg $\Xr$), denotes a random element.
 We will be concerned with a variety of stochastic processes, in both discrete and continuous time.
 In both cases, we will use a subscript to indicate the time parameter: \eg $\Xr_t$ or $\Gr_k$, where $t$ takes values in the non-negative reals $\Rp$ and $k$ in the non-negative integers $\Zp$.
-In the case of continuous-time processes, we will assume that sample paths are \cadlag\ \ie right-continuous with left limits.
-We will frequently need to refer to the left-limit of such a process.
-Accordingly, if $\Phir_t$ is a \cadlag\ random process, we define
+In the case of continuous-time processes, we will find ourselves needing to refer to their left- or right-limits.
+Accordingly, if $\Phir_t$ is any random process, let
 \begin{equation*}
-  \Phirt_t\colonequals
-  \begin{cases}
-    \displaystyle\lim_{s\,\uparrow\,{t}}\;\Phir_{s}, & t>0,\\[2ex]
-    \Phir_0, & t=0.\\
-  \end{cases}
+  \begin{gathered}
+    \Phirt_t\coloneq
+    \displaystyle\lim_{s\,\uparrow\,{t}}\;\Phir_{s}
+    \qquad\text{and}\qquad
+    \Philt_t\coloneq
+    \displaystyle\lim_{s\,\downarrow\,{t}}\;\Phir_{s}.
+  \end{gathered}
 \end{equation*}
-Note that $\Phirt_t$ is thus left-continuous with right limits.
+We will typically assume that the random processes treated here are right-continuous with left limits (\ie \cadlag, so that $\Philt_t=\Phir_t$).
+Note that, in this case, $\Phirt_t$ is left-continuous with right limits (\caglad).
 
 If $\Phir_t$, $t\in\Rp$ is a pure jump process, knowledge of its sample path is equivalent to knowledge of the number, $\Kr_t$, of jumps it has taken as of time $t$, the jump times $\Trh_k$, and the embedded chain $\Phirh^{}_k\coloneq{\Phir_{\Trh^{}_k}}$, $k=0,\dots,\Kr^{}_t$.
 In particular, if we adopt the convention that $\Trh_0=0$ and $\Trh_{\Kr_t+1}=t$, then
@@ -204,14 +195,14 @@ $\Phir_t=\Phirh_k$ for $t\in\halfopen{\Trh_k,\Trh_{k+1}}$, $k=0,\dots,\Kr_t$.
 
 We are motivated by the desire for exact phylodynamic inference methods for as wide a class of epidemiological models as possible.
 In particular, we would like to be able to formulate and parameterize an arbitrary compartmental model and to quantify its ability to explain data using likelihood.
-\Cref{fig:example_models} depicts a few such models in order to give a sense of the kinds of complexities that can arise.
+\Cref{fig:example_models} depicts a few of the simplest such models in order to give a sense of the kinds of complexities that can arise.
 Of course, with the ability to entertain models with countably many compartments, much greater complexity is possible.
 In particular, one can model not only complex infection progression, but also strain structure, behavioral structure, age structure, and spatial structure using compartmental models.
 As is well known, one can discretize continuous structure-variables and employ the linear chain trick to accommodate non-exponential residence times.
 While the utility of these approximations will vary, a very wide range of model assumptions lie within the scope of the theory presented here.
 
 \begin{figure}
-  \input{figs/example_models}
+  \input{example_models}
   \caption{
     Examples of discretely-structured population models.
     Demes are shaded.
@@ -235,7 +226,8 @@ While the utility of these approximations will vary, a very wide range of model 
   }
 \end{figure}
 
-We will assume that our population process is a time-inhomogeneous Markov jump process, $\Xr_t$, $t\in\Rp$, taking values in some space $\Xspace$.
+We will refer to the stochastic process defined by the given model as the \emph{population process}.
+We will assume that the population process is a time-inhomogeneous Markov jump process, $\Xr_t$, $t\in\Rp$, taking values in some space $\Xspace$.
 In earlier work \citep{King2022}, we limited ourselves to the case $\Xspace=\mathbb{Z}^d$, but here we assume only that $\Xspace$ is a complete metric measure space with a countable dense subset.
 The population process is completely specified by its initial-state density, $p_0$, and its transition rates $\alpha$.
 In particular, we suppose that
@@ -251,7 +243,7 @@ More precisely, the transition rates have the following properties:
     \alpha(t,x,x')\ge{0}, \qquad \int_{\Xspace}{\alpha(t,x,x')\,\dd{x'}}<\infty,\\
   \end{gathered}
 \end{equation*}
-for all $t\in\Rp$ and $x,x'\in\Xspace$ and that, as a function of time, $\alpha$ is continuous almost everywhere.
+for all $t\in\Rp$ and $x,x'\in\Xspace$ and that, as a function of time, $\alpha$ is \cadlag\ and continuous almost everywhere.
 Henceforth, we understand that integrals are taken over all of $\Xspace$ unless otherwise specified.
 Let $\Kr_t$ be the number of jumps that $\Xr$ has taken by time $t$.
 We assume that $\Kr_t$ is a simple counting process so that
@@ -259,33 +251,50 @@ We assume that $\Kr_t$ is a simple counting process so that
   \begin{gathered}
     \CondProb{\Kr_{t+\Delta}=n+1}{\Kr_{t}=n}=\Delta\,\int{\alpha(t,x,x')\,\dd{x'}}+o(\Delta),\\
     \CondProb{\Kr_{t+\Delta}>n+1}{\Kr_{t}=n}=o(\Delta),\\
-    \CondProb{\Xr_{t+\Delta}\in\mathcal{E}}{\Xr_{t}=x, \Kr_{t+\Delta}-\Kr_{t}=1}=\frac{\int_{\mathcal{E}}{\alpha(t,x,x')\,\dd{x'}}}{\int{\alpha(t,x,x')\,\dd{x'}}}+o(\Delta).
+    \CondProb{\Xr_{t+\Delta}\in\mathcal{E}\setminus\Set{x}}{\Xr_{t}=x}=\Delta\,\int_{\mathcal{E}\setminus\Set{x}}{\alpha(t,x,x')\,\dd{x'}}+o(\Delta),\\
+    %% \CondProb{\Xr_{t+\Delta}\in\mathcal{E}}{\Xr_{t}=x, \Kr_{t+\Delta}-\Kr_{t}=1}=\frac{\int_{\mathcal{E}}{\alpha(t,x,x')\,\dd{x'}}}{\int{\alpha(t,x,x')\,\dd{x'}}}+o(\Delta).
+    \CondProb{\Xr_{t+\Delta}=x}{\Xr_{t}=x}=1-\Delta\,\int{\alpha(t,x,x')\,\dd{x'}}+o(\Delta).
   \end{gathered}
 \end{equation*}
-We further assume that $\alpha(t,x,x')$ is \cadlag\ as a function of time for all $x,x'\in{\Xspace}$ and that the number of jumps that occur in a finite time-interval is finite, \ie $\Prob{\Kr_t<\infty}=1$ for all $t$.
+We further assume that $\Xr_t$ is \emph{non-explosive}, \ie that $\Prob{\Kr_t<\infty}=1$ for all $t<\infty$.
 
-\subsection{Kolmogorov forward equation}
+
+\subsection{Kolmogorov equations}
 
 The above may be compactly summarized by stating that if $v(t,x)$ satisfies the Kolmogorov forward equation (KFE),
 \begin{equation}
   \label{eq:kfe}
-  \frac{\partial{v}}{\partial{t}}(t,x)
-  =\int\!{v(t,x')\,\alpha(t,x',x)\,\dd{x'}}
-  -\int\!{v(t,x)\,\alpha(t,x,x')\,\dd{x'}},
+  \begin{gathered}
+    \frac{\partial{v}}{\partial{t}}(t,x)
+    =\int\!{v(t,x')\,\alpha(t,x',x)\,\dd{x'}}
+    -\int\!{v(t,x)\,\alpha(t,x,x')\,\dd{x'}},
+    \qquad
+    v(0,x) = p_0(x),
+  \end{gathered}
 \end{equation}
-and if, moreover, $v(0,x) = p_0(x)$,
-then $\int_{\mathcal{E}}\!{v(t,x)\,\dd{x}}=\Prob{\Xr_t\in\mathcal{E}}$ for every measurable $\mathcal{E}\subseteq{\Xspace}$.
+for $t\in[0,T]$, then $\int_{\mathcal{E}}\!{v(t,x)\,\dd{x}}=\Prob{\Xr_t\in\mathcal{E}}$ for every $t\in[0,T]$ and measurable $\mathcal{E}\subseteq{\Xspace}$.
 \Cref{eq:kfe} is sometimes called the \emph{master equation} for $\Xr_t$.
+The adjoint form of the KFE is the Kolmogorov backward equation,
+\begin{equation}
+  \label{eq:kbe}
+  \begin{gathered}
+    -\frac{\partial{F}}{\partial{s}}(s,x)
+    =\int\!{\alpha(t,x,x')\,\left[F(s,x')-F(s,x)\right]\dd{x'}},
+    \qquad
+    F(T,x) = f(x).
+  \end{gathered}
+\end{equation}
+If $F$ satisfies \cref{eq:kbe} for $s\in[0,T]$ and $x\in\Xspace$, then $F(s,x)=\CondExpect{f(\Xr_T)}{\Xr_s=x}$ for all $t\in[0,T]$ and $x\in\Xspace$.
 
 \subsection{Inclusion of jumps at deterministic times}
 
-For modeling purposes, it is sometimes desirable to insist that certain events occur at known times.
+For modeling purposes, it is sometimes desirable to insist that certain events occur at specified times.
 For example, if samples are collected at specific times in such a way that the timing itself conveys no information about the process, one might wish to condition on the sampling time.
 We can expand the class of population models to allow for this as follows.
-Suppose that $S=\Set{s_1,s_2,\dots,}\subset\Zp$ is a sequence of event times.
+Suppose that $S=\Set{s_1,s_2,\dots,}\subset\Rp$ is a sequence of times.
 Let us postulate that, at each of these times, an event occurs at which $\Xr_t$ jumps according to a given probability kernel $\pi$.
 In particular, for any state $x\in\Xspace$ and measurable $\mathcal{E}\subset\Xspace$,
-$\pi(s_i,x,\mathcal{E})$ is the probability that the jump at time $s_i$ is to $\mathcal{E}$, conditional on the state just before the jump being $x$.
+$\pi(s_i,x,\mathcal{E})$ is the probability that the jump at time $s_i$ is to $\mathcal{E}$, conditional on $\Xrt_{s_i}=x$.
 With this notation, the KFE for the process becomes
 \begin{align}
   \label{eq:kfe-reg}
@@ -298,17 +307,18 @@ With this notation, the KFE for the process becomes
   &=\int\!{\leftlim{v}(t,x')\,\pi(t,x',\dd{x})\,\dd{x'}},
   &t\in{S}.
 \end{align}
-Note that the \cref{eq:kfe-reg} is identical to \cref{eq:kfe};
+Note that \cref{eq:kfe-reg} is identical to \cref{eq:kfe};
 we call this the \emph{regular part} of the KFE.
 We refer to \cref{eq:kfe-sing} as the \emph{singular part} of the KFE.
+In this notation, $\pi(t,x',\dd{x})/\dd{x}$ is the density (\ie Radon-Nikodym derivative) of $\pi$ with respect to the base measure on $\Xspace$.
 
 As a matter of notation, one can represent \cref{eq:kfe-reg,eq:kfe-sing} as a single equation in the form of \cref{eq:kfe}.
 In particular, if in \cref{eq:kfe} we make the substitution
 \begin{equation*}
-  \alpha(t,x,x')\mapsto\alpha(t,x,x')+\sum_{s\in{S}}{\delta(t,s)\,\frac{\dd{\pi}}{\dd{x'}}(t,x,x')},
+  \alpha(t,x,x')\,\dd{x'}\mapsto\alpha(t,x,x')\,\dd{x'}+\sum_{s\in{S}}{\delta(t,s)\,\pi(t,x,\dd{x'})},
 \end{equation*}
 we obtain an equation which we can view as shorthand for \cref{eq:kfe-reg,eq:kfe-sing}.
-Here, $\delta(t,s)$ is a Dirac delta function and $\dd{\pi}/\dd{x'}$ denotes the density (\ie Radon-Nikodym derivative) of $\pi$ with respect to the measure on $\Xspace$.
+Here, $\delta(t,s)$ is a one-sided Dirac delta function.
 %% To be even more parsimonious, we can refer to \cref{eq:kfe-reg,eq:kfe-sing} as the $(\alpha,\pi,S)$ KFE.
 
 \subsection{Jump marks}
@@ -316,10 +326,10 @@ Here, $\delta(t,s)$ is a Dirac delta function and $\dd{\pi}/\dd{x'}$ denotes the
 %% Another perspective on the Markov processes is to be had from its Markov state transition diagram (\cref{fig:markov_state}).
 
 \begin{figure}
-  \input{figs/markov_diagram}
+  \input{markov_diagram}
 \end{figure}
 
-It will be useful to divide the jumps of the population process $\Xr_t$ into distinct categories, which differ with respect to the changes they induce in a genealogy.
+It will be useful to divide the jumps of the population process $\Xr_t$ into distinct categories which differ with respect to the changes they induce in a genealogy.
 For this purpose, we let $\Jumps$ be a countable set of jump \emph{marks} such that
 \begin{equation*}
   \alpha(t,x,x')=\sum_{u\in\Jumps}{\alpha_u(t,x,x')}.
@@ -327,74 +337,85 @@ For this purpose, we let $\Jumps$ be a countable set of jump \emph{marks} such t
 \Cref{fig:markov_state} shows an example for which $\Jumps$ has five elements.
 In the following, sums over $u$ are to be taken over the whole of $\Jumps$ unless otherwise indicated.
 
-Let us define the \emph{jump mark} process, $\Ur_t$, to be the mark of the latest jump as of time $t$.
+Let us define the \emph{jump mark process}, $\Ur_t$, to be the mark of the latest jump as of time $t$.
 As usual, we take the sample paths of $\Ur_t$ to be \cadlag.
-Observe that, though $\Xr_t$ and $(\Xr_t,\Ur_t)$ are Markov processes, $\Ur_t$ is not.
+Observe that $\Xr_t$ and $(\Xr_t,\Ur_t)$ are Markov processes, but that $\Ur_t$ is not.
 
 \subsection{Demes and deme occupancy}
 \label{sec:demes}
 
-Our first goal in this paper is to show how a given population process induces a unique stochastic process on the space of genealogies.
+Our first goal in this paper is to show how a given population process induces a stochastic process on the space of genealogies.
 At each time, this genealogy will represent the relationships of shared ancestry among a population of lineages extant at that time.
 To accommodate the structure of the population, this population of lineages will itself be subdivided into discrete categories.
 In particular, we suppose that there are a countable set of subpopulations, within each of which individual lineages are exchangeable.
-We call these subpopulations \emph{demes}, and use the symbol $\Demes$ to denote an index set for them.
-\Cref{fig:example_models} illustrates this concept in the context of several compartmental models.
+We call these subpopulations \emph{demes} and let $\Demes$ be an index set for them.
+We note that other authors have used different terminology for the same concept, including ``colony'', ``type'', ``state'', and ``population'' \citep{Takahata1988,Notohara1990,Boskova2014,Volz2018,BaridoSottani2020,Seidel2024,Vaughan2025}.
+\Cref{fig:example_models} illustrates this concept in the context of several specific models.
 
 We define the \emph{deme occupancy} function $n:\Demes\times\Xspace\to\Zp$ so that
 for $i\in\Demes$, $x\in\Xspace$, $n_i(x)$ is the number of lineages in deme $i$ when the population is in state $x$.
 
 \subsection{Examples}
 
-The class of population models to which the theory presented here applies is very broad indeed.
+The class of population models to which the theory presented here applies is very broad.
 In particular, it encompasses the entire class of compartmental models with time-dependent flow rates.
 Here, to give a sense of this breadth, we briefly describe a few models of interest.
-\Cref{sec:app-examples} works out the theory for each of these examples.
-
 
 \paragraph{SIRS model}
 
-\citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
-The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
+\citet{King2022} developed formulae for the exact likelihood of a genealogy induced by an SIRS model.
+The theory developed in this paper applies, but since there is only one deme in this model, it is a simple case.
+In \cref{sec:app-examples}, we illustrate the theory by working it out in detail for this model.
 
 \paragraph{SEIRS model}
 
-A simple, yet interesting, model with more than one deme is the SEIRS model (\cref{fig:example_models}A).
-The state space is $\Zp^4$, with the state $x=(S,E,I,R)$ defined by the numbers of hosts in each of the four compartments.
-It has two demes: $\Demes=\Set{\lab{E},\lab{I}}$.
+Modifying the SIRS model by incorporating an incubation period results in the SEIRS model, which has two demes (\cref{fig:example_models}A):
+$\Demes=\Set{\lab{E},\lab{I}}$.
+We can take the state space to be $\Zp^4$:
+the state $x=(S,E,I,R)$ is defined by the numbers of hosts in each of the four compartments.
 The deme occupancy function in this case is $n(x)=(E,I)$.
-Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
+%% Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
+In \cref{sec:app-examples}, we work out the theory for this model in detail.
 
 \paragraph{Two-strain competition model}
 
-A simple model for the competition of two strains for susceptible hosts is depicted in \cref{fig:example_models}B.
+A simple model for the competition of two pathogen strains is depicted in \cref{fig:example_models}B.
 In this model, the state vector consists of seven numbers: $x=(S,E_1,E_2,I_1,I_2,R_1,R_2)$.
 There are four demes ($\Demes=\Set{\lab{E}_1,\lab{E}_2,\lab{I}_1,\lab{I}_2}$) and the occupancy function is $n(x)=(E_1,E_2,I_1,I_2)$.
 
+\paragraph{Complex infection progression}
+
+\Cref{fig:example_models}C depicts a model in which infections are heterogeneous with respect to the severity of the disease they engender.
+There are three demes ($\Demes=\Set{\lab{E},\lab{I_A},\lab{I_S}}$).
+Asymptomatic infections ($\lab{I_A}$) are unobservable, while symptomatic infections ($\lab{I_S}$) may develop into hospitalized cases ($\lab{H}$) and deaths ($\lab{D}$).
+
 \paragraph{Superspreading model}
 
-\Cref{fig:example_models}D depicts a model of superspreading.
+Compartmental models can be used to capture heterogeneities of various kinds.
+\Cref{fig:example_models}D depicts a model with behavioral heterogeneity.
 There are three demes ($\Demes=\Set{\lab{E},\lab{I_L},\lab{I_H}}$).
+Hosts in the low-transmitting $\lab{I_L}$ compartment have fewer contacts than those in the high-transmitting $\lab{I_H}$ compartment, and individuals move between these compartments as they engage in bouts of risky or cautious behavior.
+
+\paragraph{Kingman coalescent and Moran model}
+
+The \citet{Kingman1982a} coalescent is one of the two foundations upon which most existing phylodynamic approaches have been constructed.
+It is the ancestral process for the Moran model, in which a fixed population of $n$ lineages experiences events at times distributed according to a rate-$\mu$ Poisson process.
+At each such event, an individual lineage selected uniformly at random dies and is replaced by the offspring of a second randomly selected lineage.
+In \cref{sec:kingman}, we show that the Kingman coalescent likelihood is a special case of the theory presented in this paper.
 
 \paragraph{Linear birth-death model}
 
-The linear birth-death process, a mainstay of existing phylodynamic methods, is a special case of the theory presented here.
+The linear birth-death process, the second basis for widely-used phylodynamic methods, is also a special case of the theory presented here.
 For this process, we have $\Xspace=\Zp$ and there is a single deme.
-$\Xr_t$ represents the size of a population and $n(X_t)=X_t$.
+$\Xr_t$ represents the size of a population and $n(x)=x$.
+In \cref{sec:lbdp}, we derive exact expressions for the likelihood under this model.
 
-\paragraph{Moran model and the Kingman coalescent}
-
-The \citet{Kingman1982a} coalescent is another workhorse in existing phylodynamic approaches.
-It is the ancestral process for the Moran model, in which a fixed population of $n$ lineages experiences events at times distributed according to a rate-$\mu$ Poisson process.
-At each such event, an individual lineage selected uniformly at random dies and is replaced by the offspring of a second randomly selected lineage.
-
-\subsection{History}
+\subsection{History process}
 
 Consider the Markov process $(\Xr_t,\Ur_t)$.
 We define its \emph{history process}, $\Hr_t$, to be the restriction of the random function $s\mapsto(\Xr_s,\Ur_s)$ to the interval $[0,t]$.
 Note that $\Hr_t$ is itself trivially a Markov process, since it contains its own history.
-
-Alternatively, one can think of $\Hr_t$ as consisting of the sequence
+Alternatively, one can identify $\Hr_t$ with the sequence
 $\left(\left(\Trh_k,\Xrh_k,\Urh_k\right)\right)_{k=0}^{\Kr_t}$.
 In particular, conditional on $\Hr_t$, both $\Xr_t$ and $\Ur_t$ are deterministic, as are $\Kr_t$, the embedded chains, $\Xrh_k$, $\Urh_k$, and the point process of event times $\Trh_k$.
 The probability measure on the space of histories can be expressed in terms of these:
@@ -409,12 +430,37 @@ The probability measure on the space of histories can be expressed in terms of t
 \end{mathsize}%
 where again, by convention, $\Th^{}_0=0$ and $\Th^{}_{K^{}_t+1}=t$.
 
-If $\H$ is such a history, we define $\time(\H)$ to be the right endpoint of its domain and use the notation $\event{\H}\coloneq\Set{\Th^{}_1,\dots,\Th^{}_{\K_t}}\subset{[0,\time(\H)]}$ to denote the set of its jump times.
+If $\H$ is a potential value of a history process, $\Hr_t$, we define $\time(\H)$ to be the right endpoint of its domain and use the notation $\event{\H}\coloneq\Set{\Th^{}_1,\dots,\Th^{}_{\K_t}}\subset{[0,\time(\H)]}$ to denote the set of its jump times.
+
+
+\section{Genealogy processes}
 
 \subsection{Genealogies}
 \label{sec:genealogy}
 
-\begin{figure}
+A \emph{genealogy}, $G$, encapsulates the relationships of shared ancestry among a set of lineages that are extant at some time $\time(G)\in\Rp$ and perhaps a set of samples collected at earlier times (\cref{fig:geneal}).
+A genealogy has a tree- or forest-like structure, with four distinct kinds of nodes:
+\begin{inparaenum}[(i)]
+\item \emph{tip nodes}, which represent labeled extant lineages;
+\item \emph{internal nodes}, which represent events at which lineages diverged and/or moved from one deme to another;
+\item \emph{sample nodes}, which represent labeled samples; and
+\item \emph{root nodes}, at the base of each tree.
+\end{inparaenum}
+Each node $a$ is associated with a specific time, $\time(a)$.
+In particular, if $a$ is a tip node in $G$, then $\time(a)=\time(G)$;
+if $a$ is a sample node, then $\time(a)\le{\time(G)}$ is the time at which the sample was taken.
+Moreover, if node $a$ is ancestral to node $a'$, then $\time(a)\le{\time(a')}$ and $\time(a')-\time(a)$ is the distance between $a$ and $a'$ along the genealogy.
+Without loss of generality we assume that $\time(a)=0$ for all root nodes $a$.
+We let $\event{G}$ denote the set of all internal and sample node-times of the genealogy $G$;
+we refer to these as \emph{genealogical event times}.
+
+Importantly, a genealogy informs us not only about the shared ancestry of any pair of lineages, but also about where in the set of demes any given lineage was at all times.
+Accordingly, we can visualize a genealogy as a graph, the nodes and edges of which are painted with a distinct color for each deme (\cref{fig:geneal}).
+Note that a genealogy will in general have \emph{branch-point nodes}, \ie internal nodes with more than one descendant, but may also have internal nodes with only one descendant.
+We refer to such nodes as \emph{inline nodes}.
+These occur whenever the color changes along a branch, but can also occur without a color-change.
+
+\begin{figure}[t]
   \begin{center}
     <<geneal,fig.dim=c(4,2),out.width="50%">>=
     simulate(
@@ -444,38 +490,16 @@ If $\H$ is such a history, we define $\time(\H)$ to be the right endpoint of its
   }
 \end{figure}
 
-A \emph{genealogy}, $G$, encapsulates the relationships of shared ancestry among a set of lineages that are extant at some time $\time(G)\in\Rp$ and perhaps a set of samples collected at earlier times (\cref{fig:geneal}).
-A genealogy has a tree- or forest-like structure, with four distinct kinds of nodes:
-\begin{inparaenum}[(i)]
-\item \emph{tip nodes}, which represent labeled extant lineages;
-\item \emph{internal nodes}, which represent events at which lineages diverged and/or moved from one deme to another;
-\item \emph{sample nodes}, which represent labeled samples; and
-\item \emph{root nodes}, at the base of each tree.
-\end{inparaenum}
-Each node $a$ is associated with a specific time, $\time(a)$.
-In particular, if $a$ is a tip node in $G$, then $\time(a)=\time(G)$;
-if $a$ is a sample node, then $\time(a)\le{\time(G)}$ is the time at which the sample was taken.
-Moreover, if node $a$ is ancestral to node $a'$, then $\time(a)\le{\time(a')}$ and $\time(a')-\time(a)$ is the distance between $a$ and $a'$ along the genealogy.
-Without loss of generality we assume that $\time(a)=0$ for all root nodes $a$.
-We let $\event{G}$ denote the set of all internal and sample node-times of the genealogy $G$;
-we refer to these as \emph{genealogical event times}.
-
-Importantly, a genealogy informs us not only about the shared ancestry of any pair of lineages, but also about where in the set of demes any given lineage was at all times.
-Accordingly, we can visualize a genealogy as a tree, the nodes and edges of which are painted with a distinct color for each deme (\cref{fig:geneal}).
-Note that a genealogy will in general have \emph{branch-point nodes}, \ie internal nodes with more than one descendant, but may also have internal nodes with only one descendant.
-We refer to such nodes as \emph{inline nodes}.
-These occur whenever the color changes along a branch, but can also occur without a color-change.
-
 Formally, we define a genealogy, $G$, to be a triple, $(T,Z,Y)$, where $T=\time(G)\in\Rp$ is the \emph{genealogy time}, $Z$ specifies the genealogy's \emph{tree structure}, and $Y$ gives the \emph{coloring}.
-In particular, let $\leaves$ be a countable set of labels and let $\part(\leaves)$ be the set of all collections of finite, mutually-disjoint subsets of $\leaves$.
-That is, an element $z\in{\part(\leaves)}$ is a partition of the finite set $\bigcup{z}\subseteq\leaves$.
-Partition \emph{fineness} defines a partial order on $\part(\leaves)$.
-Specifically, for $z,z'\in{\part(\leaves)}$, we say $z\preceq{z'}$ if and only if for every $b'\in{z'}$ there is $b\in{z}$ such that $b\supseteq{b'}$.
-The tree structure of $G$ is defined by a \cadlag\ map $Z:[0,T]\to\part(\leaves)$ that is monotone in the sense that $t_1\le{t_2}$ implies $Z_{t_1}\preceq{Z_{t_2}}$.
+In particular, let $\leaves$ be a countable set of labels---referring to samples and/or extant lineages---and let $\partit(\leaves)$ be the set of all collections of finite, mutually-disjoint subsets of $\leaves$.
+That is, an element $z\in{\partit(\leaves)}$ is a partition of the finite set $\bigcup{z}\subseteq\leaves$.
+Partition \emph{fineness} defines a partial order on $\partit(\leaves)$.
+Specifically, for $z,z'\in{\partit(\leaves)}$, we say $z\preceq{z'}$ if and only if for every $b'\in{z'}$ there is $b\in{z}$ such that $b\supseteq{b'}$.
+The tree structure of $G$ is a \cadlag\ map $Z:[0,T]\to\partit(\leaves)$ that is monotone in the sense that $t_1\le{t_2}$ implies $Z_{t_1}\preceq{Z_{t_2}}$.
 An element $b\in{Z_t}$ is a set of labels;
 it represents the branch of the tree that bears the corresponding lineages.
 We use the notation $\event{Z}$ to denote the set of times at which $Z$ is discontinuous.
-Note that $\event{Z}$ includes the times of all tip, sample, and branch-point nodes, but excludes inline and root nodes.
+Note that $\event{Z}$ includes the times of all tip, sample, and branch-point nodes, but excludes root and non-sample inline nodes.
 Therefore, $\event{Z}\subseteq{\event{G}}$.
 
 The third element of $G$ specifies the coloring of branches and locations of tip, sample, and internal nodes (including inline nodes).
@@ -488,57 +512,38 @@ Given a tree $Z$, we let $\func{Y}(Z)$ denote the set of colorings $Y$ that are 
 We moreover define $\func{Y}_t(Z)\coloneq\CondSet{Y_t}{Y\in{\func{Y}(Z)}}$.
 Formally speaking, $\func{Y}(Z)$ is a fiber bundle over $Z$, each $\func{Y}_t(Z)$ being a fiber.
 
-It will sometimes be convenient to make use of notation whereby a genealogy $G=(\time(G),G^{\lab{Z}},G^{\lab{Y}})$.
-
-\subsection{Binomial ratio}
-\label{sec:binomial_ratio}
-
-For $n,r,\ell,s\in{\Zp^\Demes}$, define the \emph{binomial ratio}
-\begin{equation*}
-  \BinRatio{n}{\ell}{r}{s}\colonequals
-  \begin{cases}
-    \frac{\displaystyle\prod_{i\in\Demes}{\binom{n_i-\ell_i}{r_i-s_i}}}%
-         {\displaystyle\prod_{i\in\Demes}{\binom{n_i}{r_i}}},
-         & \text{if}\ \forall i\ n_i\ge{\Set{\ell_i,r_i}}\ge{s_i}\ge{0},\\[7ex]
-         0, & \text{otherwise}.
-  \end{cases}
-\end{equation*}
-Observe that $\BinRatio{n}{\ell}{r}{s}\in{[0,1]}$.
-Moreover, in consequence of the Chu-Vandermonde identity, we have
-\begin{equation*}
-  \sum_{s\in\Zp^{\Demes}}\BinRatio{n}{\ell}{r}{s}\binom{\ell}{s}=1,
-\end{equation*}
-whenever $n_i\ge{\Set{\ell_i,r_i}}\ge{0}$ for all $i$.
-
-\section{The induced genealogy process}
+It will sometimes be convenient to make use of notation whereby the tree structure of genealogy $G$ is $G^{\lab{Z}}$ and the coloring is $G^{\lab{Y}}$, so that $G=(\time(G),G^{\lab{Z}},G^{\lab{Y}})$.
 
 \subsection{Event types}
 \label{sec:event_types}
 
-We now show how a given population process naturally induces a process in the space of genealogies.
-Specifically, at each jump in the population process, a corresponding change occurs in the genealogy, according to whether lineages branch, die, move between demes, or are sampled.
+To see how events in the population process leave a trace in the genealogy, we assume that, at each jump in the population process, a corresponding change occurs in the genealogy, according to whether lineages branch, die, move between demes, or are sampled.
 For this purpose, there are five distinct \emph{pure types} of events:
 \begin{compactenum}[(a)]
-\item \emph{Birth-type events} result in the branching of one or more new lineages, each from some existing lineage.
+\item \emph{Birth-type events} result in the branching of one or more new lineages from an existing lineage.
   Examples of birth-type events include transmission events, speciations, and actual births.
-  Importantly, we assume that all new lineages arising from a birth event share the same parent and that  at most one birth event occurs at a time, almost surely.
+  Importantly, we assume that all new lineages arising from a birth event share the same parent and that at most one birth event occurs at a time, almost surely.
+  While it is possible to relax this assumption, the resulting notational complexities are nontrivial, so we postpone consideration of this more general case.
 \item \emph{Death-type events} result in the extinction of one or more lineages.
   Examples include recovery from infection, death of a host, and species extinctions.
-  We allow for the possibility that multiple lineages die simultaneously.
+  We allow for the possibility that multiple lineages, potentially in multiple demes, die simultaneously.
 \item \emph{Migration-type events} result in the movement of a lineage from one deme to another.
   Spatial movements, changes in host age or behavior, and progression of an infection can all be represented as migration-type events.
-  We permit multiple lineages to move simultaneously.
+  In a migration-type event, one or more lineages within exactly one deme may move simultaneously, and they may move to different demes.
+  Again, while it possible to relax the assumption that exactly one deme is the source of all migrating lineages within any one event, we postpone consideration of this case for the present.
 \item \emph{Sample-type events} result in the collection of a sample from a lineage.
-  We allow for the possibility that multiple samples are collected simultaneously, though we require that, in this case, each extant lineage is sampled at most once.
+  We allow for the possibility that multiple samples are collected simultaneously, though we require that, in this case, each extant lineage is sampled at most once and that all sampled lineages be in the same deme.
+  It is possible to allow for simultaneous sampling of multiple demes but, again, we postpone consideration of this case to ease the exposition.
 \item \emph{Neutral-type events} result in no change to any of the lineages.
 \end{compactenum}
 \Cref{fig:markov_state} depicts an example with jumps of all five pure types.
 It is not necessary that an event be of a pure type;
 \emph{compound events} partake of more than one type.
 For example, a sample/death-type event, in which a lineage is simultaneously sampled and removed, has been employed \citep{Leventhal2014}, as have birth/death events in which one lineage reproduces at the same moment that another dies (\eg the \citet{Moran1958} process).
-The theory presented here places few restrictions on the complexity of the events that can occur by combining events of the various pure types.
-
-%% Because different kinds of events may differ not only in the number of offspring they engender, but also in the number of parent lineages, and the distribution of offspring among parents and demes, there is implicitly a deterministic indicator function $Q_u$, for $u\in\Jumps$, (described below) that captures these properties.
+%% There are restrictions on the parentage within an event.
+%% In particular, in Theorem 1, we assume that, given $u$, the parent deme is deterministic.
+In combining the pure types, the main restriction is that, at any compound event, all parent lineages must be drawn from the same deme.
+Beyond this, the theory presented here places few restrictions on the complexity of the events that can occur by combining events of the various pure types.
 
 \subsection{Genealogy process}
 
@@ -546,7 +551,7 @@ We now show how a given population process induces a stochastic process, $\Gr_t$
 In the case of unstructured population processes (\ie those having a single deme), \citet{King2022} gave a related construction that is equivalent to the one presented here.
 
 \begin{figure}
-  \input{figs/event_types}
+  \input{event_types}
   \caption{
     Event types differ by their effects on the genealogy.
     This can be seen by examining the local structure of the genealogy in the neighborhood of a jump.
@@ -589,16 +594,16 @@ In particular:
 \item
   If $u$ is of death-type (\cref{fig:event_types}B), one or more tip nodes of the appropriate demes are selected with uniform probability from among those present.
   These are deleted.
-  Next, internal nodes without children are recursively removed.
+  Next, non-sample internal nodes without children are recursively removed.
   Sample nodes are never removed.
 \item
-  At a migration-type event (\cref{fig:event_types}C), the appropriate number of migrating lineages are selected at random with uniform probability, from among those present in the appropriate demes.
+  At a migration-type event (\cref{fig:event_types}C), the appropriate number of migrating lineages are selected at random with uniform probability, from among those present in the appropriate deme.
   For each selected lineage, one new branch node is inserted between the selected tip node and its ancestor.
   The color of the descendant branch changes accordingly.
 \item
   At a sample-type event (\cref{fig:event_types}D), the appropriate number of sampled lineages are selected at random from among the tip nodes, with uniform probability according to deme.
   One new sample node is introduced for each selected lineage:
-  each is inserted between a selected tip nodes and its ancestor.
+  each is inserted between a selected tip node and its ancestor.
 \item
   At a neutral-type event (\cref{fig:event_types}E), no change is made to the genealogy.
 \item
@@ -609,7 +614,7 @@ In each of these events, the new node or nodes that are introduced have node-tim
 \subsubsection{Emergent lineages and production}
 \label{sec:production}
 
-The lineages which descend from an inserted node are said to \emph{emerge} from the event.
+At each event, the lineages which descend from a node inserted at that event are said to \emph{emerge} from the event.
 Thus, after a birth-type event, the emerging lineages include all the new offspring as well as the parent.
 Likewise, at pure migration- or sample-type events, each migrating or sampled lineage emerges from the event.
 At pure death-type events, no lineages emerge.
@@ -624,12 +629,12 @@ Note that the lineages that die as a result of an event do not count in the prod
 
 Application of these rules at each jump of $\Xr_t$ constructs a chain of genealogies $\Grh_k$.
 In particular, at each jump-time $\Trh_k$, the genealogy $\Grh_{k-1}$ is modified according to the jump-mark $\Urh_k$ to yield $\Grh_k$.
-We view $\Grh_k$ as the embedded chain of the continuous-time genealogy process $\Gr_t$.
+We view $\Grh_k$, $k=0,1,2,\dots$, as the embedded chain of the continuous-time genealogy process $\Gr_t$.
 It is very important to note that, conditional on $(\Xrh_k,\Urh_k)$, the number of parents and number of offspring in each deme is determined and the random choice of which lineages die, migrate, are sampled, or sire offspring is independent of these choices at any other times and independent of $(\Xrh_j,\Urh_j)$ for all $j\ne{k}$.
 Moreover, by assumption, the lineages within each deme are exchangeable:
 any lineage within a deme is as likely as any other lineage in that deme to be selected as a parent or for death, sampling, or migration.
 Finally, note that $\Gr_t$ does not have the Markov property, though $(\Xr_t,\Ur_t,\Gr_t)$ and $(\Xr_t,\Gr_t)$ do.
-Observe in passing that, if instead of dropping tip nodes at death events we were to retain them as we do samples, the resulting genealogy---which we might call the ``complete'' genealogy---would have the Markov property.
+In passing, we observe that, if instead of dropping tip nodes at death events we were to retain them as we do samples, the resulting genealogy---which we might call the \emph{complete genealogy}---would have the Markov property.
 
 \subsection{Pruned and obscured genealogies}
 
@@ -701,7 +706,7 @@ In a pruned genealogy only internal and sample nodes remain, and sample nodes ar
 Observe that a pruned genealogy is a colored genealogy:
 it retains information about where among the demes each of its lineages was through time (\cref{fig:upo}B).
 Note also that a pruned genealogy $P$ is characterized by its time, $\time(P)$ and the functions $P^{\lab{Y}}$ and $P^{\lab{Z}}$ just as an unpruned genealogy is.
-Finally, observe that, since it contains within itself all of its past history, the pruned genealogy process $\Pr_t=\prune(\Gr_t)$ is Markov, even though the unpruned genealogy process, $\Gr_t$, is not.
+Crucially, since it contains within itself all of its past history, the pruned genealogy process $\Pr_t=\prune(\Gr_t)$ is Markov, even though the unpruned genealogy process, $\Gr_t$, is not.
 
 \subsubsection{Lineage count and saturation}
 \label{sec:ells}
@@ -721,7 +726,7 @@ Thus, we can define the \emph{saturation} function such that, whenever $P=(T,Y,Z
 \Cref{fig:ells} illustrates.
 
 \begin{figure}
-  \input{figs/ells}
+  \input{ells}
   \caption{
     \textbf{Lineage count and saturation.}
     Each panel shows the neighborhood of a single event in the unpruned genealogy (top row) and the corresponding pruned genealogy (bottom row).
@@ -743,11 +748,11 @@ Thus, we can define the \emph{saturation} function such that, whenever $P=(T,Y,Z
 \subsubsection{Compatibility}
 \label{sec:compatibility}
 
-Suppose $P$ is a pruned genealogy, with $\time(P)=T$ and $t\in\event{P}$.
+Suppose $P$ is a pruned genealogy, with $\time(P)=T$ and $t\in{[0,T]}$.
 The local structure of $P$ at $t$ is, in general, compatible with only a subset of the possible jumps $\Jumps$.
-For example, if the event in $P$ at $t$ is a branch node or a sample node, then it is compatible only with birth-type or sample-type jumps, respectively.
-Similarly, if the node in $P$ at time $t$ is one at which a lineage moves from deme $i$ to deme $i'$, then $u$ must be either of $i\to{i'}$ migration type or of a birth type with parent in $i$ and $r^u_{i'}>0$.
-To succinctly accommodate all possibilities, let us introduce the indicator function $Q$ such that $Q=1$ if the local genealogy structure---which is captured by the values of $P^{\lab{Y}}$ just before and after $t$---is compatible with an event of type $u$ and $Q=0$ otherwise.
+For example, if there is a branch node or a sample node at $t$, then it is compatible only with birth-type or sample-type jumps, respectively.
+Similarly, if a lineage moves from deme $i$ to deme $i'$ at $t$, then $u$ must be either of $i\to{i'}$ migration type or of a birth type with parent in $i$ and $r^u_{i'}>0$.
+To succinctly accommodate all possibilities, let us introduce the indicator function $Q$ such that $Q=1$ if the local genealogy structure---which is captured by the values of $P^{\lab{Y}}$ just before and at $t$---is compatible with an event of type $u$ and $Q=0$ otherwise.
 That is, $Q_u(y,y')=1$ if and only if
 there is a feasible genealogy, $\G=(\T,\Z,\Y)$, and history, $\H$,
 and a $t\in{[0,\T]}$ such that,
@@ -761,13 +766,37 @@ We refer to $Q$ as the \emph{compatibility indicator}.
 The \emph{obscured genealogy} is obtained by discarding all information about demes and events not visible from the topology of the tree alone (\cref{fig:upo}B--C).
 In particular, if $P=(T,Z,Y)$ is a pruned genealogy, we write $\obs(P)=(T,Z)$ to denote the obscured genealogy.
 
+\subsection{Binomial ratio}
+\label{sec:binomial_ratio}
+
+The statement of the theorems to come is made easier with the following definition.
+For $n,r,\ell,s\in{\Zp^\Demes}$,
+we define the \emph{binomial ratio}
+\begin{equation*}
+  \BinRatio{n}{\ell}{r}{s}\coloneq
+  \begin{cases}
+    \frac{\displaystyle\prod_{i\in\Demes}{\binom{n_i-\ell_i}{r_i-s_i}}}%
+         {\displaystyle\prod_{i\in\Demes}{\binom{n_i}{r_i}}},
+         & \text{if}\ \forall i\ n_i\ge{\Set{\ell_i,r_i}}\ge{s_i}\ge{0},\\[7ex]
+         0, & \text{otherwise}.
+  \end{cases}
+\end{equation*}
+where $\tbinom{a}{b}=\tfrac{a!}{b!\,(a-b)!}$ is the binomial coefficient.
+Observe that $\BinRatio{n}{\ell}{r}{s}\in{[0,1]}$.
+Moreover, in consequence of the Chu-Vandermonde identity, we have
+\begin{equation*}
+  \sum_{s\in\Zp^{\Demes}}\BinRatio{n}{\ell}{r}{s}\binom{\ell}{s}=1,
+\end{equation*}
+whenever $n_i\ge{\Set{\ell_i,r_i}}\ge{0}$ for all $i$.
+
 \section{Results}
 
 \subsection{Likelihood for pruned genealogies}
 
 Our first result will be an expression for the likelihood of a given pruned genealogy given the history of the population process.
 
-\begin{thm}\label{thm:pruned_lik}
+\begin{thm}
+  \label{thm:pruned_lik}
   Suppose $\P=(\T,\Z,\Y)$ is a given pruned genealogy.
   Define
   \begin{equation}\label{eq:phidef}
@@ -779,37 +808,19 @@ Our first result will be an expression for the likelihood of a given pruned gene
     \CondProb{\Pr_\T=\P}{\Hr_\T=\H}=\Indicator{\event{\H}\supseteq{\event{\P}}}\,\prod_{t\in\event{\H}}{\phi^{}_{\U_t}\!(\X_t,\Yt_t,\Y_t)}.
   \end{equation*}
 \end{thm}
-\begin{proof}
-  If $\event{\H}\nsupseteq\event{\P}$, then $\H$ and $\P$ are incompatible and $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}=0$.
-  Similarly, if any event of $\H$ is incompatible with the local structure of $\P$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}=0$.
-  Let us therefore suppose that neither of these conditions hold.
-  Conditional on $\Hr_\T=\H$, at each time $t\in\event{\H}$, a jump of mark $\U_t$ occurred, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
-  In $\P$, at time $t$, there are $\ell_i=\ell_i(\Y_t)$ lineages in deme $i$, of which $s_i=s_i(\Yt_t,\Y_t)$ are emergent.
-  By assumption, at each genealogical event, lineages within a deme are exchangeable:
-  each has an identical probability of being involved.
-  This exchangeability implies that each lineage present in a deme at time $t$ was equally likely to have been one of the emergent lineages.
-  In particular, at time $t$, the probability that $s_i$ of the $\ell_i$ deme-$i$ lineages were among the $r_i$ of $n_i$ lineages emergent in the unpruned genealogy process is the same as the probability that, upon drawing $\ell_i$ balls without replacement from an urn containing $r_i$ red balls and $n_i-r_i$ black balls, exactly $s_i$ of the drawn balls are red, namely
-  \begin{equation*}
-    \frac{\binom{n_i-\ell_i}{r_i-s_i}\,\binom{\ell_i}{s_i}}{\binom{n_i}{r_i}}.
-  \end{equation*}
-  Because our lineages are labeled, each of the $\tbinom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct;
-  just one of these is the one present in $\P$.
-  Moreover, since, again conditional on $\Hr_\T=\H$, the identities of the lineages involved in a genealogical event are random and independent of the identities selected at all other events, we have established that
-  \begin{equation*}
-    \CondProb{\Pr_\T=\P}{\Hr_\T=\H}=\prod_{t\in\event{\H}}{\BinRatio{n(\X_t)}{\ell(\Y_t)}{r^{\U_t}}{s(\Yt_t,\Y_t)}}.
-  \end{equation*}
-  Returning to the possibility that $\H$ is incompatible with $\P$, since $\Prob{\Pr_\T=\P}=0$ if either any $Q^{}_{\U_t}=0$ or $\event{\P}\nsubseteq\event{\H}$, we obtain the result.
-\end{proof}
 
-Next, we show how the likelihood of a pruned genealogies, unconditional on the history, can be computed.
+The proof is given in \cref{sec:proof}.
+
+Next, we show how the likelihood of a pruned genealogy, unconditional on the history, can be computed.
 For this, we use the filter equation technology developed in \cref{sec:filter_eqns}.
-In particular, the following theorem follows immediately from \cref{lemma:sing-filt}.
+In particular, the following theorem follows immediately from \cref{thm:pruned_lik,lemma:sing-filt}.
 
 \begin{thm}
-  \label{thm:pruned_uncond}
+  \label{thm:pruned_filter}
   Suppose that $\P=(\T,\Z,\Y)$ is a given pruned genealogy.
-  Suppose that $w=w(t,x)$ satisfies the initial condition $w(0,x)=p_0(x)$ and the filter equation
+  Suppose that $w=w(t,x)$ is \cadlag\ in $t$ and satisfies the initial condition $w(0,x)=p_0(x)$ and the filter equation
   \begin{equation}
+    \label{eq:pruned_filter_eqn}
     \begin{aligned}
       \frac{\partial{w}}{\partial{t}}(t,x)=
       &\sum_u{\int{w(t,x')\,\alpha_u(t,x',x)\,\phi^{}_u(x,\Yt_t,\Y_t)\,\dd{x'}}}
@@ -822,15 +833,48 @@ In particular, the following theorem follows immediately from \cref{lemma:sing-f
   where $\phi$ is defined in \cref{eq:phidef}.
   Then the likelihood of $\P$ is
   \begin{equation*}
-    \lik(\P)=\int{w(T,x)\,\dd{x}}.
+    \lik=\int{w(T,x)\,\dd{x}}.
   \end{equation*}
 \end{thm}
+
+Alternatively, one can express the likelihood of a pruned genealogy using the adjoint form of the filter equation (see \cref{sec:adjoint_filter}).
+
+\begin{corol}
+  \label[corol]{corol:pruned_filter}
+  If $\P=(\T,\Z,\Y)$ is a given pruned genealogy and $F=F(s,x)$ is \caglad\ in $s$ and satisfies the final condition $\rightlim{F}(\T,x)=1$ and the adjoint filter equation
+  \begin{equation}
+    \label{eq:pruned_adjoint_eqn}
+    \begin{aligned}
+      -\frac{\partial{F}}{\partial{s}}(s,x)=
+      &\sum_u{\int{\leftlim{\alpha}_u(s,x,x')\,\left[\phi^{}_u(x',\Yt_s,\Y_s)\,F(s,x')-F(s,x)\right]\,\dd{x'}}},
+      &s\notin{\event{\P}},\\
+      F(s,x)=&\sum_u{\int{\alpha_u(s,x,x')\,\phi^{}_u(x',\Yt_s,\Y_s)\,\rightlim{F}(s,x')\dd{x'}}},
+      &s\in{\event{\P}},
+    \end{aligned}
+  \end{equation}
+  where $0\le{s}\le{T}$ and $\phi$ is defined in \cref{eq:phidef},
+  then the likelihood of $\P$ is
+  \begin{equation*}
+    \lik=\int{F(0,x)\,p_0(x)\,\dd{x}}.
+  \end{equation*}
+\end{corol}
+
+\begin{remark}
+  \label{rem:ordering}
+  Note that the likelihood given by the foregoing expressions is the likelihood of a given genealogy \emph{in which the samples are ordered} and that, while this order should be compatible with time-ordering, it may not be completely determined by it.
+  In particular, if $n$ samples are taken at one time, there are $n!$ possible orderings of the samples, each of which has an identical likelihood.
+  In consequence, the likelihood given above will differ by a factor of $n!$ from the likelihood computed ignoring ordering of samples.
+  From the standpoint of parameter estimation, this is immaterial, since factors that depend only on the data drop out of the score function.
+  This consideration is relevant, however, in the context of model comparison.
+  %% In effect, we are assuming that the ordering of samples is part of the data.
+\end{remark}
 
 \subsection{Likelihood for obscured genealogies}
 
 Our next result concerns the likelihood of a given obscured genealogy conditional on the history.
 
-\begin{thm}\label{thm:obsc_lik}
+\begin{thm}
+  \label{thm:obsc_lik}
   Suppose that $(\T,\Z)$ is a given obscured genealogy.
   Let $q$ and $\pi$ be probability kernels, such that
   for all $x\in\Xspace$ and $y\in\func{Y}_0(\Z)$,
@@ -862,9 +906,9 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
   \begin{equation}\label{eq:IS1}
     \CondProb{\Pr^{\lab{Z}}_\T=\Z}{\Hr_\T=\H}=\CondExpect{\Indicator{\Pr^{\lab{Z}}_\T=\Z}}{\Hr_\T=\H}.
   \end{equation}
-  Our strategy will be to evaluate \cref{eq:IS1} using importance sampling:
+  Our strategy will be to evaluate \cref{eq:IS1} using a change of measure:
   we will propose pruned genealogies compatible with $\Z$ as sample paths from a stochastic process driven by $\Xr_t$ and
-  evaluate the the expectation in \cref{eq:IS1} by summing over these paths.
+  evaluate the the expectation in \cref{eq:IS1} by a suitably weighted expectation over these paths.
   Conditional on $\Hr_\T=\H$, the initial distribution $q$ and probability kernel $\pi$ generate a Markov chain, $\yrh_k$ such that
   \begin{equation*}
     \begin{gathered}
@@ -899,7 +943,7 @@ The final result shows how to compute the likelihood of an obscured genealogy.
 It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
 
 \begin{thm}
-  \label{thm:obsc_uncond}
+  \label{thm:obsc_filter}
   Let $V=(\T,\Z)$ be a given obscured genealogy.
   Then there are probability kernels $q$ and $\pi$ as in \cref{thm:obsc_lik} such that if
   \begin{equation*}
@@ -923,46 +967,282 @@ It is an immediate consequence of \cref{thm:obsc_lik,lemma:sing-filt}.
   \end{equation*}
   then the likelihood of $V$ is
   \begin{equation*}
-    \lik(V)=\sum_y{\int{w(T,x,y)\,\dd{x}}}.
+    \lik=\sum_{y\in\func{Y}_T(\Z)}{\int{w(T,x,y)\,\dd{x}}}.
   \end{equation*}
 \end{thm}
 
-\Cref{lemma:monte_carlo} shows how this can be computed via Sequential Monte Carlo.
+\Cref{lemma:monte_carlo} shows how this can be computed via sequential Monte Carlo.
+As before, there is also an adjoint form of \cref{thm:obsc_filter}, to wit:
 
-\section{Discussion}
+\begin{corol}
+  \label[corol]{corol:obsc_filter}
+  Let $V=(\T,\Z)$ be a given obscured genealogy and let $\beta$ and $\varPsi$ be defined as in \cref{thm:obsc_filter}.
+  Suppose $F$ is \caglad\ and satisfies the final condition
+  $\rightlim{F}(T,x,y)=1$ for all $x\in\Xspace$, $y\in\func{Y}_T(\Z)$ and also the adjoint filter equation
+  \begin{equation*}
+    \begin{aligned}
+      -&\frac{\partial{F}}{\partial{s}}=
+      \sum_{uy'}{\int{\leftlim{\beta}_u(s,x,x',y,y')\,\left[\leftlim{\varPsi}_u(s,x,x',y,y')\,F(s,x',y')-F(s,x,y)\right]\,\dd{x'}}},
+      &s\notin{\event{\Z}},\\
+      &F(s,x,y)=\sum_{uy'}{\int{\beta_u(s,x,x',y,y')\,\varPsi_u(s,x,x',y,y')\,\rightlim{F}(s,x',y')\,\dd{x'}}},
+      &s\in{\event{\Z}},
+    \end{aligned}
+  \end{equation*}
+  for $0\le{s}\le{T}$.
+  Then the likelihood of $V$ is
+  \begin{equation*}
+    \lik=\sum_{y\in\func{Y}_0(\Z)}{\int{F(0,x,y)\,p_0(x)\,\dd{x}}}.
+  \end{equation*}
+\end{corol}
 
-The theory presented here represents a strict generalization of the existing coalescent and birth-death process approaches to phylodynamic inference.
-In \cref{sec:app-examples}, we demonstrate that both of the latter processes are special cases of the genealogical processes constructed here.
-Importantly, because the theory allows computation of the likelihood via strictly forward-in-time computations, it permits consideration of models for which time-reversal arguments are not available.
-Moreover, inasmuch as the formulae of \cref{thm:obsc_uncond} can be efficiently computed via sequential Monte Carlo, explicit expressions for transition probabilities are not needed:
+
+\newpage
+\subsection{Special cases}
+\label{sec:special_cases}
+
+\subsubsection{Moran model and the Kingman coalescent}
+\label{sec:kingman}
+
+In the Moran model \citep{Moran1958,King2020}, events occur according to a rate-$\mu$ Poisson process.
+At each event, a compound birth-death jump occurs so that the population size, $n$, remains constant (cf.~\cref{fig:event_types}F).
+If we let $\Xr_t$ be the number of events that have occurred by time $t$, then $\Xr_t$ is a simple counting process, which we can use to define the state of the population process.
+Its KFE is then
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation*}
+    \begin{gathered}
+      \frac{\partial{v}}{\partial{t}}=
+      \mu\,v(t,x-1)
+      -\mu\,v(t,x),
+      \qquad
+      v(0,x) =
+      \begin{cases}
+        1, & x=0,\\
+        0, & x>0.
+      \end{cases}
+    \end{gathered}
+  \end{equation*}
+\end{mathsize}%
+
+Since there is only a single deme, and since nothing depends on the state, in writing the corresponding filter equation (\cref{thm:obsc_filter}), we can take $w$ to be independent of both $x$ and $y$.
+
+In the classical case \citep{Kingman1982a}, $m$ samples are taken simultaneously at a single time, $T$.
+Then, if $B$ is the set of branch-times and $\ell(t)$ is the number of lineages in the genealogy at time $t$, upon summing over $x$ and $y$, the filter equation reads
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation}
+    \label[pluralequation]{eq:moran-filter}
+    \begin{gathered}
+      w(0) = 1,
+      \qquad
+      \frac{\partial{w}}{\partial{t}}=
+      \mu\,w(t)\,\left(1-\frac{\tbinom{\ell(t)}{2}}{\tbinom{n}{2}}\right)
+      -\mu\,w(t),\quad t\notin{B},
+      \qquad
+      w(t) = \frac{\mu}{\tbinom{n}{2}}\,\wt(t),\quad t\in{B}.
+    \end{gathered}
+  \end{equation}
+\end{mathsize}%
+Integrating \cref{eq:moran-filter} and taking logarithms yields
+\begin{equation}
+  \label{eq:kingman}
+  \log{\lik}=|B|\,\log{\frac{\mu}{\tbinom{n}{2}}}-\frac{\mu}{\tbinom{n}{2}}\,\sum_{i=1}^{m}\!{\tbinom{i}{2}\,s^{}_i},
+\end{equation}
+where the $s^{}_{i}\coloneq\int{\Indicator{\ell(t)=i}\,\dd{t}}$ are the durations of the \emph{coalescent intervals}, \ie intervals between successive branch-points.
+We recognize \cref{eq:kingman} as the expression for the \citet{Kingman1982a} coalescent likelihood \citep[\eg][]{Wakeley2009}.
+
+More generally, if in addition samples are taken according to a rate-$\psi$ Poisson process such that the set of sample-times in the genealogy is $S=S_0\cup{S_1}$, where $S_0$, $S_1$ are the sets of times of terminal and inline samples, respectively, then the filter equation reads
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation}
+    \label[pluralequation]{eq:moran-filter2}
+    \begin{gathered}
+      w(0) = 1,
+      \qquad
+      \frac{\partial{w}}{\partial{t}}=
+      -\mu\,\frac{\tbinom{\ell(t)}{2}}{\tbinom{n}{2}}\,w(t),
+      \quad t\notin{S\cup{B}},
+      \qquad
+      \frac{w(t)}{\wt(t)} =
+      \begin{cases}
+        \frac{\mu}{\tbinom{n}{2}}, & t\in{B},\\[8pt]
+        \psi\,\left(1-\frac{\ell(t)}{n}\right), & t\in{S_0},\\
+        \frac{\psi}{n}, & t\in{S_1}.
+      \end{cases}
+    \end{gathered}
+  \end{equation}
+\end{mathsize}%
+Integrating \cref{eq:moran-filter2} yields
+\begin{equation}
+  \label{eq:mgp}
+  \log{\lik}-|S|\,\log{\psi}
+  =\sum_{t\in{S_0}}{\log{\left(1-\frac{\ell(t)}{n}\right)}}
+  -|S_1|\,\log{n}
+  +|B|\,\log{\frac{\mu}{\tbinom{n}{2}}}
+  -\frac{\mu}{\tbinom{n}{2}}\,\sum_{i=1}^{\infty}\!{\tbinom{i}{2}\,s^{}_i},
+\end{equation}
+in agreement with the result of the very different derivation of \citet{King2020}.
+
+\subsubsection{Linear birth-death model} %% LBDP
+\label{sec:lbdp}
+
+In this model, the state variable, $\Xr_t$, is the size of a population at time $t$.
+All individuals face the same per-capita birth and death rates, which are $\lambda$ and $\mu$, respectively.
+Accordingly, the Kolmogorov backward equation for this model is
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation*}
+    -\frac{\partial{F}}{\partial{s}}=
+    \lambda\,x\,\left[F(s,x+1)-F(s,x)\right]
+    +\mu\,x\,\left[F(s,x-1)-F(s,x)\right].
+  \end{equation*}
+\end{mathsize}%
+\citet{Stadler2010} considered the case where samples are taken through time at a uniform per-capita rate $\psi$ and lineages extant at time $T$ are sampled with probability $\rho$.
+Let $B$ denote the set of branch-times in an observed genealogy, let $S_0$ and $S_1$ be, respectively, the sets of terminal and inline sample times prior to time $T$, and suppose $n$ lineages are sampled at time $T$.
+Since there is only a single deme, and since nothing depends on the genealogy coloring, in writing the corresponding filter equation, we can apply \cref{corol:obsc_filter} and take $F$ to be independent of $y$.
+After summing over $y$, the regular part of the adjoint filter equation then reads
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation}
+    \label{eq:filter-lbdp-reg}
+    -\frac{\partial{F}}{\partial{s}}(s,x)=
+    \lambda\,x\,\left(1-\frac{\tbinom{\ell(s)}{2}}{\tbinom{x+1}{2}}\right)\,F(s,x+1)
+    +\mu\,x\,F(s,x-1)\\
+    -\left(\lambda+\mu+\psi\right)\,x\,F(s,x),
+  \end{equation}
+\end{mathsize}%
+which holds for $x\ge\ell(s)$ and $s\notin{B\cup{S_0}\cup{S_1}\cup\Set{T}}$.
+The singular part is
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation}
+    \label{eq:filter-lbdp-sing}
+    F(s,x)=\begin{cases}
+    \frac{2\lambda}{x+1}\,\rightlim{F}(s,x+1),
+    &s\in{B},
+    \\[2ex]
+    \psi\left(x-\ell(s)\right)\,\rightlim{F}(s,x),
+    &s\in{S_0},
+    \\[2ex]
+    \psi\,\rightlim{F}(s,x),
+    &s\in{S_1},
+    \\[2ex]
+    \tbinom{x}{n}\,(1-\rho)^{x-n}\,\rho^n,
+    &s=T.
+    \end{cases}
+  \end{equation}
+\end{mathsize}%
+We note that $F(s,x)=0$ when $x<\ell(s)$.
+Let us make the ansatz
+\begin{equation}
+  F(s,x)=C(s)\,G(s)^{x-\leftlim{\ell}(s)}\,H(s)^{\leftlim{\ell}(s)}\,K(x,\leftlim{\ell}(s)),
+\end{equation}
+where $G$, $H$ are smooth functions and $C$ is \caglad\ and piecewise constant, with discontinuities only at genealogical events, so that
+\begin{equation*}
+  \rightlim{F}(s,x)=\rightlim{C}(s)\,G(s)^{x-{\ell}(s)}\,H(s)^{{\ell}(s)}\,K(x,{\ell}(s)).
+\end{equation*}
+Putting these into the first three cases of \cref{eq:filter-lbdp-sing} yields conditions on $C$ and $K$ that are satisfied when
+\begin{equation*}
+  \begin{gathered}
+    K(x,\ell)=\frac{x!}{(x-\ell)!}
+    \qquad\text{and}\qquad
+    \frac{C(s)}{\rightlim{C}(s)}=\begin{cases}
+         {2\lambda}\,H(s),
+         &s\in{B},
+         \\[2ex]
+         \psi\,G(s)\,H(s)^{-1},
+         &s\in{S_0},
+         \\[2ex]
+         \psi,
+         &s\in{S_1}.
+    \end{cases}
+  \end{gathered}
+\end{equation*}
+To satisfy the last case of \cref{eq:filter-lbdp-sing}, we note that $\leftlim{\ell}(T)=n$ and therefore impose the conditions
+\begin{equation}
+  \label[pluralequation]{eq:FGfc}
+  G(T)=1-\rho, \qquad H(T)=1, \qquad C(T)=\frac{\rho^n}{n!}.
+\end{equation}
+Finally, upon substituting the ansatz into \cref{eq:filter-lbdp-reg}, we obtain for $s\notin{B\cup{S_0}\cup{S_1}\cup{\Set{T}}}$,
+\begin{equation*}
+  \begin{split}
+    -\frac{1}{F}\frac{\partial{F}}{\partial{s}}
+    &=
+    -(x-\ell)\,\frac{G'}{G}
+    -\ell\,\frac{H'}{H}\\
+    &=\lambda\,x\,\left(1-\frac{\tbinom{\ell}{2}}{\tbinom{x+1}{2}}\right)\,\frac{x+1}{x+1-\ell}\,G
+    +\mu\,x\,\frac{x-\ell}{x}\,G^{-1}
+    -\left(\lambda+\mu+\psi\right)\,x\\
+    &=\lambda\,(x+\ell)\,G
+    +\mu\,(x-\ell)\,G^{-1}
+    -\left(\lambda+\mu+\psi\right)\,x.\\
+  \end{split}
+\end{equation*}
+If this is to hold for all $x$ and $\ell$, we must have
+\begin{equation}
+  \label[pluralequation]{eq:FGeq}
+  \begin{gathered}
+    -\frac{G'}{G}
+    =\lambda\,G+\mu\,G^{-1}
+    -\left(\lambda+\mu+\psi\right),
+    \qquad
+    -\frac{H'}{H}
+    =2\,\lambda\,G-(\lambda+\mu+\psi).
+  \end{gathered}
+\end{equation}
+In passing, we note that \cref{eq:FGeq} are central to the original derivation of \citet{Stadler2010}.
+\Cref{eq:FGfc,eq:FGeq} form a final-value problem that can be solved by elementary means to obtain closed-form expressions for $G(s)$ and $H(s)$.
+%% \begin{equation*}
+%%   \begin{gathered}
+%%     G = \frac{\delta\,(1-\rho)\,\cosh\left(\tfrac{\delta}{2}\,(s-T)\right)+\left(\lambda-\mu+\psi-\rho\,(\lambda+\mu+\psi)\right)\,\sinh\left(\tfrac{\delta}{2}\,(s-T)\right)}{\delta\,\cosh\left(\tfrac{\delta}{2}\,(s-T)\right)+(\lambda-\mu-\psi-2\,\lambda\,\rho)\,\sinh\left(\tfrac{\delta}{2}\,(s-T)\right)}\\
+%%     H = \left(\cosh\left(\tfrac{\delta}{2}\,(s-T)\right)+\frac{\lambda-\mu-\psi-2\,\lambda\,\rho}{\delta}\,\sinh\left(\tfrac{\delta}{2}\,(s-T)\right)\right)^{-2}\\
+%%     \delta=\sqrt{(\lambda+\mu+\psi)^2-4\,\lambda\,\mu}
+%%   \end{gathered}
+%% \end{equation*}
+\Cref{corol:obsc_filter} then states that $\lik=\int{F(0,x)\,p_0(x)\,\dd{x}}$.
+In particular, conditional on $\Xr_0=x$, we have
+\begin{equation}
+  \lik=\frac{x!}{(x-\ell(0))!}\,\frac{\rho^n}{n!}\,G(0)^{x-{\ell}(0)}\,H(0)^{{\ell}(0)}\,\psi^{|S_1|}\,\prod_{\mathclap{e\in{B}}}{\left(2\,\lambda\,H(e)\right)}\,\prod_{\mathclap{e\in{S_0}}}{\left(\psi\,{G(e)}{H(e)^{-1}}\right)}.
+\end{equation}
+\citet[Thm.~3.5]{Stadler2010} derives an expression for this quantity in the special case $x=\ell(0)=1$, which is equivalent up to the factor of $n!$ explained in \cref{rem:ordering}.
+%% (our $G$, $H$ are related to the $p_0$, $q$ of that paper by the relations $G(s)=p_0(T-s)$, $H(s)=4/q(T-s)$).
+
+The foregoing represents an independent verification of the correctness of the theory in the case of the simple linear birth-death process with constant sampling through time and one bulk-sampling event.
+It should be clear, however, that even within the context of the unstructured, linear, birth-death process, the theory presented here readily accommodates complexities such as time-varying sampling rates, multiple bulk-sampling events at specified or random times, and time-varying birth and death rates.
+
+\section{Discussion}\label{sec:discussion}
+
+The theory presented here represents a generalization of the existing coalescent and birth-death-process approaches to phylodynamic inference.
+Importantly, because it allows computation of the likelihood via strictly forward-in-time computations, it permits consideration of models for which time-reversal arguments are not available.
+Moreover, inasmuch as the formulae of \cref{thm:obsc_filter} can be efficiently computed via sequential Monte Carlo, explicit expressions for transition probabilities are not needed:
 it is sufficient to be able to simulate from the population process.
 This feature of the algorithms---known as the \emph{plug-and-play property} \citep{He2010}---further expands the class of population models that can be confronted with data.
 
 In particular, the theory gives us the freedom to choose models with many demes.
 For deterministic population models, \citet{Volz2012} and \citet{Rasmussen2014a} showed how one could accommodate discrete population structure.
 Their procedures involve solving a large number of differential equations backward in time, relying on the time-reversibility of deterministic dynamics.
-In general, this time-reversibility is not a property of stochastic processes.
+In general, this time-reversibility is not available for stochastic processes.
 
 Some existing methods put rather severe limits on the form of the sampling model and, as \citet{Volz2014a} pointed out, misspecification of the sampling model can lead to large inferential biases.
 With the theory presented here, essentially arbitrary specification of the sampling model is possible.
 In particular, one can posit sampling at a rate which is an arbitrary function of time and state and include discrete sampling events as well.
 It is also possible to condition on the existence of samples.
 
-If Sequential Monte Carlo algorithms are used to compute the likelihoods of \cref{thm:obsc_uncond}, then it is straightforward to simultaneously assimilate information from both time-series and genealogical data.
-One can therefore supplement traditional incidence, disease, or mortality time series with genealogical data in an inferential exercise.
+If sequential Monte Carlo algorithms are used to compute the likelihoods of \cref{thm:obsc_filter}, then it is straightforward to simultaneously assimilate information from both time-series and genealogical data.
+One can therefore supplement traditional incidence, disease, or mortality time series with genealogical data to improve inference.
 
 A limitation of the theory is that the population models are assumed to be pure jump processes, which allows consideration of demographic stochasticity and environmental stochasticity modeled by jumps involving multiple individuals \citep{Breto2011}, but disallows stochastic processes with a diffusive component.
-It should be possible to incorporate of the full range of Markovian environmental stochasticity via extension of this theory to population models containing both diffusion and jump components.
+However, we anticipate that it will be possible to incorporate the full range of Markovian environmental stochasticity via extension of this theory to population models containing both diffusion and jump components.
+
+Similarly, the theory presented here assumes that at most one birth event can occur at a time and that at most one deme can migrate or be sampled at a time (though multiple migrators or samples are permitted).
+These restrictions are not essential, and the proof of \cref{thm:pruned_lik} can be adapted to accommodate relaxations of these assumptions.
+This will be developed in a sequel.
 
 The price of the theory's flexibility is primarily computational.
-When Sequential Monte Carlo is used to evaluate the likelihood in \cref{thm:obsc_uncond}, the computational effort scales linearly with the number of samples.
+When sequential Monte Carlo is used to evaluate the likelihood in \cref{thm:obsc_filter}, the computational effort scales linearly with the number of samples.
 In its most straightforward implementation---using an event-driven algorithm \citep[\eg][]{Gillespie1977a}---it scales nonlinearly with population size in general.
 However, stochastic simulation schemes are available that scale independently of population size \citep{Higham2008}.
-On the other hand, the importance sampling underlying \cref{thm:obsc_uncond} will in general require effort that is exponential in the number of demes.
+On the other hand, the importance sampling underlying \cref{thm:obsc_filter} will in general require effort that is exponential in the number of demes.
 For models with many demes, therefore, approaches for ameliorating or circumventing this curse of dimensionality may be necessary.
-Critically, the substantial freedom one has in the choice of the importance-sampling distribution $\pi$ can be exploited for this purpose.
+Critically, the substantial freedom one has in the choice of the importance-sampling kernel $\pi$ can be exploited for this purpose.
 In particular, since it is permissible to ``borrow information'' from the future by means of the importance sampling, there is hope for highly efficient algorithmic computation.
 
+\phantomsection
+\addcontentsline{toc}{section}{Acknowledgments}
 \section*{Acknowledgments}
 
 This work was supported by grants from
@@ -970,28 +1250,139 @@ the U.S. National Institutes of Health, (Grant \#1R01AI143852 to AAK, \#1U54GM11
 and a grant from the Interface program, jointly operated by the U.S. National Science Foundation and the National Institutes of Health (Grant \#1761603 to ELI and AAK).
 QL acknowledges the support of the Michigan Institute for Data Science.
 
+\phantomsection
 \bibliographystyle{preprint}
 \bibliography{phylopomp}
+\addcontentsline{toc}{section}{References}
 
+\clearpage
 \appendix
-\setcounter{equation}{0}
-\setcounter{figure}{0}
-\setcounter{table}{0}
-%%\setcounter{tcbcounter}{0}
+\numberwithin{equation}{section}
+\numberwithin{table}{section}
+\numberwithin{figure}{section}
 
 \titleformat{\section}[hang]{\large\bfseries}{Appendix \periodafter\thesection}{2ex}{\periodafter}{}
 \renewcommand{\theequation}{\thesection\arabic{equation}}
 \renewcommand{\thefigure}{\thesection\arabic{figure}}
 \renewcommand{\thetable}{\thesection\arabic{table}}
-%%\renewcommand{\thetcbcounter}{\thesection\arabic{tcbcounter}}
+\renewcommand{\thealgorithm}{\thesection\arabic{algorithm}}
+
+\section{Proof of Theorem 1}
+\label[appendix]{sec:proof}
+
+We are given a pruned genealogy $\P=(\T,\Z,\Y)$ and a history $\H$ and wish to compute $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}$.
+First, note that if $\event{\H}\nsupseteq\event{\P}$, then $\H$ and $\P$ are incompatible and $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}=0$.
+Similarly, if any event of $\H$ is incompatible with the local structure of $\P$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}=0$.
+In either case, the conclusion of the theorem follows.
+Let us therefore suppose that neither of these conditions hold.
+
+We can always construct a time-respecting, but otherwise arbitrary ordering of the sample nodes.
+Let $\P_j$ represent the genealogy spanned by the first $j$ samples in this ordering.
+Since each $\P_j$ contains $\P_{j'}$ for all $j'<j$, $\P_j$ is a Markov chain.
+Therefore, we have the factorization
+\begin{equation*}
+  \CondProb{\P}{\H}=\prod_{j}{\CondProb{\P_j}{\P_{j-1},\H}}.
+\end{equation*}
+Each factor, $\CondProb{\P_j}{\P_{j-1},\H}$, can itself be factorized.
+In particular, suppose $\H$ and $\P_{j-1}$ are given and suppose that it is the $K$-th event in $\H$ that introduces the $j$-th sample.
+The $j$-th lineage extends backward in time until it either coalesces with $\P_{j-1}$ or reaches $t=0$ (\cref{fig:embedded_chain}).
+Moreover, since $\P$ is compatible with $\H$, nothing can happen to this lineage between events of $\H$.
+Therefore, we proceed backward, event by event, as follows.
+Since the type of event $K$ is given, the color of the $j$-th lineage just prior to that event is known.
+At each subsequent event, the lineage either emerges from the event or does not.
+Moreover, if the lineage does emerge from the event, the color prior to the event is determined and the color remains unchanged if it does not.
+Suppose that lineage $j$ is in deme $i$ just to the right of event $k<K$ and that the deme-$i$ occupancy and production are $n_i$, $r_i$, respectively.
+Let $\ell_{ij}$, $s_{ij}$ be the lineage count and saturation at this event in $\P_{j-1}$.
+Then the new lineage can be any one of the $n_i-\ell_i$ lineages as yet unaccounted for.
+Of these, $r_i-s_{ij}$ emerge from the event.
+Therefore, the probability that lineage $j$ emerges from the event is $(r_i-s_{ij})/(n_i-\ell_{ij})$ and the probability that it does not is $(n_i-r_i-\ell_{ij}+s_{ij})/(n_i-\ell_{ij})$.
+Let $q_{jk}$ be the former if lineage $j$ does in fact emerge from the event and the latter if it does not.
+Then $\CondProb{\P_j}{\P_{j-1},\H}=\prod_{k}{q_{jk}}$ and $\CondProb{\P}{\H}=\prod_{jk}{q_{jk}}$.
+
+\begin{figure}[b]
+  <<upo2b,results="hide">>=
+  plot_grid(
+    x |>
+      curtail(time=7.7,prune=FALSE,obscure=FALSE) |>
+      plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
+      expand_limits(x=9,y=3)+
+      theme(axis.line=element_line(color=grey(0.8)))+
+      labs(title=expression(P[8])),
+    x |>
+      curtail(time=8,prune=FALSE,obscure=FALSE) |>
+      plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
+      expand_limits(x=9,y=3)+
+      theme(axis.line=element_line(color=grey(0.8)))+
+      labs(title=expression(P[9])),
+    x |>
+      curtail(time=8.8,prune=FALSE,obscure=FALSE) |>
+      plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
+      expand_limits(x=9,y=3)+
+      theme(axis.line=element_line(color=grey(0.8)))+
+      labs(title=expression(P[10])),
+    ncol=1
+  )
+  @
+  \caption{
+    \textbf{Embedded chain of the pruned genealogy process.}
+    Three successive states of the embedded chain of the pruned genealogy process are shown.
+    At each step, a new lineage is added in a sampling event.
+    This lineage extends backward until it either coalesces with the pre-existing genealogy or reaches $t=0$.
+    \Cref{thm:pruned_lik} is derived by computing the probability that it coalesces at each possible point, conditional on the history of the population process.
+    \label{fig:embedded_chain}
+  }
+\end{figure}
+
+Now fix $k$ and consider the cumulative product $\prod_{m=1}^{j}{q_{mk}}$.
+Clearly $\ell_{1,k}=s_{1,k}=0$ and, if lineage $j$ has not already coalesced to the right of $k$, then $\ell_{j+1,k}=\ell_{j,k}+1$.
+Moreover, if $j$ emerges from $k$, then $s_{j+1,k}=s_{j,k}+1$ and $s_{j+1,k}=s_{j,k}$ if it does not.
+Therefore, as we accumulate each successive lineage $j$, we move one step to the right in the following diagram.
+
+\input{triangle3}
+
+\noindent
+At each step, the lineage count increases by 1 and the saturation either increases by a unit or stays the same.
+The probability of each option is indicated on the corresponding arrow.
+Although there are multiple paths by which the process may arrive at the final lineage count and saturation, the product of the probabilities along each path is the same:
+\begin{equation*}
+  \frac{\tbinom{n_i-\ell_i}{r_i-s_i}}{\tbinom{n_i}{r_i}}.
+\end{equation*}
+Moreover, since each of the options is independent of the others,
+\begin{equation*}
+  \prod_{j}{q_{jk}}=\BinRatio{n}{\ell}{r}{s},
+\end{equation*}
+the latter being the binomial ratio defined in \cref{sec:binomial_ratio}.
+
+Alternatively, one can reason as follows.
+Conditional on $\Hr_\T=\H$, at each time $t\in\event{\H}$, a jump of mark $\U_t$ occurred, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
+In $\P$, at time $t$, there are $\ell_i=\ell_i(\Y_t)$ lineages in deme $i$, of which $s_i=s_i(\Yt_t,\Y_t)$ are emergent.
+By assumption, at each genealogical event, lineages within a deme are exchangeable:
+each has an identical probability of being involved.
+This exchangeability implies that each lineage present in a deme at time $t$ was equally likely to have been one of the emergent lineages.
+In particular, at time $t$, the probability that $s_i$ of the $\ell_i$ deme-$i$ lineages were among the $r_i$ of $n_i$ lineages emergent in the unpruned genealogy process is the same as the probability that, upon drawing $\ell_i$ balls without replacement from an urn containing $r_i$ red balls and $n_i-r_i$ black balls, exactly $s_i$ of the drawn balls are red, namely
+\begin{equation*}
+  \frac{\binom{n_i-\ell_i}{r_i-s_i}\,\binom{\ell_i}{s_i}}{\binom{n_i}{r_i}}.
+\end{equation*}
+Because the lineages are labeled, each of the $\tbinom{\ell_i}{s_i}$ equally probable sets of $s_i$ lineages is distinct;
+just one of these is the one present in $\P$.
+Moreover, since, again conditional on $\Hr_\T=\H$, the identities of the lineages involved in a genealogical event are random and independent of the identities selected at all other events, we have established that
+\begin{equation*}
+  \CondProb{\Pr_\T=\P}{\Hr_\T=\H}=\prod_{t\in\event{\H}}{\BinRatio{n(\X_t)}{\ell(\Y_t)}{r^{\U_t}}{s(\Yt_t,\Y_t)}}.
+\end{equation*}
+
+Returning to the possibility that $\H$ is incompatible with $\P$, since $\Prob{\Pr_\T=\P}=0$ if either any $Q^{}_{\U_t}=0$ or $\event{\P}\nsubseteq\event{\H}$, we obtain the result.
+\hfill\qedsymbol
+
 
 \section{Filter equations}
-\label{sec:filter_eqns}
+\label[appendix]{sec:filter_eqns}
 
-The likelihoods that appear in \cref{thm:pruned_uncond,thm:obsc_uncond} are integrals over large sets of histories.
+\subsection{Definition}
+
+The likelihoods that appear in \cref{thm:pruned_filter,thm:obsc_filter} are integrals over large sets of histories.
 As such, explicit expressions for them are not available, and we require mathematical tools to allow us to manipulate these quantities and devise algorithms for their numerical solution.
 The \emph{filter equations} we introduce here are suitable for these purposes, and we devote this appendix to exposing their essential properties.
-This extremely convenient formalism has, to our knowledge, not been thoroughly exploited, though we note their resemblance to the constructions of \citet{Ogata1978}, \citet{Puri1986}, \citet{Kliemann1990}, and \citet{Giesecke2018}.
+This extremely convenient formalism has, to our knowledge, not been thoroughly exploited in the context we introduce here, though we note their resemblance to the constructions of \citet{Ogata1978}, \citet{Puri1986}, \citet{Kliemann1990}, and \citet{Giesecke2018}.
 
 \begin{defn}
   Let $\Xr_t$ be a continuous-time Markov process with KFE
@@ -1004,12 +1395,12 @@ This extremely convenient formalism has, to our knowledge, not been thoroughly e
     \end{equation}
   \end{mathsize}%
   Suppose that $B:\Rp\times\Xspace^2\to\Rp$ and $\lambda:\Rp\times\Xspace\to\mathbb{R}$ are are given measurable functions.
-  Let $S\subset\Rp$ be countable and locally finite (\ie $S\cap{[0,t]}$ is finite for all $t>0$).
+  Let $S\subset\Rp$ be locally finite (\ie $S\cap{[0,t]}$ is finite for all $t>0$).
   Then the system of equations
   \begin{mathsize}{9pt}{11pt}
     \begin{align}
-      \frac{\partial{w}}{\partial{t}}(t,x)&=
-      \int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
+      \frac{\partial{w}}{\partial{t}}(t,x)
+      &=\int{w(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}
       -\int{w(t,x)\,\beta(t,x,x')\,\dd{x'}}
       -\lambda(t,x)\,w(t,x),
       \qquad
@@ -1020,7 +1411,7 @@ This extremely convenient formalism has, to our knowledge, not been thoroughly e
       \label{eq:filter-eq-defn-sing}
     \end{align}
   \end{mathsize}%
-  is called the \emph{filter equation} \emph{generated by} $\beta$, with \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observation times} $S$.
+  is called the \emph{filter equation} \emph{generated by} $\beta$, with \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observed event times} $S$.
   The process $\Xr_t$ is said to be the \emph{driver} of the filter equation.
   \Cref{eq:filter-eq-defn-reg} is the \emph{regular part} of the filter equation;
   \Cref{eq:filter-eq-defn-sing} is known as the \emph{singular part}.
@@ -1029,6 +1420,8 @@ This extremely convenient formalism has, to our knowledge, not been thoroughly e
 \begin{remark}
   Trivially, a Kolmogorov forward equation is itself a filter equation with boost $1$, decay $0$, and $S=\emptyset$.
 \end{remark}
+
+\subsection{Properties}
 
 The following results show how filter equations allow one to integrate over random histories.
 First, \cref{lemma:reg-filt} shows how one integrates over the full space of histories using a regular filter equation.
@@ -1056,24 +1449,21 @@ First, \cref{lemma:reg-filt} shows how one integrates over the full space of his
 \end{lemma}
 \begin{proof}
   Since $\Prob{\Vr_0=1}=1$, $\lambda_0(\mathcal{E})=\Prob{\Xr_0\in\mathcal{E}}$, which implies that $w(0,x)=p_0(x)$.
-  For $t>0$ and $\Delta>0$ sufficiently small, the expectation can be broken into three terms, according to whether $\H_t$ has zero, one, or more than one event in $\halfclosed{t-\Delta,t}$.
+  For $t>0$ and $\Delta>0$, the expectation can be broken into three terms, according to whether $\H_t$ has zero, one, or more than one event in $\halfclosed{t,t+\Delta}$.
   Accordingly, as $\Delta\downarrow{0}$,
   \begin{equation*}
-    \begin{aligned}
-      w(t,x)=&\left(1-\Delta\,\int{\alpha(t-\Delta,x,x')\,\dd{x'}}\right)\,w(t-\Delta,x)\\
-      &\qquad+\Delta\,\int{\alpha(t-\Delta,x',x)\,B(t-\Delta,x',x)\,w(t-\Delta,x')\,\dd{x'}}+o(\Delta).
-    \end{aligned}
+    w(t+\Delta,x)=\left(1-\Delta\,\int{\alpha(t,x,x')\,\dd{x'}}\right)\,w(t,x)+\Delta\,\int{\alpha(t,x',x)\,B(t,x',x)\,w(t,x')\,\dd{x'}}+o(\Delta).
   \end{equation*}
-  In the limit, we obtain \cref{eq:reg-filter-eq2}, the regular filter equation generated by $\alpha$, with boost $B$ and zero decay.
-  %%  \AAK{[This depends on $\alpha$ and $B$ being continuous in their first arguments. We have assumed they are continuous almost everywhere.]}
+  Forming a difference quotient and taking the limit, we obtain \cref{eq:reg-filter-eq2}.
+  Note that here we use the assumption that $\alpha$ and $B$ are \cadlag\ as functions of $t$.
 \end{proof}
 
 When events are known to have occurred at particular times, it is of interest to integrate over those histories that include an event at each of these times.
 This leads to singular filter equations, as the next lemma shows.
 Before we state the lemma, some terminology is needed.
 Let $\mathbb{S}$ be the space of increasing, locally finite sequences in $\Rp$, with the topology induced by the Skorokhod metric and Lebesgue measure.
-For $t\in\Rp$ and $s\in\mathbb{S}$, let $s^{}_t\coloneq{s\cap{[0,t]}}$.
-Thus if $s\in\mathbb{S}$ and $s^{}_t=(\hat{s}_1,\dots,\hat{s}_K)$, then the infinitesimal element of Lebesgue measure at $s^{}_t$ is $\dd{s^{}_t}=\prod_{n=1}^{K}\dd{\hat{s}_n}$.
+For $t\in\Rp$ and $S\in\mathbb{S}$, let $S^{}_t\coloneq{S\cap{[0,t]}}$.
+Thus if $S\in\mathbb{S}$ and $S^{}_t=(\hat{s}_1,\dots,\hat{s}_K)$, then the infinitesimal element of Lebesgue measure at $S^{}_t$ is $\dd{S^{}_t}=\prod_{n=1}^{K}\dd{\hat{s}_n}$.
 
 \begin{lemma}
   \label{lemma:sing-filt}
@@ -1082,37 +1472,99 @@ Thus if $s\in\mathbb{S}$ and $s^{}_t=(\hat{s}_1,\dots,\hat{s}_K)$, then the infi
   \begin{equation*}
     \CondExpect{\Vr_t}{\Hr_t=\H_t}=\prod_{\mathclap{e\;\in\;\event{\H_{t}}}}{B(e,\Xt_e,\X_e)}.
   \end{equation*}
-  Let $\lambda_t$ be a family measures on $\Xspace\times\mathbb{S}$ defined by
+  Let $\lambda_t$ be a family of measures on $\Xspace\times\mathbb{S}$ defined by
   \begin{equation*}
-    \lambda_t(\mathcal{E},\mathcal{S})=\Expect{\Vr_t\cdot\Indicator{\Xr_t\in{\mathcal{E}}}\cdot\Indicator{\exists{s\in\mathcal{S}}\:\text{s.t.}\:\event{\Hr_t}\supseteq{s^{}_t}}},
+    \lambda_t(\mathcal{E},\mathcal{S})=\Expect{\Vr_t\cdot\Indicator{\Xr_t\in{\mathcal{E}}}\cdot\Indicator{\exists{S\in\mathcal{S}}\:\text{s.t.}\:\event{\Hr_t}\supseteq{S^{}_t}}},
   \end{equation*}
   whenever $\mathcal{E}\subseteq\Xspace$ and $\mathcal{S}\subseteq\mathbb{S}$ are measurable.
-  Let $w(t,x,s)$ be the density of this measure, \ie
+  Let $w(t,x,S)$ be the density of this measure, \ie
   \begin{equation*}
-    \lambda_t(\dd{x}\,\dd{s})=w(t,x,s)\,\dd{x}\,\dd{s^{}_t}.
+    \lambda_t(\dd{x}\,\dd{S})=w(t,x,S)\,\dd{x}\,\dd{S^{}_t}.
   \end{equation*}
   Then $w$ satisfies
   \begin{align}
     \label{eq:two-part-filter-reg}
-    \frac{\partial{w}}{\partial{t}}(t,x,s)&=
-    \int{w(t,x',s)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
-    -\int{w(t,x,s)\,\alpha(t,x,x')\,\dd{x'}},\qquad
-    &t\notin{s},\\
+    \frac{\partial{w}}{\partial{t}}(t,x,S)
+    &=\int{w(t,x',S)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}}
+    -\int{w(t,x,S)\,\alpha(t,x,x')\,\dd{x'}},\qquad
+    &t\notin{S},\\
     \label{eq:two-part-filter-sing}
-    w(t,x,s)&=\int{\wt(t,x',s)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
-    &t\in{s}.
+    w(t,x,S)&=\int{\wt(t,x',S)\,\alpha(t,x',x)\,B(t,x',x)\,\dd{x'}},\qquad
+    &t\in{S}.
   \end{align}
 \end{lemma}
 \begin{proof}
-  The proof proceeds by induction on the cardinality of $s_t$.
-  The base case, for which $s_t=\emptyset$, follows immediately from \cref{lemma:reg-filt}.
-  Assuming that it holds for $|s^{}_t|<K$, one has only to verify \cref{eq:two-part-filter-sing}.
+  The proof proceeds by induction on the cardinality of $S_t$.
+  The base case, for which $S_t=\emptyset$, follows immediately from \cref{lemma:reg-filt}.
+  Assuming that it holds for $|S^{}_t|<K$, one has only to verify \cref{eq:two-part-filter-sing}.
   This can be accomplished by integrating \cref{eq:Hdens} directly.
 \end{proof}
 
 \begin{remark}
   In the same way that \cref{eq:kfe-reg,eq:kfe-sing} can be represented as a single equation by means of a Dirac delta notation, the \cref{eq:two-part-filter-reg,eq:two-part-filter-sing} can be collapsed into a more compact form if $\beta$ is allowed to have atoms at a countable set of time-points and the boost $B$ is adjusted appropriately.
 \end{remark}
+
+\subsection{Adjoint filter equation}
+\label{sec:adjoint_filter}
+
+Given driver, boost, and decay functions, a filter equation determines a family of measures on $\Xspace$.
+Specifically, suppose that, for $s\le{t}$ and $S\subset{\R}$ locally finite, $w(s,x,t,x')$ satisfies the filter equation
+\begin{align}
+  \label{eq:gen_filt1}
+  w(s,x,s,x') = &\delta(x,x')\\
+  \label{eq:gen_filt2}
+  \frac{\partial{w}}{\partial{t}}(s,x,t,x')=
+  &\int{w(s,x,t,\xi)\,\beta(t,\xi,x')\,B(t,\xi,x')\,\dd{\xi}}\\
+  &\qquad -\int{w(s,x,t,x')\,\beta(t,x',\xi)\,\dd{\xi}}
+  -\lambda(t,x')\,w(s,x,t,x'),
+  \qquad
+  &t\notin{S},\notag\\
+  \label{eq:gen_filt3}
+  w(s,x,t,x')=&\int{\wt(s,x,t,\xi)\,\beta(t,\xi,x')\,B(t,\xi,x')\,\dd{\xi}},\qquad
+  &t\in{S}.
+\end{align}
+Let $\omega$ be the measure whose density is $w$:
+\begin{equation*}
+  \omega(s,x,t,\mathcal{E})\coloneq\int_{\mathcal{E}}{w(s,x,t,x')\,\dd{x'}}.
+\end{equation*}
+If $f:\Xspace\to\R$ is a measurable function, then one defines its integral with respect to this measure in the usual way:
+\begin{equation*}
+  \omega(s,x,t,f) = \int{\omega(s,x,t,\dd{x'})\,f(x')} = \int{w(s,x,t,x')\,f(x')\,\dd{x'}}.
+\end{equation*}
+In particular, $\omega(s,x,t,f)$ is itself a measurable function of $x$ and we have the Chapman-Kolmogorov-like relation
+\begin{equation}\label{eq:chapkolm}
+  \omega(s,x,t,f) = \int{\omega(s,x,\tau,\omega(\tau,\xi,t,f))\,\dd{\xi}} = \int{\omega(s,x,\tau,\dd{\xi})\,\omega(\tau,\xi,t,f)},
+\end{equation}
+whenever $s\le{\tau}\le{t}$.
+Let us now fix $t$ and $f$ and write $F(s,x)=\omega(s,x,t,f)$.
+Let us take $\beta$, $B$, and $\lambda$ to be \cadlag\ in $t$ and $F$ to be \caglad\ in $s$.
+Applying \cref{eq:chapkolm} we obtain, for $\Delta>0$ and $s\notin{S}$,
+\begin{equation*}
+  \begin{split}
+    F(s-\Delta,x) = &\left(1-\Delta\,\int{\beta(s-\Delta,x,\xi)\,\dd{\xi}}-\Delta\,\lambda(s-\Delta,x)\right)\,F(s,x)\\
+    &\qquad +\Delta\,\int{\beta(s-\Delta,x,\xi)\,B(s-\Delta,x,\xi)\,F(s,\xi)\,\dd{\xi}}+o(\Delta).
+  \end{split}
+\end{equation*}
+Taking $\Delta\downarrow{0}$ gives
+\begin{equation}\label{eq:adjfilt1}
+  \begin{split}
+    -\frac{\partial{F}}{\partial{s}}
+    %%    &= \int{\leftlim{\beta}(s,x,\xi)\,\leftlim{B}(s,x,\xi)\,F(s,\xi)\,\dd{\xi}}-\int{\leftlim{\beta}(s,x,\xi)\,F(s,x)\,\dd{\xi}}-\leftlim{\lambda}(s,x)\,F(s,x)\\
+    &= \int{\leftlim{\beta}(s,x,\xi)\,\left[\leftlim{B}(s,x,\xi)\,F(s,\xi)-F(s,x)\right]\,\dd{\xi}}-\leftlim{\lambda}(s,x)\,F(s,x).
+  \end{split}
+\end{equation}
+For $s\in{S}$, we have
+\begin{equation}\label{eq:adjfilt2}
+  F(s,x)
+  =\int{\omega(s,x,s,\dd{\xi})\,\rightlim{F}(s,\xi)}
+  =\int{\beta(s,x,\xi)\,B(s,x,\xi)\,\rightlim{F}(s,\xi)\,\dd{\xi}},
+\end{equation}
+where $\rightlim{F}$ denotes the right-limit of $F$.
+\Cref{eq:adjfilt1,eq:adjfilt2} constitute the \emph{adjoint form} of \cref{eq:gen_filt1,eq:gen_filt2,eq:gen_filt3}.
+Together with the final condition $F(t,x)=f(x)$, these determine $\omega(s,x,t,f)$ for all $s\le{t}$.
+Note that, when $B=1$ and $\lambda=0$, the adjoint filter equation becomes the familiar Kolmogorov backward equation (\cref{eq:kbe}) for the driving process.
+
+\subsection{Solving filter equations by sequential Monte Carlo}
 
 Filter equations afford a convenient means of computing expectations and likelihoods for pure jump processes.
 This is facilitated by the following Lemma, the statement of which uses a one-sided Dirac delta function.
@@ -1160,12 +1612,16 @@ whenever $f$ is \cadlag\ and $-\infty\le{a}<{b}\le{\infty}$.
   Hence, by evaluating the first integral with respect to $v$, the second with respect to $v'$, and the third by parts, we obtain
   \begin{mathsize}{9pt}{10pt}
     \begin{equation*}
-      \begin{aligned}
-        \frac{\partial{w}}{\partial{t}}(t,x)
-        =&\int{v'\,u(t,x',v')\,\beta(t,x',x)\,B(t,x',x)\,\dd{v'}\,\dd{x'}}
-        -\int{v\,u(t,x,v)\,\beta(t,x,x')\,\dd{v}\,\dd{x'}}\\
-        &\qquad-\lambda(t,x)\,\int{v\,u(t,x,v)\,\dd{v}},
-      \end{aligned}
+      %% \begin{aligned}
+      %%   \frac{\partial{w}}{\partial{t}}(t,x)
+      %%   =&\int{v'\,u(t,x',v')\,\beta(t,x',x)\,B(t,x',x)\,\dd{v'}\,\dd{x'}}
+      %%   -\int{v\,u(t,x,v)\,\beta(t,x,x')\,\dd{v}\,\dd{x'}}\\
+      %%   &\qquad-\lambda(t,x)\,\int{v\,u(t,x,v)\,\dd{v}},
+      %% \end{aligned}
+      \frac{\partial{w}}{\partial{t}}(t,x)
+      =\int{v'\,u(t,x',v')\,\beta(t,x',x)\,B(t,x',x)\,\dd{v'}\,\dd{x'}}
+      -\int{v\,u(t,x,v)\,\beta(t,x,x')\,\dd{v}\,\dd{x'}}
+      -\lambda(t,x)\,\int{v\,u(t,x,v)\,\dd{v}},
     \end{equation*}
   \end{mathsize}%
   which is simplified to obtain \cref{eq:filter-eq-defn-reg}.
@@ -1183,17 +1639,19 @@ whenever $f$ is \cadlag\ and $-\infty\le{a}<{b}\le{\infty}$.
   which is equivalent to \cref{eq:filter-eq-defn-sing}
 \end{proof}
 
-\begin{remark}
-  \Cref{eq:filterlemma} are recognizable as the KFE of a certain process $(\Xr_t,\Vr_t)$.
-  In particular, the driver $\Xr_t$ has KFE \cref{eq:kfe2}.
-  $\Vr_t$ is \emph{directed} by $\Xr_t$ in the sense that $\Vr$ has jumps wherever $\Xr$ does:
-  when $\Xr$ jumps at time $t$ from $x$ to $x'$, $\Vr$ jumps by the multiplicative factor $B(t,x,x')\ge{0}$.
-  Between jumps, $\Vr_t$ decays deterministically and exponentially at rate $\lambda(t,x)$.
-  At the known times in $S$, $\Xr$ jumps according to the probability kernel $\pi$ and, $\Vr$ jumps by the factor $A(t,x)\,B(t,x,x')$.
-  If we view $\Vr_t$ as a weight, then \cref{lemma:monte_carlo} tells us how the $\Vr_t$-weighted average of $\Xr_t$ evolves in time:
-  this average is simply $\int{w(t,x)\,\dd{x}}$.
-  Thus, \cref{lemma:monte_carlo} shows how to integrate \cref{eq:two-part-filter-reg,eq:two-part-filter-sing} in the Monte Carlo sense.
-\end{remark}
+\Cref{eq:filterlemma} are recognizable as the KFE of a certain process $(\Xr_t,\Vr_t)$.
+In particular, the driver $\Xr_t$ has KFE \cref{eq:kfe2}.
+$\Vr_t$ is \emph{directed} by $\Xr_t$ in the sense that $\Vr$ has jumps wherever $\Xr$ does:
+when $\Xr$ jumps at time $t$ from $x$ to $x'$, $\Vr$ jumps by the multiplicative factor $B(t,x,x')\ge{0}$.
+Between jumps, $\Vr_t$ decays deterministically and exponentially at rate $\lambda(t,x)$.
+At the known times in $S$, $\Xr$ jumps according to the probability kernel $\pi$ and, $\Vr$ jumps by the factor $A(t,x)\,B(t,x,x')$.
+If we view $\Vr_t$ as a weight, then \cref{lemma:monte_carlo} tells us how the $\Vr_t$-weighted average of $\Xr_t$ evolves in time:
+this average is simply $\int{w(t,x)\,\dd{x}}$.
+Thus, \cref{lemma:monte_carlo} gives a recipe for the integration of \cref{eq:two-part-filter-reg,eq:two-part-filter-sing} in the Monte Carlo sense.
+A pseudocode representation of this procedure is given in \cref{alg:smc}.
+This is a simple sequential importance sampling algorithm and as such can be improved upon in many ways \citep{Doucet2001,Arulampalam2002,Wills2023}.
+Our purpose here is merely to illustrate the implications of \cref{lemma:monte_carlo} by showing how the features of \cref{eq:filter-eq-defn-reg,eq:filter-eq-defn-sing} translate into computations, in the simplest possible context.
+
 
 %% Filter equations allow us to pass easily between equivalent representations of a process.
 %% For example, an equivalent way of representing $\Xr_t$ is in terms of its embedded chain and event times.
@@ -1234,12 +1692,83 @@ whenever $f$ is \cadlag\ and $-\infty\le{a}<{b}\le{\infty}$.
 %%   Note that this makes the appropriate importance-sampling correction.
 %% \end{compactenum}
 
+\begin{algorithm}[t]
+  \caption{
+    \textbf{Sequential Monte Carlo filter.}
+    The following is a simple Monte Carlo scheme for the filter given by \cref{eq:filter-eq-defn-reg,eq:filter-eq-defn-sing}.
+    It takes as input an initial time $t_0$, a final time $T$, and a sequence of observed event times $S=\Set{t_1,\dots,t_K}$.
+    We order the latter so that $t_0\le{t_1}<t_2<\cdots<t_K\le{t_{K+1}}\coloneq{T}$.
+    In addition, we are given event rates $\beta$, a boost function $B$, a decay function $\lambda$, and the initial distribution of latent states $p_0$.
+    As in \cref{lemma:monte_carlo}, we let
+    \begin{equation*}
+      \begin{gathered}
+        A(t,x)\coloneq{\int{\beta(t,x,x')\,\dd{x'}}},
+        \qquad
+        \pi(t,x,\dd{x'})\coloneq\frac{\beta(t,x,x')}{A(t,x)}\,\dd{x'}.
+      \end{gathered}
+    \end{equation*}
+    For a given, fixed ensemble size, $J\in\Zp$, the algorithm returns an unbiased Monte Carlo estimate, $\rdm{\hat{\lik}}$, of the likelihood.
+  }
+  \label{alg:smc}
+  \begin{algorithmic}[1]
+    %% \Require{
+    %%   times, $S$;
+    %%   initial latent-state distribution, $p_0$;
+    %%   event rates, $\beta$;
+    %%   boost function, $B$;
+    %%   decay function, $\lambda$;
+    %%   ensemble size, $J\in\Zp$.
+    %% }
+    %% \Ensure{
+    %%   unbiased Monte Carlo likelihood estimate, $\rdm{\lik}$
+    %% }
+    \Procedure{SMCFilter}{$t_0,T,S,\beta,B,\lambda,p_0,J$}
+    \Statex Initialize an ensemble of latent states and weights:
+    \State
+    $x_j\sim{p_0(\cdot)}$, for $j=1,\dots,J$
+    \State
+    $w_j\gets{1}$, for $j=1,\dots,J$
+    \For{$k=0,\dots,K$}
+    \Comment loop over observed event times
+    \For{$j=1,\dots,J$}
+    \Comment loop over the ensemble
+    \State $t\gets{t_{k}}$
+    \If{$k>0$}
+    \Comment singular part (\cref{eq:filter-eq-defn-sing})
+    \State $x'_j\sim\pi(t,x_j,\cdot)$
+    \State $w_j\gets{w_j\,A(t,x_j)\,B(t,x_j,x'_j)}$
+    \State $x_j\gets{x'_j}$
+    \EndIf
+    \While{$t<t_{k+1}$}
+    \Comment regular part (\cref{eq:filter-eq-defn-reg})
+    \State $\Delta\sim{\mathrm{Exp}(A(t,x_j))}$
+    \Comment Sojourn times are exponentially distributed.
+    \If{$t+\Delta<{t_{k+1}}$}
+    \State $x'_j\sim{\pi(t,x_j,\cdot)}$
+    \State $t'\gets{t+\Delta}$
+    \State $w_j\gets{w_j\,B(t',x_j,x'_j)\,\exp{(-\lambda(t,x_j)\,\Delta)}}$
+    \State $x_j\gets{x'_j}$
+    \State $t\gets{t'}$
+    \Else
+    \State $\Delta\gets{t_{k+1}-t}$
+    \State $w_j\gets{w_j\,\exp{(-\lambda(t,x_j)\,\Delta)}}$
+    \State $t\gets{t_{k+1}}$
+    \EndIf
+    \EndWhile
+    \EndFor
+    \EndFor
+    \State $\rdm{\hat{\lik}}\gets\tfrac{1}{J}\displaystyle\sum_{j}{w_j}$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
 \section{Examples}
-\label{sec:app-examples}
+\label[appendix]{sec:app-examples}
 
 \subsection{SIRS model} %% SIRS
 
-\citet{King2022} worked out formulas for the exact likelihood of a genealogy induced by an SIRS model.
+\citet{King2022} worked out formulae for the exact likelihood of a genealogy induced by an SIRS model.
 The theory developed in this paper applies, but since there is only one deme in this model, this is a simple case.
 Its state vector is $x=(S,I,R)$ and its KFE is
 \begin{mathsize}{9pt}{10pt}
@@ -1261,18 +1790,18 @@ This model has one deme and occupancy function $n(x)=I$.
 There are four kinds of jumps:
 transmission, recovery, waning of immunity, and sampling.
 Accordingly, the marks are $\Jumps=\Set{\lab{Trans},\lab{Recov},\lab{Wane},\lab{Sample}}$.
-\Cref{tab:sirs_model_elements} gives $\alpha_u$, $r_u$, and the event type for each of these marks.
+\Cref{tab:sirs_model_elements} gives $\alpha_u$, $r^u$, and the event type for each of these marks.
 
 \begin{table}[h!]
   \caption{
     \label{tab:sirs_model_elements}
     Elements of the SIRS model pertinent to the genealogy process.
-    The table shows the rate ($\alpha_u$), jump ($x\mapsto{x'}$), production ($r_u$), and event type for each of the model's four marks ($u$).
+    The table shows the rate ($\alpha_u$), jump ($x\mapsto{x'}$), production ($r^u$), and event type for each of the model's four marks ($u$).
   }
   %% \renewcommand{\arraystretch}{1.2}
   \begin{tabular}{ccccl}
     \hline\hline
-    $u$ & $\alpha_u$ \bigstrut & $x\mapsto{x'}$ \bigstrut & $r_u$ \bigstrut & Event type \\
+    $u$ & $\alpha_u$ \bigstrut & $x\mapsto{x'}$ \bigstrut & $r^u$ \bigstrut & Event type \\
     \hline
     $\lab{Trans}$  & $\frac{\beta S I}{N}$ \bigstrut & $(S,I)\mapsto(S-1,I+1)$ \bigstrut & 2 & pure birth \\
     $\lab{Recov}$  & $\gamma I$ \bigstrut & $(I,R)\mapsto(I-1,R+1)$ \bigstrut & 0 & pure death \\
@@ -1446,7 +1975,7 @@ params |>
   \end{center}
   \caption{
     \label{fig:sirs_example}
-    Likelihood computation for the SIRS model by Sequential Monte Carlo.
+    Likelihood computation for the SIRS model by sequential Monte Carlo.
     (A)~A~simulated genealogy for $\beta=\Sexpr{sirs_params$Beta}$, $\gamma=\Sexpr{sirs_params$gamma}$, $\omega=\Sexpr{sirs_params$omega}$, $\psi=\Sexpr{sirs_params$psi}$, $(S_0,I_0,R_0)=(\Sexpr{with(sirs_params,c(S0,I0,R0))})$.
     (B)~A~slice through the likelihood surface at the true parameters in the $\gamma$-direction.
     Each point is a distinct Monte Carlo estimate.
@@ -1476,27 +2005,27 @@ The KFE for the population process is
   \end{equation*}
 \end{mathsize}%
 where $N=S+E+I+R$ is the total population size.
-Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
+Note that the terms associated with sampling cancel each other in the KFE, since, with the state space defined as above, sampling has no effect on the state.
 
 This model has two demes: $\Demes=\Set{\lab{E},\lab{I}}$.
 Its deme occupancy function is $n(x)=(E,I)$.
 There are five kinds of jumps:
 transmission, progression, recovery, waning of immunity, and sampling.
 The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab{Wane},\lab{Sample}}$.
-\Cref{tab:seirs_model_elements} gives $\alpha_u$, $r_u$, and the event type for each of these marks.
+\Cref{tab:seirs_model_elements} gives $\alpha_u$, $r^u$, and the event type for each of these marks.
 
-\input{figs/seirs_events}
+\input{seirs_events}
 
 \begin{table}[h!]
   \caption{
     \label{tab:seirs_model_elements}
     Elements of the SEIRS model pertinent to the genealogy process.
-    The table shows the rate ($\alpha_u$), jump ($x\mapsto{x'}$), production ($r_u$), and event type for each of the model's five marks ($u$).
+    The table shows the rate ($\alpha_u$), jump ($x\mapsto{x'}$), production ($r^u$), and event type for each of the model's five marks ($u$).
   }
   %% \renewcommand{\arraystretch}{1.2}
   \begin{tabular}{ccccl}
     \hline\hline
-    $u$ & $\alpha_u$ & $x\mapsto{x'}$ & $r_u$ & Event type \\
+    $u$ & $\alpha_u$ & $x\mapsto{x'}$ & $r^u$ & Event type \\
     \hline
     $\lab{Trans}$  & $\frac{\beta S I}{N}$ \bigstrut & $(S,E)\mapsto(S-1,E+1)$  \bigstrut & $(1,1)$ & pure birth \\
     $\lab{Prog}$   & $\sigma E$ \bigstrut & $(E,I)\mapsto(E-1,I+1)$ \bigstrut & $(0,1)$ & pure migration \\
@@ -1513,7 +2042,7 @@ The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab
     Elements of a scheme for numerically computing the likelihood under the SEIRS model.
     The regular portion of the filter equation holds in between genealogical events (\ie for $t\notin{{B}\cup{S_0}\cup{S_1}}$);
     the singular portion describes the effect of these events ($t\in{{B}\cup{S_0}\cup{S_1}}$).
-    Each line corresponds to a potential event, but only those for which $Q=1$ appear in the equation.
+    Each line corresponds to a potential event.
     An event with mark $u$ and saturation $s$ has the boost given by the binomial ratio shown (third column).
     The $y\mapsto{y'}$ column depicts the proposed painting schematically, and $\pi$ is the probability of that proposal.
     Blue is used for the $\lab{E}$ deme and yellow for the $\lab{I}$ deme.
@@ -1580,58 +2109,56 @@ The corresponding marks are $\Jumps=\Set{\lab{Trans},\lab{Prog},\lab{Recov},\lab
   \end{tabular}
 \end{table}
 
-The filter equation corresponding to the scheme of \cref{tab:seirs_integ} is presented in \Cref{box:SEIRS}.
-Some numerical results are presented in \cref{fig:seirs_example}.
+In the application of \cref{thm:obsc_filter,corol:obsc_filter}, one has wide latitude in the selection of the kernels $\pi$ and $q$.
+\Cref{tab:seirs_integ} gives a particular set of choices that are \emph{na\"ive} in the sense that they refrain from borrowing information from the future.
+Such a na\"ive filter is always available, though it will rarely be optimal.
 
-\clearpage
-\newpage
+Using the choices of \cref{tab:seirs_integ}, we proceed to write down a filter equation for the SEIRS model.
+As previously, given an obscured genealogy, let $B$ be the set of its branch times, $S_0$ be the set of tip-sample times, and $S_1$ be the set of inline sample times.
+Then for $t\notin{{B}\cup{S_0}\cup{S_1}}$, the filter equation reads:
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation}
+    \label{eq:seirs_filter_reg}
+    \begin{split}
+      \frac{\partial{w}}{\partial{t}}(t,S,&E,I,R,y)=
+      \frac{\beta\,(S+1)\,I}{N}\,\left(1-\frac{\ell_E}{E}\right)\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S+1,E-1,I,R,y)\\
+      &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\,\frac{1}{E}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_2^k)\\
+      &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\frac{1}{I}\,\left(1-\frac{\ell_E}{E}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_3^k)
+      -\frac{\beta\,S\,I}{N}\,w(t,S,E,I,R,y)\\
+      &+\sigma\,(E+1)\,\Indicator{E\ge{\ell_E}}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S,E+1,I-1,R,y)\\
+      &+\sum_{k=1}^{\ell_E}\sigma\,(E+1)\,\Indicator{E\ge{\ell_E}}\,\frac{1}{I}\,w(t,S,E+1,I-1,R,\leftlim{y}_6^k)
+      -\sigma\,E\,w(t,S,E,I,R,y)\\
+      &+\gamma\,(I+1)\,\Indicator{I\ge\ell_I}\,w(t,S,E,I+1,R-1,y)
+      -\gamma\,I\,w(t,S,E,I,R,y)\\
+      &+\omega\,(R+1)\,w(t,S-1,E,I,R+1,y)
+      -\omega\,R\,w(t,S,E,I,R,y)
+      -\psi\,I\,w(t,S,E,I,R,y).
+    \end{split}
+  \end{equation}
+\end{mathsize}%
+Here, $\leftlim{y}_j^k$ refers to the coloring of the tree immediately preceding the proposal indicated on line $j$ of \cref{tab:seirs_integ}.
+The integer $k$ specifies the particular branch on which the change occurs.
 
-\begin{bluebox}[label={box:SEIRS}]{Filter equation for the SEIRS model}
-  As previously, given an obscured genealogy, let $B$ be the set of its branch times, $S_0$ be the set of tip-sample times, and $S_1$ be the set of inline sample times.
-  Then for $t\notin{{B}\cup{S_0}\cup{S_1}}$, the filter equation reads:
-  \begin{mathsize}{9pt}{10pt}
-    \begin{equation}
-      \label{eq:seirs_filter_reg}
-      \begin{split}
-        \frac{\partial{w}}{\partial{t}}(t,S,&E,I,R,y)=
-        \frac{\beta\,(S+1)\,I}{N}\,\left(1-\frac{\ell_E}{E}\right)\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S+1,E-1,I,R,y)\\
-        &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\,\frac{1}{E}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_2^k)\\
-        &+\sum_{k=1}^{\ell_I}\frac{\beta\,(S+1)\,I}{N}\,\frac{1}{I}\,\left(1-\frac{\ell_E}{E}\right)\,w(t,S+1,E-1,I,R,\leftlim{y}_3^k)
-        -\frac{\beta\,S\,I}{N}\,w(t,S,E,I,R,y)\\
-        &+\sigma\,(E+1)\,\Indicator{E\ge{\ell_E}}\,\left(1-\frac{\ell_I}{I}\right)\,w(t,S,E+1,I-1,R,y)\\
-        &+\sum_{k=1}^{\ell_E}\sigma\,(E+1)\,\Indicator{E\ge{\ell_E}}\,\frac{1}{I}\,w(t,S,E+1,I-1,R,\leftlim{y}_6^k)
-        -\sigma\,E\,w(t,S,E,I,R,y)\\
-        &+\gamma\,(I+1)\,\Indicator{I\ge\ell_I}\,w(t,S,E,I+1,R-1,y)
-        -\gamma\,I\,w(t,S,E,I,R,y)\\
-        &+\omega\,(R+1)\,w(t,S-1,E,I,R+1,y)
-        -\omega\,R\,w(t,S,E,I,R,y)
-        -\psi\,I\,w(t,S,E,I,R,y).
-      \end{split}
-    \end{equation}
-  \end{mathsize}%
-  Here, $\leftlim{y}_j^k$ refers to the coloring of the tree immediately preceding the proposal indicated on line $j$ of \cref{tab:seirs_integ}.
-  The integer $k$ specifies the particular branch on which the change occurs.
+The singular portion of the filter equation has one component for each distinct type of genealogical event:
+\begin{mathsize}{9pt}{10pt}
+  \begin{equation}
+    \label{eq:seirs_filter_sing}
+    w(t,S,E,I,R,y)=
+    \begin{cases}
+      \frac{\beta\,(S+1)\,I}{N}\,\frac{1}{E I}\,\wt(t,S+1,E-1,I,R,\leftlim{y}_{10})\\[2ex]
+      \qquad+\frac{\beta\,(S+1)\,I}{N}\,\frac{1}{E I}\,\wt(t,S+1,E-1,I,R,\leftlim{y}_{11}), & t\in{B},\\[2ex]
+      \psi\,\left(I-\ell_I\right)\,\wt(t,S,E,I,R,\leftlim{y}_{15}), & t\in{S_0},\\[2ex]
+      \psi\,\wt(t,S,E,I,R,\leftlim{y}_{18}), & t\in{S_1}.
+    \end{cases}
+  \end{equation}
+\end{mathsize}%
 
-  The singular portion of the filter equation has one component for each distinct type of genealogical event:
-  \begin{mathsize}{9pt}{10pt}
-    \begin{equation}
-      \label{eq:seirs_filter_sing}
-      w(t,S,E,I,R,y)=
-      \begin{cases}
-        \frac{\beta\,(S+1)\,I}{N}\,\frac{1}{E I}\,\wt(t,S+1,E-1,I,R,\leftlim{y}_{10})\\[2ex]
-        \qquad+\frac{\beta\,(S+1)\,I}{N}\,\frac{1}{E I}\,\wt(t,S+1,E-1,I,R,\leftlim{y}_{11}), & t\in{B},\\[2ex]
-        \psi\,\left(I-\ell_I\right)\,\wt(t,S,E,I,R,\leftlim{y}_{15}), & t\in{S_0},\\[2ex]
-        \psi\,\wt(t,S,E,I,R,\leftlim{y}_{18}), & t\in{S_1}.
-      \end{cases}
-    \end{equation}
-  \end{mathsize}%
+In addition to \cref{eq:seirs_filter_reg,eq:seirs_filter_sing}, the quantity $w$ should satisfy the condition $w(t,S,E,I,R,y)=0$ whenever $E<\ell_E$ or $I<\ell_I$.
 
-  In addition to \cref{eq:seirs_filter_reg,eq:seirs_filter_sing}, the quantity $w$ should satisfy the condition $w(t,S,E,I,R,y)=0$ whenever $E<\ell_E$ or $I<\ell_I$.
-
-  A variety of importance-sampling kernels are permissible under the terms of \cref{thm:obsc_uncond}.
-  With a particular choice of importance-sampling kernel, the filter equation uniquely specifies a Sequential Monte Carlo algorithm for estimating the likelihood.
-  The choices made in \cref{tab:seirs_integ} underlie the results displayed in \cref{fig:seirs_example}.
-\end{bluebox}
+A variety of importance-sampling kernels $q$, $\pi$ are permissible under the terms of \cref{thm:obsc_filter}.
+With a particular choice of importance-sampling kernel, the filter equation uniquely specifies a sequential Monte Carlo algorithm for estimating the likelihood.
+The specific choices made in \cref{tab:seirs_integ} underlie the results displayed in \cref{fig:seirs_example}.
+Some numerical results obtained using this scheme are presented in \cref{fig:seirs_example}.
 
 <<seirs3>>=
 seirs_params <- data.frame(
@@ -1735,7 +2262,7 @@ params |>
   \end{center}
   \caption{
     \label{fig:seirs_example}
-    Likelihood computation for the SEIRS model by Sequential Monte Carlo, using the scheme of \cref{box:SEIRS}.
+    Likelihood computation for the SEIRS model by sequential Monte Carlo, using the scheme of \cref{tab:seirs_integ}.
     (A)~Simulated genealogy for $\beta=\Sexpr{seirs_params$Beta}$,
     $\sigma=\Sexpr{seirs_params$sigma}$,
     $\gamma=\Sexpr{seirs_params$gamma}$,
@@ -1743,92 +2270,30 @@ params |>
     $\omega=\Sexpr{seirs_params$omega}$,
     $(S_0,E_0,I_0,R_0)=(\Sexpr{with(seirs_params,c(S0,E0,I0,R0))})$.
     (B)~Likelihood slice in the $\sigma$-direction.
-    Each point represents the estimate of an independent Sequential Monte Carlo computation.
+    Each point represents the estimate of an independent sequential Monte Carlo computation.
     The blue curve shows a LOESS smooth;
     the dashed vertical lines enclose the Monte Carlo-adjusted 95\% confidence interval \citep{Ionides2017}.
   }
 \end{figure}
 
-\subsection{Two-strain competition model}
+%% \begin{table}[h!]
+%%   \caption{
+%%     \label{tab:lbdp_model_elements}
+%%     Elements of the linear birth-death-sampling model pertinent to the genealogy process.
+%%   }
+%%   \renewcommand{\arraystretch}{1.2}
+%%   \begin{tabular}{cccl}
+%%     \hline\hline
+%%     $u$ & $\alpha_u$ & $r^u$ & Event type \\
+%%     \hline
+%%     $\lab{Birth}$  & $\lambda N$ & 2 & pure birth \\
+%%     $\lab{Death}$  & $\gamma N$ & 0 & pure death \\
+%%     $\lab{Sample}$ & $\psi N$ & 1 & pure sample \\
+%%     \hline\hline
+%%   \end{tabular}
+%% \end{table}
 
-A simple model for the competition of two strains for susceptible hosts is depicted in \cref{fig:example_models}B.
-This example will be included in a forthcoming draft.
-
-\subsection{Superspreading model}
-
-\Cref{fig:example_models}D depicts a model of superspreading.
-This example will be included in a forthcoming draft.
-
-
-\subsection{Linear birth-death model} %% LBDP
-
-In this model, the state variable is the size, $N_t$, of a population at time $t$.
-All individuals face the same per-capita birth and death rates, which are $\lambda$ and $\mu$, respectively.
-The KFE is
-\begin{mathsize}{9pt}{10pt}
-  \begin{equation*}
-    \frac{\partial{v}}{\partial{t}}=
-    \lambda\,(n-1)\,v(t,n-1)
-    -\lambda\,n\,v(t,n)
-    +\mu\,(n+1)\,v(t,n+1)
-    -\mu\,n\,v(t,n)
-  \end{equation*}
-\end{mathsize}%
-\citet{Stadler2010} considered the case where samples are taken through time at a uniform per-capita rate $\psi$.
-In this case, since there is only one deme, in the filter equation, $w$ can be taken to be independent of $y$.
-If $B$ is the set of branch-times and $S_0$, $S_1$ are the sets of terminal and inline samples, respectively, then the regular part of the filter equation is
-\begin{mathsize}{9pt}{10pt}
-  \begin{equation}
-    \label{eq:filter-lbdp-reg}
-    \begin{aligned}
-      \frac{\partial{w}}{\partial{t}}(t,n)=
-      &\lambda\,(n-1)\,\left(1-\frac{\tbinom{\ell(t)}{2}}{\tbinom{n}{2}}\right)\,w(t,n-1)
-      -\lambda\,n\,w(t,n)
-      \\
-      &\qquad+\mu\,(n+1)\,w(t,n+1)-\mu\,n\,w(t,n)-\psi\,n\,w(t,n),
-      &&n\ge\ell(t),\quad t\notin{B\cup{S_0}\cup{S_1}}
-    \end{aligned}
-  \end{equation}
-\end{mathsize}%
-and the singular part is
-\begin{mathsize}{9pt}{10pt}
-  \begin{equation}
-    \label{eq:filter-lbdp-sing}
-    \begin{gathered}
-      w(t,n)=
-      \frac{\lambda\,(n-1)}{\tbinom{n}{2}}\,\wt(t,n-1),
-      \quad t\in{B},
-      \\
-      w(t,n)=
-      \psi\,n\,\left(1-\frac{\ell(t)}{n}\right)\,\wt(t,n),
-      \quad t\in{S_0},
-      \qquad
-      w(t,n)=
-      \psi\,\wt(t,n),
-      \quad t\in{S_1}.
-    \end{gathered}
-  \end{equation}
-\end{mathsize}%
-\Cref{eq:filter-lbdp-reg,eq:filter-lbdp-sing} are supplemented by the ancillary condition $w(t,n)=0$ for $n<\ell(t)$.
-
-\begin{table}[h!]
-  \caption{
-    \label{tab:lbdp_model_elements}
-    Elements of the linear birth-death-sampling model pertinent to the genealogy process.
-  }
-  \renewcommand{\arraystretch}{1.2}
-  \begin{tabular}{cccl}
-    \hline\hline
-    $u$ & $\alpha_u$ & $r_u$ & Event type \\
-    \hline
-    $\lab{Birth}$  & $\lambda N$ & 2 & pure birth \\
-    $\lab{Death}$  & $\gamma N$ & 0 & pure death \\
-    $\lab{Sample}$ & $\psi N$ & 1 & pure sample \\
-    \hline\hline
-  \end{tabular}
-\end{table}
-
-<<lbdp3>>=
+<<lbdp3,eval=FALSE>>=
 lbdp.params <- data.frame(
   lambda=1.2,mu=0.8,psi=1,n0=5,
   time=10
@@ -1900,185 +2365,109 @@ params |>
   ungroup() -> stats
 @
 
-\begin{figure}
-  \begin{center}
-    <<lbdp3_plot,fig.dim=c(9,7),out.width="100%">>=
-    pal <- c(viridis_pal(option="H",begin=0.1,end=0.8)(8),"#000000")
-    names(pal) <- c("1k","2k","4k","8k","16k","32k","64k","128k","exact")
+%% \begin{figure}
+%%   \begin{center}
+<<lbdp3_plot,fig.dim=c(9,7),out.width="100%",eval=FALSE>>=
+pal <- c(viridis_pal(option="H",begin=0.1,end=0.8)(8),"#000000")
+names(pal) <- c("1k","2k","4k","8k","16k","32k","64k","128k","exact")
 
-    plot_grid(
-      ncol=1,
-      rel_heights=c(3,2),
-      AB=plot_grid(
-        labels=c("A","B"),
-        nrow=1,
-        rel_widths=c(3,5),
-        A=lbdp_tree |>
-          plot(points=FALSE,palette="#000000")+
-          labs(x="time"),
-        B=params |>
-          pivot_longer(c(exact,pf)) |>
-          unite(name,name,Np) |>
-          mutate(
-            name=if_else(grepl("exact",name),"exact",name),
-            name=gsub("pf_","",name),
-            name=gsub("000","k",name),
-            name=ordered(name,levels=names(pal))
-          ) |>
-          group_by(lambda,mu,psi,n0,name) |>
-          reframe(
-            type=c("logLik","logLik_se"),
-            value=logmeanexp(value,se=TRUE)
-          ) |>
-          ungroup() |>
-          pivot_wider(names_from=type) |>
-          mutate(
-            y=logLik,
-            ymax=logLik+2*logLik_se,
-            ymin=logLik-2*logLik_se
-          ) |>
-          filter(logLik>max(logLik)-16) |>
-          ggplot(
-            aes(
-              x=mu,group=name,color=name,
-              y=y,ymin=ymin,ymax=ymax
-            )
-          )+
-          geom_errorbar(
-            position="dodge"
-          )+
-          geom_vline(xintercept=lbdp.params$mu,color="red")+
-          geom_hline(
-            yintercept=max(params$exact)-
-              c(0,0.5*qchisq(p=0.95,df=1)),
-            linetype=2
-          )+
-          scale_color_manual(values=pal)+
-          labs(
-            color="effort",
-            y="log likelihood",
-            x=expression(mu)
-          )
-      ),
-      CDE=plot_grid(
-        labels=c("C","D","E"),
-        nrow=1,
-        rel_widths=c(24,24,17),
-        C=stats |>
-          ggplot(aes(x=Np,y=rmse))+
-          geom_smooth(formula=y~x,method="lm")+
-          geom_point()+
-          scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-          scale_y_log10()+
-          coord_fixed(ratio=1)+
-          labs(x="effort",y="RMSE"),
-        D=stats |>
-          ggplot(aes(x=Np,y=prec))+
-          geom_smooth(formula=y~x,method="lm")+
-          geom_point()+
-          scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-          scale_y_log10()+
-          coord_fixed(ratio=1)+
-          labs(x="effort",y="SD"),
-        E=stats |>
-          ggplot(aes(x=Np,y=bias))+
-          geom_smooth(formula=y~x,method="lm")+
-          geom_point()+
-          scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-          scale_y_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
-          coord_fixed(ratio=1)+
-          labs(x="effort",y=expression(group("|",bias,"|")))
+plot_grid(
+  ncol=1,
+  rel_heights=c(3,2),
+  AB=plot_grid(
+    labels=c("A","B"),
+    nrow=1,
+    rel_widths=c(3,5),
+    A=lbdp_tree |>
+      plot(points=FALSE,palette="#000000")+
+      labs(x="time"),
+    B=params |>
+      pivot_longer(c(exact,pf)) |>
+      unite(name,name,Np) |>
+      mutate(
+        name=if_else(grepl("exact",name),"exact",name),
+        name=gsub("pf_","",name),
+        name=gsub("000","k",name),
+        name=ordered(name,levels=names(pal))
+      ) |>
+      group_by(lambda,mu,psi,n0,name) |>
+      reframe(
+        type=c("logLik","logLik_se"),
+        value=logmeanexp(value,se=TRUE)
+      ) |>
+      ungroup() |>
+      pivot_wider(names_from=type) |>
+      mutate(
+        y=logLik,
+        ymax=logLik+2*logLik_se,
+        ymin=logLik-2*logLik_se
+      ) |>
+      filter(logLik>max(logLik)-16) |>
+      ggplot(
+        aes(
+          x=mu,group=name,color=name,
+          y=y,ymin=ymin,ymax=ymax
+        )
+      )+
+      geom_errorbar(
+        position="dodge"
+      )+
+      geom_vline(xintercept=lbdp.params$mu,color="red")+
+      geom_hline(
+        yintercept=max(params$exact)-
+          c(0,0.5*qchisq(p=0.95,df=1)),
+        linetype=2
+      )+
+      scale_color_manual(values=pal)+
+      labs(
+        color="effort",
+        y="log likelihood",
+        x=expression(mu)
       )
-    )
-    @
-  \end{center}
-  \caption{
-    \label{fig:lbdp_example}
-    Likelihood computation for the constant-parameter, linear birth-death-sampling model, according to \cref{thm:obsc_uncond} via Sequential Monte Carlo.
-    Panel (A) shows the genealogy, simulated for $\lambda=\Sexpr{lbdp.params$lambda}$, $\mu=\Sexpr{lbdp.params$mu}$, $\psi=\Sexpr{lbdp.params$psi}$, $N_0=\Sexpr{lbdp.params$n0}$.
-    Panel (B) shows a likelihood slice, through the true parameters in the $\mu$ direction.
-    As computational effort (\ie number of particles) increases, the Monte Carlo estimates converge on the exact values, for which an explicit formula exists in this case.
-    The dashed horizontal lines show the approximate maximized likelihood and the 95\% critical value (under the likelihood-ratio test).
-    Panels (C--E) are log-log plots that show how the root-mean-square error (RMSE), imprecision (SD), and bias decrease with effort.
-    Note that the bias and the SD are roughly inversely proportional to the effort and its square-root, respectively, as expected.
-  }
-\end{figure}
-
-\subsection{Moran model and the Kingman coalescent}
-
-In the Moran model, events occur according to a rate-$\mu$ Poisson process.
-At each event, a compound birth-death jump (cf.~\cref{fig:event_types}F) occurs so that the population size, $n$, remains constant.
-If we let $X_t$ be the number of events that have occurred by time $t$, then $X_t$ is a simple counting process, which we can use to define the state of the population process.
-Its KFE is then
-\begin{mathsize}{9pt}{10pt}
-  \begin{equation*}
-    \begin{gathered}
-      \frac{\partial{v}}{\partial{t}}=
-      \mu\,(x-1)\,v(t,x-1)
-      -\mu\,x\,v(t,x),
-      \qquad
-      v(0,x) =
-      \begin{cases}
-        1, & x=0,\\
-        0, & x>0.
-      \end{cases}
-    \end{gathered}
-  \end{equation*}
-\end{mathsize}%
-
-Since there is only a single deme, and since nothing depends on the state, in writing the corresponding filter equation, we can take $w$ to be independent of both $x$ and $y$.
-
-In the classical case \citep{Kingman1982a}, $m$ samples are taken simultaneously at a single time, $T$.
-Then, if $B$ is the set of branch-times and $\ell(t)$ is the number of lineages in the genealogy at time $t$, the filter equation reads
-\begin{mathsize}{9pt}{10pt}
-  \begin{equation}
-    \label[pluralequation]{eq:moran-filter}
-    \begin{gathered}
-      w(0) = 1,
-      \qquad
-      \frac{\partial{w}}{\partial{t}}=
-      \mu\,w(t)\,\left(1-\frac{\tbinom{\ell(t)}{2}}{\tbinom{n}{2}}\right)
-      -\mu\,w(t),\quad t\notin{B},
-      \qquad
-      w(t) = \frac{\mu}{\tbinom{n}{2}}\,\wt(t),\quad t\in{B}.
-    \end{gathered}
-  \end{equation}
-\end{mathsize}%
-Integrating \cref{eq:moran-filter} and taking logarithms yields
-\begin{equation}
-  \label{eq:kingman}
-  \log{w(T)}=k\,\log{\frac{\mu}{\tbinom{n}{2}}}-\frac{\mu}{\tbinom{n}{2}}\,\sum_{i=m-k}^{m}\!{\tbinom{i}{2}\,s^{}_i},
-\end{equation}
-where $k=|B|$ is the number of branch-points in $[0,T]$ and the $s^{}_{i}\coloneq\int{\Indicator{\ell(t)=i}\,\dd{t}}$ are the durations of the \emph{coalescent intervals}, \ie intervals between successive branch-points.
-We recognize \cref{eq:kingman} as the expression for the \citet{Kingman1982a} coalescent \citep[\eg][]{Wakeley2009}.
-
-More generally, if in addition samples are taken according to a rate-$\nu$ Poisson process such that the set of sample-times in the genealogy is $S=S_0\cup{S_1}$, where $S_0$, $S_1$ are the sets of times of terminal and inline samples, respectively, then the filter equation reads
-\begin{mathsize}{9pt}{10pt}
-  \begin{equation}
-    \label[pluralequation]{eq:moran-filter2}
-    \begin{gathered}
-      w(0) = 1,
-      \qquad
-      \frac{\partial{w}}{\partial{t}}=
-      -\mu\,\frac{\tbinom{\ell(t)}{2}}{\tbinom{n}{2}}\,w(t),
-      \quad t\notin{S\cup{B}},
-      \qquad
-      w(t) = \frac{\mu}{\tbinom{n}{2}}\,\wt(t),\quad t\in{B},\\[8pt]
-      w(t) = \nu\,\left(1-\frac{\ell(t)}{n}\right)\,\wt(t),\quad t\in{S_0},
-      \qquad
-      w(t) = \frac{\nu}{n}\,\wt(t),\quad t\in{S_1}.
-    \end{gathered}
-  \end{equation}
-\end{mathsize}%
-Integrating \cref{eq:moran-filter2} yields
-\begin{equation}
-  \label{eq:mgp}
-  \log{w(T)}-|S|\,\log{\nu}
-  =\sum_{t\in{S_0}}{\log{\left(1-\frac{\ell(t)}{n}\right)}}
-  -|S_1|\,\log{n}
-  +|B|\,\log{\frac{\mu}{\tbinom{n}{2}}}
-  -\frac{\mu}{\tbinom{n}{2}}\,\sum_{i=1}^{\infty}\!{\tbinom{i}{2}\,s^{}_i}.
-\end{equation}
+  ),
+  CDE=plot_grid(
+    labels=c("C","D","E"),
+    nrow=1,
+    rel_widths=c(24,24,17),
+    C=stats |>
+      ggplot(aes(x=Np,y=rmse))+
+      geom_smooth(formula=y~x,method="lm")+
+      geom_point()+
+      scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+      scale_y_log10()+
+      coord_fixed(ratio=1)+
+      labs(x="effort",y="RMSE"),
+    D=stats |>
+      ggplot(aes(x=Np,y=prec))+
+      geom_smooth(formula=y~x,method="lm")+
+      geom_point()+
+      scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+      scale_y_log10()+
+      coord_fixed(ratio=1)+
+      labs(x="effort",y="SD"),
+    E=stats |>
+      ggplot(aes(x=Np,y=bias))+
+      geom_smooth(formula=y~x,method="lm")+
+      geom_point()+
+      scale_x_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+      scale_y_log10(labels=\(x)aakmisc::scinot(x,simplify=TRUE))+
+      coord_fixed(ratio=1)+
+      labs(x="effort",y=expression(group("|",bias,"|")))
+  )
+)
+@
+%%   \end{center}
+%%   \caption{
+%%     \label{fig:lbdp_example}
+%%     Likelihood computation for the constant-parameter, linear birth-death-sampling model, according to \cref{thm:obsc_filter} via sequential Monte Carlo.
+%%     Panel (A) shows the genealogy, simulated for $\lambda=\Sexpr{lbdp.params$lambda}$, $\mu=\Sexpr{lbdp.params$mu}$, $\psi=\Sexpr{lbdp.params$psi}$, $N_0=\Sexpr{lbdp.params$n0}$.
+%%     Panel (B) shows a likelihood slice, through the true parameters in the $\mu$ direction.
+%%     As computational effort (\ie number of particles) increases, the Monte Carlo estimates converge on the exact values, for which an explicit formula exists in this case.
+%%     The dashed horizontal lines show the approximate maximized likelihood and the 95\% critical value (under the likelihood-ratio test).
+%%     Panels (C--E) are log-log plots that show how the root-mean-square error (RMSE), imprecision (SD), and bias decrease with effort.
+%%     Note that the bias and the SD are roughly inversely proportional to the effort and its square-root, respectively, as expected.
+%%   }
+%% \end{figure}
 
 \end{document}
 

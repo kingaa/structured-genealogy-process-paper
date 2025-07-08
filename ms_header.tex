@@ -5,11 +5,8 @@
 \usepackage{multirow,bigstrut}
 
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,decorations,calc,math}
+\usetikzlibrary{arrows,arrows.meta,positioning,decorations,calc,math}
 \graphicspath{{figs/}}
-
-\usepackage{tcolorbox}
-\newtcolorbox[auto counter]{bluebox}[2][]{label type=textbox,colback=blue!4,colframe=blue!40!black,fonttitle=\bfseries,title=Box~\thetcbcounter: #2,#1}
 
 \input{defs}
 
@@ -34,7 +31,7 @@
 
 \usepackage[small,compact]{titlesec}
 \newcommand\periodafter[1]{{#1}.}
-\titleformat{\section}[hang]{\large\bfseries}{\periodafter\thesection}{2ex}{\periodafter}{}
+\titleformat{\section}[hang]{\large\bfseries}{\periodafter\thesection}{2ex}{}{}
 \titleformat{\subsection}[runin]{\normalsize\bfseries}{\periodafter\thesubsection}{1ex}{\periodafter}{}
 \titleformat{\subsubsection}[runin]{\normalsize\bfseries}{\periodafter\thesubsubsection}{1ex}{\periodafter}{}
 \titleformat{\paragraph}[runin]{\normalsize\bfseries}{\theparagraph}{0em}{\periodafter}{}
@@ -52,17 +49,16 @@
 \newtheorem*{defn}{Definition}
 \newtheorem{example}{Example}
 \theoremstyle{remark}
-\newtheorem*{remark}{Remark}
+\newtheorem{remark}{Remark}
 \renewcommand\thethm{\arabic{thm}}
 \renewcommand\theprop{\thesection\arabic{prop}}
 \renewcommand\thelemma{\thesection\arabic{lemma}}
 
 \usepackage{algorithm}
-\usepackage{algorithmic}
-%\usepackage[noend]{algpseudocode}
+\usepackage[noend]{algpseudocode}
 
-\renewcommand{\algorithmicrequire}{\textbf{Input:}} %Use Input in the format of Algorithm
-\renewcommand{\algorithmicensure}{\textbf{Output:}}
+%% \renewcommand{\algorithmicrequire}{\textbf{Input:}}
+%% \renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 \renewcommand{\theenumii}{(\alph{enumi}.\arabic{enumii})}
 \renewcommand{\labelenumii}{\theenumii}
@@ -97,6 +93,8 @@
 \Crefmultiformat{section}{#2\S\S#1#3}{ and~#2#1#3}{, #2#1#3}{, and~#2#1#3}
 \crefname{thm}{Theorem}{Theorems}
 \Crefname{thm}{Theorem}{Theorems}
+\crefname{algorithm}{Algorithm}{Algorithms}
+\Crefname{algorithm}{Algorithm}{Algorithms}
 \crefname{corol}{Corollary}{Corollaries}
 \Crefname{corol}{Corollary}{Corollaries}
 \crefname{prop}{Proposition}{Propositions}

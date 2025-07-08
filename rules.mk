@@ -7,11 +7,11 @@ PDFLATEX = pdflatex
 BIBTEX = bibtex
 CP = cp -f
 RM = rm -f
-ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+ROOT_DIR := $(shell git rev-parse --show-toplevel)
 
 %.pdf: export BSTINPUTS=$(ROOT_DIR)
 %.pdf: export BIBINPUTS=$(ROOT_DIR)
-%.pdf: export TEXINPUTS=.:$(ROOT_DIR):$(shell echo $$TEXINPUTS)
+%.pdf: export TEXINPUTS=.:./figs:$(ROOT_DIR):$(shell echo $$TEXINPUTS)
 %.pdf: export SOURCE_DATE_EPOCH=954590400
 
 %.pdf: %.tex
@@ -38,6 +38,9 @@ ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 %.R: %.Rnw
 	$(RSCRIPT) -e "library(knitr); purl(\"$*.Rnw\")"
+
+%.Rout: %.R
+	$(RBATCH) $*.R
 
 %.idx: %.tex
 	-$(PDFLATEX) $*

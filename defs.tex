@@ -1,4 +1,4 @@
-\usepackage{mathabx,mathrsfs,eucal,bbm,colonequals,amsmath,amssymb,mathtools}
+\usepackage{mathabx,mathrsfs,eucal,bbm,amsmath,amssymb,mathtools,accents}
 
 \definecolor{maize}{rgb}{1.0,0.796,0.020}
 \definecolor{darkblue}{rgb}{0,0.153,0.298}
@@ -32,7 +32,8 @@
 %%     \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}%
 %% }
 \newcommand\leftlim[1]{\widetilde{#1}}
-\newcommand\rdm[1]{\mathbf{#1}}
+\newcommand\rightlim[1]{\undertilde{#1}}
+\newcommand\rdm[1]{\boldsymbol{#1}}
 \newcommand\spc[1]{\mathbb{#1}}
 \newcommand\func[1]{\mathsf{#1}}
 \newcommand\lab[1]{\mathsf{#1}}
@@ -52,61 +53,63 @@
 
 \def\ie{{i.e.,} }
 \def\eg{{e.g.,} }
+\def\cf{{cf.}~}
 \def\st{\text{s.t.}}
 \def\prune{\func{prune}}
 \def\obs{\func{obs}}
 \def\leaves{\mathbb{L}}
-\def\part{\func{partit}}
+\def\partit{\func{partit}}
 \def\time{\func{t}}
 
 \def\X{\mathrm{X}}
-\def\Xr{\rdm{X}}
+\def\Xr{\rdm{\X}}
 \def\Xt{\leftlim{\X}}
 \def\Xrt{\leftlim{\Xr}}
 \def\Xh{\hat{\X}}
-\def\Xrh{\rdm{\hat{X}}}
+\def\Xrh{\rdm{\hat{\X}}}
 \def\U{\mathrm{U}}
-\def\Ur{\rdm{U}}
+\def\Ur{\rdm{\U}}
 \def\Ut{\leftlim{\U}}
 \def\Urt{\leftlim{\Ur}}
 \def\Uh{\hat{\U}}
-\def\Urh{\rdm{\hat{U}}}
+\def\Urh{\rdm{\hat{\U}}}
 \def\T{\mathrm{T}}
-\def\Th{\mathrm{\hat{T}}}
-\def\Trh{\rdm{\hat{T}}}
+\def\Th{\mathrm{\hat{\T}}}
+\def\Trh{\rdm{\hat{\T}}}
 \def\K{\mathrm{K}}
-\def\Kr{\rdm{K}}
+\def\Kr{\rdm{\K}}
 \def\H{\mathrm{H}}
-\def\Hr{\rdm{H}}
+\def\Hr{\rdm{\H}}
 \def\G{\mathrm{G}}
-\def\Gr{\rdm{G}}
-\def\Gh{\hat{G}}
+\def\Gr{\rdm{\G}}
+\def\Gh{\hat{\G}}
 \def\Grh{\rdm{\Gh}}
 \def\y{\mathrm{y}}
-\def\yr{\rdm{y}}
-\def\yrh{\rdm{\hat{y}}}
+\def\yr{\rdm{\y}}
+\def\yrh{\rdm{\hat{\y}}}
 \def\yt{\leftlim{\y}}
-\def\yrt{\leftlim{\rdm{y}}}
+\def\yrt{\leftlim{\yr}}
 \def\P{\mathrm{P}}
-\def\Pr{\rdm{P}}
+\def\Pr{\rdm{\P}}
 \def\Y{\mathrm{Y}}
-\def\Yr{\rdm{Y}}
+\def\Yr{\rdm{\Y}}
 \def\Yt{\leftlim{\Y}}
 \def\Yrt{\leftlim{\Yr}}
 \def\Yh{\hat{\Y}}
-\def\Yrh{\rdm{\hat{Y}}}
+\def\Yrh{\rdm{\hat{\Y}}}
 \def\Z{\mathrm{Z}}
-\def\Zr{\rdm{Z}}
+\def\Zr{\rdm{\Z}}
 \def\Zt{\leftlim{\Z}}
 \def\Zrt{\leftlim{\Zr}}
 \def\Zh{\hat{\Z}}
-\def\Zrh{\rdm{\hat{Z}}}
+\def\Zrh{\rdm{\hat{\Z}}}
 \def\Phir{\rdm{\Phi}}
 \def\Phit{\leftlim{\Phi}}
 \def\Phirt{\leftlim{\Phir}}
+\def\Philt{\rightlim{\Phir}}
 \def\Phih{\hat{\Phi}}
 \def\Phirh{\rdm{\hat{\Phi}}}
-\def\Vr{\rdm{V}}
+\def\Vr{\rdm{\mathrm{V}}}
 \def\ut{\leftlim{u}}
 \def\wt{\leftlim{w}}
 
