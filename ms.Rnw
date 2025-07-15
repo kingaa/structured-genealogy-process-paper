@@ -161,7 +161,7 @@ We then show that our approach generalizes both the coalescent- and linear birth
 Indeed, the filter equations for the models on which these approaches are based can be solved to obtain the familiar likelihood formulae.
 In appendices, we develop the properties of filter equations generally, provide a sequential Monte Carlo algorithm that can be used when numerical integration is needed for their solution, and work out the filter equations and their solutions in two examples.
 
-Code sufficient for the reproduction of all the figures in this paper are freely available for download at \url{https://github.com/kingaa/structured-genealogy-process-paper}.
+Codes sufficient for the reproduction of all the figures in this paper are freely available for download at \url{https://github.com/kingaa/structured-genealogy-process-paper}.
 An archival version of these will be stored on Zotero upon publication of a peer-reviewed version of this paper.
 The open-source \pkg{R} package \pkg{phylopomp} (\url{https://github.com/kingaa/phylopomp}) implements the simulation and likelihood-computation algorithms employed here.
 
