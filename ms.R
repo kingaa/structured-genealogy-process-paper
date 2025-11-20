@@ -7,7 +7,7 @@ library(viridis)
 library(phylopomp)
 stopifnot(getRversion() >= "4.4")
 stopifnot(packageVersion("pomp")>="6.1")
-stopifnot(packageVersion("phylopomp")>="0.14.8")
+stopifnot(packageVersion("phylopomp")>="0.14.9.1")
 theme_set(theme_bw(base_family="serif"))
 options(
   width=150,
@@ -74,19 +74,19 @@ plot_grid(
 ## ----upo2b,results="hide"-----------------------------------------------------
 plot_grid(
   x |>
-    curtail(time=7.7,prune=FALSE,obscure=FALSE) |>
+    curtail(time=7.7) |>
     plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
     expand_limits(x=9,y=3)+
     theme(axis.line=element_line(color=grey(0.8)))+
     labs(title=expression(P[8])),
   x |>
-    curtail(time=8,prune=FALSE,obscure=FALSE) |>
+    curtail(time=8) |>
     plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
     expand_limits(x=9,y=3)+
     theme(axis.line=element_line(color=grey(0.8)))+
     labs(title=expression(P[9])),
   x |>
-    curtail(time=8.8,prune=FALSE,obscure=FALSE) |>
+    curtail(time=8.8) |>
     plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
     expand_limits(x=9,y=3)+
     theme(axis.line=element_line(color=grey(0.8)))+
