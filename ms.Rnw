@@ -189,7 +189,7 @@ Note that, in this case, $\Phirt_t$ is left-continuous with right limits (\cagla
 
 If $\Phir_t$, $t\in\Rp$ is a pure jump process, knowledge of its sample path is equivalent to knowledge of the number, $\Kr_t$, of jumps it has taken as of time $t$, the jump times $\Trh_k$, and the embedded chain $\Phirh^{}_k\coloneq{\Phir_{\Trh^{}_k}}$, $k=0,\dots,\Kr^{}_t$.
 In particular, if we adopt the convention that $\Trh_0=0$ and $\Trh_{\Kr_t+1}=t$, then
-$\Phir_t=\Phirh_k$ for $t\in\halfopen{\Trh_k,\Trh_{k+1}}$, $k=0,\dots,\Kr_t$.
+$\Phir_s=\Phirh_k$ for $s\in\halfopen{\Trh_k,\Trh_{k+1}}$, $k=0,\dots,\Kr_t$.
 
 \subsection{Population process}
 
@@ -249,7 +249,7 @@ Let $\Kr_t$ be the number of jumps that $\Xr$ has taken by time $t$.
 We assume that $\Kr_t$ is a simple counting process so that
 \begin{equation*}
   \begin{gathered}
-    \CondProb{\Kr_{t+\Delta}=n+1}{\Kr_{t}=n}=\Delta\,\int{\alpha(t,x,x')\,\dd{x'}}+o(\Delta),\\
+    \CondProb{\Kr_{t+\Delta}=n+1}{\Kr_{t}=n,\Xr_{t}=x}=\Delta\,\int{\alpha(t,x,x')\,\dd{x'}}+o(\Delta),\\
     \CondProb{\Kr_{t+\Delta}>n+1}{\Kr_{t}=n}=o(\Delta),\\
     \CondProb{\Xr_{t+\Delta}\in\mathcal{E}\setminus\Set{x}}{\Xr_{t}=x}=\Delta\,\int_{\mathcal{E}\setminus\Set{x}}{\alpha(t,x,x')\,\dd{x'}}+o(\Delta),\\
     %% \CondProb{\Xr_{t+\Delta}\in\mathcal{E}}{\Xr_{t}=x, \Kr_{t+\Delta}-\Kr_{t}=1}=\frac{\int_{\mathcal{E}}{\alpha(t,x,x')\,\dd{x'}}}{\int{\alpha(t,x,x')\,\dd{x'}}}+o(\Delta).
