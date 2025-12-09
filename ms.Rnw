@@ -719,10 +719,10 @@ Therefore, we can define $\ell$ as a function such that, whenever $P=(T,Z,Y)$ is
 We refer to $\ell$ as the \emph{lineage-count} function (cf.~\cref{fig:ells}).
 
 We will also have occasion to refer to the deme-specific number of lineages emerging from a given event.
-In particular, given a node time $t$ in a pruned genealogy $P=(T,Y,Z)$, the number $s_i$ of lineages of deme $i$ emerging from all nodes with time $t$ is well defined and we can write $s\coloneq\left(s_i\right)_{i\in\Demes}$.
+In particular, given a node time $t$ in a pruned genealogy $P=(T,Z,Y)$, the number $s_i$ of lineages of deme $i$ emerging from all nodes with time $t$ is well defined and we can write $s\coloneq\left(s_i\right)_{i\in\Demes}$.
 Like the lineage-count function, $s$ depends only on the local structure of $\P$.
 However, $s$ depends not only on $Y_t$, but also on $\leftlim{Y}_t$.
-Thus, we can define the \emph{saturation} function such that, whenever $P=(T,Y,Z)$ is a pruned genealogy, $s(\leftlim{Y}_t,Y_t)$ is the integer vector of deme-specific numbers of emerging lineages at time $t$.
+Thus, we can define the \emph{saturation} function such that, whenever $P=(T,Z,Y)$ is a pruned genealogy, $s(\leftlim{Y}_t,Y_t)$ is the integer vector of deme-specific numbers of emerging lineages at time $t$.
 \Cref{fig:ells} illustrates.
 
 \begin{figure}
