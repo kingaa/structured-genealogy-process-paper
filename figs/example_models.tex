@@ -12,10 +12,10 @@
       %% SEIRS model
       \coordinate (origin) at (0,0);
       \node[label] (lab) at (origin) {\textbf{A}};
-      \node [box] (S) at ($(origin)+(1,-1)$) {$\lab{S}$};
-      \node [box,deme] (E) at ($(S)+(2,0)$) {$\lab{E}$};
-      \node [box,ibox,deme] (I) at ($(E)+(2,0)$) {$\lab{I}$};
-      \node [box] (R) at ($(I)+(2,0)$) {$\lab{R}$};
+      \node [box] (S) at ($(origin)+(1,-1)$) {$\deme{S}$};
+      \node [box,deme] (E) at ($(S)+(2,0)$) {$\deme{E}$};
+      \node [box,ibox,deme] (I) at ($(E)+(2,0)$) {$\deme{I}$};
+      \node [box] (R) at ($(I)+(2,0)$) {$\deme{R}$};
       \coordinate (overR) at ($(R)+(0,1)$);
       \coordinate (midSE) at ($(S)!0.5!(E)$);
       \draw [flow,->] (S) -- (E);
@@ -23,20 +23,20 @@
       \draw [flow,->] (I) -- (R);
       \draw [flow,->] (R) -- (overR) -- (S |- overR) -- (S);
       \draw [modulate,->] (I.north west) .. controls ($(I)+(-1,1)$) and ($(midSE)+(0,1)$) .. (midSE);
-      \node[font=\normalsize] (demes) at ($(E)!0.5!(I)+(0,-1)$) {$\Demes=\{\lab{E},\lab{I}\}$};
+      \node[font=\normalsize] (demes) at ($(E)!0.5!(I)+(0,-1)$) {$\Demes=\{\deme{E},\deme{I}\}$};
 
       %% SIIR (two-strain) model
       \coordinate (origin) at (0,-3);
       \node[label] (lab) at (origin) {\textbf{B}};
-      \node [box] (S) at ($(origin)+(1,-2)$) {$\lab{S}$};
-      \node [box] (R1) at ($(S)+(6,1)$) {$\lab{R}_1$};
-      \node [box] (R2) at ($(S)+(6,-1)$) {$\lab{R}_2$};
+      \node [box] (S) at ($(origin)+(1,-2)$) {$\deme{S}$};
+      \node [box] (R1) at ($(S)+(6,1)$) {$\deme{R}_1$};
+      \node [box] (R2) at ($(S)+(6,-1)$) {$\deme{R}_2$};
       \coordinate (overR) at ($(R1)+(0,1)$);
       \coordinate (underR) at ($(R2)-(0,1)$);
-      \node [box,deme] (E1) at ($(S)+(2,1)$) {$\lab{E}_1$};
-      \node [box,deme] (E2) at ($(S)+(2,-1)$) {$\lab{E}_2$};
-      \node [box,ibox,deme] (I1) at ($(E1)+(2,0)$) {$\lab{I}_1$};
-      \node [box,ibox,deme] (I2) at ($(E2)+(2,0)$) {$\lab{I}_2$};
+      \node [box,deme] (E1) at ($(S)+(2,1)$) {$\deme{E}_1$};
+      \node [box,deme] (E2) at ($(S)+(2,-1)$) {$\deme{E}_2$};
+      \node [box,ibox,deme] (I1) at ($(E1)+(2,0)$) {$\deme{I}_1$};
+      \node [box,ibox,deme] (I2) at ($(E2)+(2,0)$) {$\deme{I}_2$};
       \draw [flow,->] (S) -- (E1);
       \draw [flow,->] (E1) -- (I1);
       \draw [flow,->] (I1) -- (R1);
@@ -49,19 +49,19 @@
       \coordinate (midSE2) at ($(S)!0.5!(E2)$);
       \draw [modulate,->] (I1.north west) .. controls ($(I1)+(-1,1)$) and ($(midSE1)+(0,1.8)$) .. (midSE1);
       \draw [modulate,->] (I2.south west) .. controls ($(I2)+(-1,-1)$) and ($(midSE2)+(0,-1.8)$) .. (midSE2);
-      \node[font=\normalsize] (demes) at ($(E2)!0.5!(I2)+(0,-2)$) {$\Demes=\{\lab{E}_1,\lab{E}_2,\lab{I}_1,\lab{I}_2\}$};
+      \node[font=\normalsize] (demes) at ($(E2)!0.5!(I2)+(0,-2)$) {$\Demes=\{\deme{E}_1,\deme{E}_2,\deme{I}_1,\deme{I}_2\}$};
 
       %% COVID model
       \coordinate (origin) at (9,0);
       \node[label] (lab) at (origin) {\textbf{C}};
-      \node [box] (S) at ($(origin)+(1,-2)$) {$\lab{S}$};
-      \node [box] (R) at ($(S)+(7,1)$) {$\lab{R}$};
+      \node [box] (S) at ($(origin)+(1,-2)$) {$\deme{S}$};
+      \node [box] (R) at ($(S)+(7,1)$) {$\deme{R}$};
       \coordinate (overR) at ($(R)+(0,1)$);
-      \node [box,deme] (E) at ($(S)+(2,0)$) {$\lab{E}$};
-      \node [box,ibox,deme] (Ia) at ($(E)+(2,1)$) {$\lab{I_A}$};
-      \node [box,ibox,deme] (Is) at ($(E)+(2,-1)$) {$\lab{I_S}$};
-      \node [box] (H) at ($(Is)+(2,0)$) {$\lab{H}$};
-      \node [box] (D) at ($(H)+(2,0)$) {$\lab{D}$};
+      \node [box,deme] (E) at ($(S)+(2,0)$) {$\deme{E}$};
+      \node [box,ibox,deme] (Ia) at ($(E)+(2,1)$) {$\deme{I_A}$};
+      \node [box,ibox,deme] (Is) at ($(E)+(2,-1)$) {$\deme{I_S}$};
+      \node [box] (H) at ($(Is)+(2,0)$) {$\deme{H}$};
+      \node [box] (D) at ($(H)+(2,0)$) {$\deme{D}$};
       \draw [flow,->] (S) -- (E);
       \draw [flow,->] (E) -- (Ia.west);
       \draw [flow,->] (E) -- (Is.west);
@@ -74,16 +74,16 @@
       \coordinate (midSE) at ($(S)!0.5!(E)$);
       \draw [modulate,->] (Ia.north west) .. controls ($(Ia.north west)+(165:1)$) and ($(midSE)+(0,2)$) .. (midSE);
       \draw [modulate,->] (Is.south west) .. controls ($(Is.south west)+(195:1)$) and ($(midSE)+(0,-2)$) .. (midSE);
-      \node[font=\normalsize] (demes) at ($(Is)+(0,-1)$) {$\Demes=\{\lab{E},\lab{I_A},\lab{I_S}\}$};
+      \node[font=\normalsize] (demes) at ($(Is)+(0,-1)$) {$\Demes=\{\deme{E},\deme{I_A},\deme{I_S}\}$};
 
       %% SI2R (super-spreader) model
       \coordinate (origin) at (9,-5);
       \node[label] (lab) at (origin) {\textbf{D}};
-      \node [box] (S) at ($(origin)+(2,-1)$) {$\lab{S}$};
-      \node [box,deme] (E) at ($(S)+(2,0)$) {$\lab{E}$};
-      \node [box,ibox,deme] (Il) at ($(E)+(2,0)$) {$\lab{I_L}$};
-      \node [box,ibox,deme] (Ih) at ($(Il)+(0,-2)$) {$\lab{I_H}$};
-      \node [box] (R) at ($(Il)+(2,0)$) {$\lab{R}$};
+      \node [box] (S) at ($(origin)+(2,-1)$) {$\deme{S}$};
+      \node [box,deme] (E) at ($(S)+(2,0)$) {$\deme{E}$};
+      \node [box,ibox,deme] (Il) at ($(E)+(2,0)$) {$\deme{I_L}$};
+      \node [box,ibox,deme] (Ih) at ($(Il)+(0,-2)$) {$\deme{I_H}$};
+      \node [box] (R) at ($(Il)+(2,0)$) {$\deme{R}$};
       \coordinate (overR) at ($(R)+(0,1)$);
       \coordinate (midSE) at ($(S)!0.5!(E)$);
       \draw [flow,->] (S) -- (E);
@@ -94,7 +94,7 @@
       \draw [flow,->] (R) -- (overR) -- (S |- overR) -- (S);
       \draw [modulate,->] (Il.north west) .. controls ($(Il.north west)+(135:0.8)$) and ($(midSE)+(0,1)$) .. (midSE);
       \draw [modulate,->] (Ih.west) .. controls ($(Ih.west)+(180:0.8)$) and ($(midSE)+(0,-1)$) .. (midSE);
-      \node[font=\normalsize] (demes) at (midSE |- Ih) {$\Demes=\{\lab{E},\lab{I_L},\lab{I_H}\}$};
+      \node[font=\normalsize] (demes) at (midSE |- Ih) {$\Demes=\{\deme{E},\deme{I_L},\deme{I_H}\}$};
     \end{tikzpicture}
   }
 \end{center}

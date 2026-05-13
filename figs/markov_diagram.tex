@@ -20,17 +20,3 @@
     \end{tikzpicture}
   }
 \end{center}
-\caption{
-  Markov state transition diagram for the SEIRS model depicted in \cref{fig:example_models}A.
-  The state, $x$, is characterized by four numbers, $S$, $E$, $I$, and $R$.
-  From a given state $x$, there are five possible kinds of jumps $x\mapsto{x'}$.
-  Accordingly, the set, $\Jumps$, of jump marks has five elements.
-  In the terminology of \cref{sec:event_types}, each of these is of a different type:
-  $\lab{Trans}$ (transmission) is of birth type,
-  $\lab{Prog}$ (progression) is of migration type,
-  $\lab{Recov}$ (recovery) is of death type,
-  $\lab{Sample}$ (sampling) is of sample type,
-  and $\lab{Wane}$ (loss or waning of immunity) is of neutral type.
-  Note that, in this formulation, when a sampling event occurs, the state does not change.
-  \label{fig:markov_state}
-}

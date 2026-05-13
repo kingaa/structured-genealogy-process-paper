@@ -1,6 +1,6 @@
 
-R version 4.5.1 (2025-06-13) -- "Great Square Root"
-Copyright (C) 2025 The R Foundation for Statistical Computing
+R version 4.5.3 (2026-03-11) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -20,54 +20,13 @@ Type 'q()' to quit R.
 > ## ----packages,include=FALSE,cache=FALSE---------------------------------------
 > library(tidyverse)
 > library(ggtree)
-ggtree v3.16.2 Learn more at https://yulab-smu.top/contribution-tree-data/
-
-Please cite:
-
-Guangchuang Yu, David Smith, Huachen Zhu, Yi Guan, Tommy Tsan-Yuk Lam.
-ggtree: an R package for visualization and annotation of phylogenetic
-trees with their covariates and other associated data. Methods in
-Ecology and Evolution. 2017, 8(1):28-36. doi:10.1111/2041-210X.12628
-
-Attaching package: ‘ggtree’
-
-The following object is masked from ‘package:tidyr’:
-
-    expand
-
 > library(pomp)
-
-Attaching package: ‘pomp’
-
-The following object is masked from ‘package:purrr’:
-
-    map
-
 > library(cowplot)
-
-Attaching package: ‘cowplot’
-
-The following object is masked from ‘package:lubridate’:
-
-    stamp
-
 > library(viridis)
-Loading required package: viridisLite
 > library(phylopomp)
-
-Attaching package: ‘phylopomp’
-
-The following object is masked from ‘package:pomp’:
-
-    simulate
-
-The following object is masked from ‘package:stats’:
-
-    simulate
-
-> stopifnot(getRversion() >= "4.4")
-> stopifnot(packageVersion("pomp")>="6.1")
-> stopifnot(packageVersion("phylopomp")>="0.14.8")
+> stopifnot(getRversion() >= "4.5")
+> stopifnot(packageVersion("pomp")>="6.4")
+> stopifnot(packageVersion("phylopomp")>="0.18")
 > theme_set(theme_bw(base_family="serif"))
 > options(
 +   width=150,
@@ -78,20 +37,23 @@ The following object is masked from ‘package:stats’:
 +   pomp_archive_dir="results"
 + )
 > set.seed(1159254136)
+> maize <- "#d6a904"
+> grey <- "#7c7e7f"
 > 
 > 
 > ## ----geneal,fig.dim=c(4,2),out.width="50%"------------------------------------
 > simulate(
 +   "SEIR",
 +   Beta=3,sigma=0.5,gamma=0.2,psi=0.3,omega=0.5,
-+   S0=15,E0=1,I0=2,R0=0,
++   S0=15/18,E0=1/18,I0=2/18,R0=0,pop=18,
 +   time=10
 + ) |>
 +   freeze(seed=382490723) -> x
 > 
-> pal <- c("#00274CFF","#FFCB05FF")
+> pal <- c(`0`="#00000000",`1`=grey,`2`=maize)
 > 
-> x |> plot(points=TRUE,prune=FALSE,obscure=FALSE,palette=pal)+
+> x |> plot(points=TRUE,prune=FALSE,obscure=FALSE,palette=pal,
++   legend.position="none")+
 +   geom_vline(xintercept=10,linewidth=0.2,color="black")
 > 
 > 
@@ -99,30 +61,33 @@ The following object is masked from ‘package:stats’:
 > simulate(
 +   "SEIR",
 +   Beta=1,sigma=0.5,gamma=0.1,psi=0.4,omega=0.1,
-+   S0=10,E0=1,I0=1,R0=0,
++   S0=10/12,E0=1/12,I0=1/12,R0=0,pop=12,
 +   time=10
 + ) |>
 +   freeze(seed=522390503) -> x
 > 
-> pal <- c("#00274CFF","#FFCB05FF")
+> pal <- c(`0`="#00000000",`1`=grey,`2`=maize)
 > 
 > plot_grid(
 +   A=x |>
 +     plot(
 +       points=TRUE,prune=FALSE,obscure=FALSE,
-+       ladderize=FALSE,palette=pal
++       ladderize=FALSE,palette=pal,
++       legend.position="none"
 +     )+
 +     geom_vline(xintercept=10,linewidth=0.2,color="black"),
 +   B=x |>
 +     plot(
 +       points=TRUE,prune=TRUE,obscure=FALSE,
-+       ladderize=FALSE,palette=pal
++       ladderize=FALSE,palette=pal,
++       legend.position="none"
 +     )+
 +     geom_vline(xintercept=10,linewidth=0.2,color="black"),
 +   C=x |>
 +     plot(
 +       points=TRUE,prune=TRUE,obscure=TRUE,
-+       ladderize=FALSE,palette="#B3B3B3FF"
++       ladderize=FALSE,palette="#000000",
++       legend.position="none"
 +     )+
 +     geom_vline(xintercept=10,linewidth=0.2,color="black"),
 +   ncol=1,
@@ -131,34 +96,11 @@ The following object is masked from ‘package:stats’:
 + )
 > 
 > 
-> ## ----upo2b,results="hide"-----------------------------------------------------
-> plot_grid(
-+   x |>
-+     curtail(time=7.7,prune=FALSE,obscure=FALSE) |>
-+     plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
-+     expand_limits(x=9,y=3)+
-+     theme(axis.line=element_line(color=grey(0.8)))+
-+     labs(title=expression(P[8])),
-+   x |>
-+     curtail(time=8,prune=FALSE,obscure=FALSE) |>
-+     plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
-+     expand_limits(x=9,y=3)+
-+     theme(axis.line=element_line(color=grey(0.8)))+
-+     labs(title=expression(P[9])),
-+   x |>
-+     curtail(time=8.8,prune=FALSE,obscure=FALSE) |>
-+     plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
-+     expand_limits(x=9,y=3)+
-+     theme(axis.line=element_line(color=grey(0.8)))+
-+     labs(title=expression(P[10])),
-+   ncol=1
-+ )
-> 
-> 
 > ## ----sirs3--------------------------------------------------------------------
 > data.frame(
 +   Beta=4,gamma=2,psi=1,omega=1,
-+   S0=97,I0=3,R0=0,t0=0,time=40
++   S0=0.97,I0=0.03,R0=0,t0=0,pop=100,
++   time=40
 + ) -> sirs_params
 > 
 > bake(
@@ -171,7 +113,8 @@ The following object is masked from ‘package:stats’:
 +       with(
 +         runSIRS(
 +           Beta=Beta,gamma=gamma,psi=psi,omega=omega,
-+           S0=S0,I0=I0,R0=R0,t0=t0,time=time
++           S0=S0,I0=I0,R0=R0,t0=t0,pop=pop,
++           time=time
 +         )
 +       )
 +   }
@@ -185,6 +128,7 @@ The following object is masked from ‘package:stats’:
 +       psi=psi,
 +       omega=omega,
 +       S0=S0,I0=I0,R0=R0,
++       pop=pop,
 +       t0=t0,
 +       rep=seq_len(8),
 +       Np=10000,
@@ -210,22 +154,13 @@ The following object is masked from ‘package:stats’:
 +           sirs_tree |>
 +             sirs_pomp(
 +               Beta=Beta,gamma=gamma,psi=psi,omega=omega,
-+               S0=S0,I0=I0,R0=R0,t0=0
++               S0=S0,I0=I0,R0=R0,pop=pop
 +             ) |>
 +             pfilter(Np=Np)
 +         })
 +     } %seed% TRUE |>
 +       concat()
 +   }) -> pfs
-Loading required package: foreach
-
-Attaching package: ‘foreach’
-
-The following objects are masked from ‘package:purrr’:
-
-    accumulate, when
-
-Loading required package: future
 > 
 > left_join(
 +   pfs |> coef() |> melt() |> pivot_wider(),
@@ -242,7 +177,7 @@ Loading required package: future
 > ## ----sirs3_plot,dependson="sirs1",fig.dim=c(8,2.8),out.width="100%"-----------
 > plot_grid(
 +   A=sirs_tree |>
-+     plot(points=FALSE,palette=c("#000000"))+
++     plot(points=FALSE,palette="#000000")+
 +     labs(x="time"),
 +   B=params |>
 +     ggplot(aes(x=gamma,y=logLik))+
@@ -270,7 +205,7 @@ Loading required package: future
 > ## ----seirs3-------------------------------------------------------------------
 > seirs_params <- data.frame(
 +   Beta=3,sigma=1,gamma=0.5,psi=0.02,omega=0.08,
-+   S0=70,E0=1,I0=0,R0=50,
++   S0=70/121,E0=1/121,I0=0,R0=50/121,pop=121,
 +   time=400
 + )
 > 
@@ -282,7 +217,7 @@ Loading required package: future
 +     with(
 +       runSEIR(
 +         Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
-+         S0=S0,E0=E0,I0=I0,R0=R0,
++         S0=S0,E0=E0,I0=I0,R0=R0,pop=pop,
 +         time=time
 +       )
 +     )
@@ -307,7 +242,7 @@ Loading required package: future
 +         seirs_tree |>
 +           seirs_pomp(
 +             Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
-+             S0=S0,E0=E0,I0=I0,R0=R0
++             S0=S0,E0=E0,I0=I0,R0=R0,pop=pop
 +           )
 +       ) -> po
 + 
@@ -363,9 +298,6 @@ Loading required package: future
 +   nrow=1,
 +   rel_widths=c(3,4)
 + )
-Warning messages:
-1: Removed 22 rows containing missing values or values outside the scale range (`geom_point()`). 
-2: Removed 110 rows containing missing values or values outside the scale range (`geom_line()`). 
 > 
 > 
 > ## ----lbdp3,eval=FALSE---------------------------------------------------------
@@ -530,20 +462,51 @@ Warning messages:
 > # )
 > 
 > 
+> ## ----upo2b,results="hide",dependson="upo"-------------------------------------
+> plot_grid(
++   x |>
++     curtail(time=7.7) |>
++     plot(
++       points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal,
++       legend.position="none",
++       axis.line=element_line(color=grey(0.8))
++     )+
++     expand_limits(x=9,y=3)+
++     labs(title=expression(P[8])),
++   x |>
++     curtail(time=8) |>
++     plot(
++       points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal,
++       legend.position="none",
++       axis.line=element_line(color=grey(0.8))
++     )+
++     expand_limits(x=9,y=3)+
++     labs(title=expression(P[9])),
++   x |>
++     curtail(time=8.8) |>
++     plot(
++       points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal,
++       legend.position="none",
++       axis.line=element_line(color=grey(0.8))
++     )+
++     expand_limits(x=9,y=3)+
++     labs(title=expression(P[10])),
++   ncol=1
++ )
+> 
+> 
 > ## ----sessioninfo,include=FALSE,purl=TRUE--------------------------------------
 > sessionInfo()
-R version 4.5.1 (2025-06-13)
+R version 4.5.3 (2026-03-11)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 24.04.2 LTS
+Running under: Ubuntu 24.04.4 LTS
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.0 
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8     LC_MONETARY=en_US.UTF-8   
- [6] LC_MESSAGES=en_US.UTF-8    LC_PAPER=en_US.UTF-8       LC_NAME=C                  LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=en_US.UTF-8    LC_NUMERIC=C            LC_TIME=en_GB.UTF-8     LC_COLLATE=C.UTF-8      LC_MONETARY=en_US.UTF-8 LC_MESSAGES=en_US.UTF-8
+ [7] LC_PAPER=en_US.UTF-8    LC_NAME=C               LC_ADDRESS=C            LC_TELEPHONE=C          LC_MEASUREMENT=C.UTF-8  LC_IDENTIFICATION=C    
 
 time zone: America/Detroit
 tzcode source: system (glibc)
@@ -552,21 +515,21 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] doFuture_1.1.1     future_1.58.0      foreach_1.5.2      iterators_1.0.14   phylopomp_0.14.8.0 viridis_0.6.5      viridisLite_0.4.2 
- [8] cowplot_1.2.0      pomp_6.3.0.0       ggtree_3.16.2      lubridate_1.9.4    forcats_1.0.0      stringr_1.5.1      dplyr_1.1.4       
-[15] purrr_1.0.4        readr_2.1.5        tidyr_1.3.1        tibble_3.3.0       ggplot2_3.5.2      tidyverse_2.0.0   
+ [1] doFuture_1.2.1     future_1.70.0      foreach_1.5.2      iterators_1.0.14   phylopomp_0.18.0.0 viridis_0.6.5      viridisLite_0.4.3 
+ [8] cowplot_1.2.0      pomp_6.4           ggtree_4.0.5       lubridate_1.9.5    forcats_1.0.1      stringr_1.6.0      dplyr_1.2.1       
+[15] purrr_1.2.2        readr_2.2.0        tidyr_1.3.2        tibble_3.3.1       ggplot2_4.0.3      tidyverse_2.0.0   
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.6        lattice_0.22-7      tzdb_0.5.0          vctrs_0.6.5         tools_4.5.1         generics_0.1.4      yulab.utils_0.2.0  
- [8] parallel_4.5.1      pkgconfig_2.0.3     data.table_1.17.6   ggplotify_0.1.2     RColorBrewer_1.1-3  lifecycle_1.0.4     compiler_4.5.1     
-[15] farver_2.1.2        treeio_1.32.0       codetools_0.2-20    ggfun_0.1.9         yaml_2.3.10         lazyeval_0.2.2      pillar_1.11.0      
-[22] parallelly_1.45.0   nlme_3.1-168        tidyselect_1.2.1    aplot_0.2.8         digest_0.6.37       mvtnorm_1.3-3       stringi_1.8.7      
-[29] listenv_0.9.1       labeling_0.4.3      grid_4.5.1          cli_3.6.5           magrittr_2.0.3      patchwork_1.3.1     dichromat_2.0-0.1  
-[36] future.apply_1.20.0 ape_5.8-1           withr_3.0.2         scales_1.4.0        timechange_0.3.0    globals_0.18.0      gridExtra_2.3      
-[43] deSolve_1.40        hms_1.1.3           coda_0.19-4.1       gridGraphics_0.5-1  rlang_1.1.6         Rcpp_1.1.0          glue_1.8.0         
-[50] tidytree_0.4.6      jsonlite_2.0.0      R6_2.6.1            fs_1.6.6           
+ [1] gtable_0.3.6            htmlwidgets_1.6.4       lattice_0.22-9          tzdb_0.5.0              vctrs_0.7.3             tools_4.5.3            
+ [7] generics_0.1.4          yulab.utils_0.2.4       parallel_4.5.3          pkgconfig_2.0.3         data.table_1.18.4       ggplotify_0.1.3        
+[13] RColorBrewer_1.1-3      S7_0.2.2                lifecycle_1.0.5         compiler_4.5.3          farver_2.1.2            treeio_1.34.0          
+[19] codetools_0.2-20        ggfun_0.2.0             fontquiver_0.2.1        fontLiberation_0.1.0    htmltools_0.5.9         yaml_2.3.12            
+[25] lazyeval_0.2.3          pillar_1.11.1           MASS_7.3-65             parallelly_1.47.0       nlme_3.1-169            fontBitstreamVera_0.1.1
+[31] tidyselect_1.2.1        aplot_0.2.9             digest_0.6.39           mvtnorm_1.3-7           stringi_1.8.7           listenv_0.10.1         
+[37] labeling_0.4.3          fastmap_1.2.0           grid_4.5.3              cli_3.6.6               magrittr_2.0.5          patchwork_1.3.2        
+[43] future.apply_1.20.2     ape_5.8-1               withr_3.0.2             gdtools_0.5.0           scales_1.4.0            rappdirs_0.3.4         
+[49] timechange_0.4.0        globals_0.19.1          gridExtra_2.3           deSolve_1.42            hms_1.1.4               coda_0.19-4.1          
+[55] gridGraphics_0.5-1      rlang_1.2.0             ggiraph_0.9.6           Rcpp_1.1.1-1.1          glue_1.8.1              tidytree_0.4.7         
+[61] jsonlite_2.0.0          R6_2.6.1                systemfonts_1.3.2       fs_2.1.0               
 > 
 > 
-> proc.time()
-    user   system  elapsed 
-9834.799   67.088  358.022 

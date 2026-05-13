@@ -1,7 +1,7 @@
-\usepackage{mathabx,mathrsfs,eucal,bbm,amsmath,amssymb,mathtools,accents}
+\usepackage{mathabx,mathrsfs,eucal,bbm,amssymb,mathtools,accents}
 
-\definecolor{maize}{rgb}{1.0,0.796,0.020}
-\definecolor{darkblue}{rgb}{0,0.153,0.298}
+\definecolor{maize}{rgb}{0.836,0.660,0.016}
+\definecolor{grey}{rgb}{0.484,0.492,0.496}
 \definecolor{purple}{rgb}{0.518,0.082,0.765}
 \definecolor{darkgreen}{rgb}{0,0.392,0}
 \definecolor{royalblue}{rgb}{0.263,0.431,0.933}
@@ -11,6 +11,7 @@
 \newcommand\eps{\varepsilon}
 \newcommand\Set[1]{\left\{{#1}\right\}}
 \newcommand\CondSet[2]{\left\{{#1}\;\middle\vert\;{#2}\right\}}
+\newcommand\condset[2]{\left\{{#1}\middle\vert{#2}\right\}}
 \newcommand\Prob[1]{\mathsf{Prob}\left[{#1}\right]}
 \newcommand\CondProb[2]{\mathsf{Prob}\left[{#1}\;\middle\vert\;{#2}\right]}
 \newcommand\Expect[1]{\mathbbm{E}\left[{#1}\right]}
@@ -35,8 +36,20 @@
 \newcommand\rightlim[1]{\undertilde{#1}}
 \newcommand\rdm[1]{\boldsymbol{#1}}
 \newcommand\spc[1]{\mathbb{#1}}
+\newcommand\deme[1]{\mathrm{#1}}
+\newcommand\jump[1]{\mathsf{#1}}
 \newcommand\func[1]{\mathsf{#1}}
 \newcommand\lab[1]{\mathsf{#1}}
+\newcommand\col[1]{\func{d}({#1})}
+\newcommand\ctr[1]{\func{m}({#1})}
+\newcommand\cols[2]{\func{col}_{#1}({#2})}
+\newcommand\fork[3]{{\kappa}_{#1}^{#2}\mkern-1mu{#3}}
+\newcommand\chop[3]{{\chi}_{#1}^{#2}\mkern-1mu{#3}}
+\newcommand\swap[3]{{\sigma}_{#1}^{#2}\mkern-1mu{#3}}
+\newcommand\backfork[3]{{\tilde{\kappa}}_{#1}^{#2}\mkern-1mu{#3}}
+\newcommand\backchop[3]{{\tilde{\chi}}_{#1}^{#2}\mkern-1mu{#3}}
+\newcommand\backswap[3]{{\tilde{\sigma}}_{{#1}}^{#2}\mkern-1mu{#3}}
+\newcommand\event[1]{\func{ev}({#1})}
 
 \def\emptyset{\varnothing}
 \def\preceq{\preccurlyeq}
@@ -60,6 +73,7 @@
 \def\leaves{\mathbb{L}}
 \def\partit{\func{partit}}
 \def\time{\func{t}}
+\def\ColorSet{\Demes\times\Set{0,1}}
 
 \def\X{\mathrm{X}}
 \def\Xr{\rdm{\X}}
@@ -93,14 +107,15 @@
 \def\Pr{\rdm{\P}}
 \def\Y{\mathrm{Y}}
 \def\Yr{\rdm{\Y}}
-\def\Yt{\leftlim{\Y}}
-\def\Yrt{\leftlim{\Yr}}
+\def\Yt{\rightlim{\Y}}
+\def\Yrt{\rightlim{\Yr}}
 \def\Yh{\hat{\Y}}
 \def\Yrh{\rdm{\hat{\Y}}}
+\def\fY{\func{Y}}
 \def\Z{\mathrm{Z}}
 \def\Zr{\rdm{\Z}}
-\def\Zt{\leftlim{\Z}}
-\def\Zrt{\leftlim{\Zr}}
+\def\Zt{\rightlim{\Z}}
+\def\Zrt{\rightlim{\Zr}}
 \def\Zh{\hat{\Z}}
 \def\Zrh{\rdm{\hat{\Z}}}
 \def\Phir{\rdm{\Phi}}
@@ -111,8 +126,10 @@
 \def\Phirh{\rdm{\hat{\Phi}}}
 \def\Vr{\rdm{\mathrm{V}}}
 \def\ut{\leftlim{u}}
+\def\vt{\leftlim{v}}
 \def\wt{\leftlim{w}}
+\newcommand\unit[1]{\mathrm{e}_{\scriptscriptstyle{#1}}}
 
 \renewcommand\binom[2]{{\scriptscriptstyle\begin{pmatrix}{#1}\\{#2}\end{pmatrix}}}
-\newcommand\BinRatio[4]{{\scriptscriptstyle\begin{pmatrix}{#1}&{#2}\\{#3}&{#4}\end{pmatrix}}}
-\newcommand\event[1]{\func{ev}({#1})}
+\newcommand\binratio[4]{{\scriptscriptstyle\begin{pmatrix}{#1}&{#2}\\{#3}&{#4}\end{pmatrix}}}
+\newcommand\tbinratio[4]{\begin{psmallmatrix}{#1}&{#2}\\{#3}&{#4}\end{psmallmatrix}}

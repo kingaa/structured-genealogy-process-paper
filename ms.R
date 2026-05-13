@@ -5,9 +5,9 @@ library(pomp)
 library(cowplot)
 library(viridis)
 library(phylopomp)
-stopifnot(getRversion() >= "4.4")
-stopifnot(packageVersion("pomp")>="6.1")
-stopifnot(packageVersion("phylopomp")>="0.14.9.1")
+stopifnot(getRversion() >= "4.5")
+stopifnot(packageVersion("pomp")>="6.4")
+stopifnot(packageVersion("phylopomp")>="0.18")
 theme_set(theme_bw(base_family="serif"))
 options(
   width=150,
@@ -18,20 +18,23 @@ options(
   pomp_archive_dir="results"
 )
 set.seed(1159254136)
+maize <- "#d6a904"
+grey <- "#7c7e7f"
 
 
 ## ----geneal,fig.dim=c(4,2),out.width="50%"------------------------------------
 simulate(
   "SEIR",
   Beta=3,sigma=0.5,gamma=0.2,psi=0.3,omega=0.5,
-  S0=15,E0=1,I0=2,R0=0,
+  S0=15/18,E0=1/18,I0=2/18,R0=0,pop=18,
   time=10
 ) |>
   freeze(seed=382490723) -> x
 
-pal <- c("#00274CFF","#FFCB05FF")
+pal <- c(`0`="#00000000",`1`=grey,`2`=maize)
 
-x |> plot(points=TRUE,prune=FALSE,obscure=FALSE,palette=pal)+
+x |> plot(points=TRUE,prune=FALSE,obscure=FALSE,palette=pal,
+  legend.position="none")+
   geom_vline(xintercept=10,linewidth=0.2,color="black")
 
 
@@ -39,30 +42,33 @@ x |> plot(points=TRUE,prune=FALSE,obscure=FALSE,palette=pal)+
 simulate(
   "SEIR",
   Beta=1,sigma=0.5,gamma=0.1,psi=0.4,omega=0.1,
-  S0=10,E0=1,I0=1,R0=0,
+  S0=10/12,E0=1/12,I0=1/12,R0=0,pop=12,
   time=10
 ) |>
   freeze(seed=522390503) -> x
 
-pal <- c("#00274CFF","#FFCB05FF")
+pal <- c(`0`="#00000000",`1`=grey,`2`=maize)
 
 plot_grid(
   A=x |>
     plot(
       points=TRUE,prune=FALSE,obscure=FALSE,
-      ladderize=FALSE,palette=pal
+      ladderize=FALSE,palette=pal,
+      legend.position="none"
     )+
     geom_vline(xintercept=10,linewidth=0.2,color="black"),
   B=x |>
     plot(
       points=TRUE,prune=TRUE,obscure=FALSE,
-      ladderize=FALSE,palette=pal
+      ladderize=FALSE,palette=pal,
+      legend.position="none"
     )+
     geom_vline(xintercept=10,linewidth=0.2,color="black"),
   C=x |>
     plot(
       points=TRUE,prune=TRUE,obscure=TRUE,
-      ladderize=FALSE,palette="#B3B3B3FF"
+      ladderize=FALSE,palette="#000000",
+      legend.position="none"
     )+
     geom_vline(xintercept=10,linewidth=0.2,color="black"),
   ncol=1,
@@ -71,34 +77,11 @@ plot_grid(
 )
 
 
-## ----upo2b,results="hide"-----------------------------------------------------
-plot_grid(
-  x |>
-    curtail(time=7.7) |>
-    plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
-    expand_limits(x=9,y=3)+
-    theme(axis.line=element_line(color=grey(0.8)))+
-    labs(title=expression(P[8])),
-  x |>
-    curtail(time=8) |>
-    plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
-    expand_limits(x=9,y=3)+
-    theme(axis.line=element_line(color=grey(0.8)))+
-    labs(title=expression(P[9])),
-  x |>
-    curtail(time=8.8) |>
-    plot(points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal)+
-    expand_limits(x=9,y=3)+
-    theme(axis.line=element_line(color=grey(0.8)))+
-    labs(title=expression(P[10])),
-  ncol=1
-)
-
-
 ## ----sirs3--------------------------------------------------------------------
 data.frame(
   Beta=4,gamma=2,psi=1,omega=1,
-  S0=97,I0=3,R0=0,t0=0,time=40
+  S0=0.97,I0=0.03,R0=0,t0=0,pop=100,
+  time=40
 ) -> sirs_params
 
 bake(
@@ -111,7 +94,8 @@ bake(
       with(
         runSIRS(
           Beta=Beta,gamma=gamma,psi=psi,omega=omega,
-          S0=S0,I0=I0,R0=R0,t0=t0,time=time
+          S0=S0,I0=I0,R0=R0,t0=t0,pop=pop,
+          time=time
         )
       )
   }
@@ -125,6 +109,7 @@ sirs_params |>
       psi=psi,
       omega=omega,
       S0=S0,I0=I0,R0=R0,
+      pop=pop,
       t0=t0,
       rep=seq_len(8),
       Np=10000,
@@ -150,7 +135,7 @@ bake(
           sirs_tree |>
             sirs_pomp(
               Beta=Beta,gamma=gamma,psi=psi,omega=omega,
-              S0=S0,I0=I0,R0=R0,t0=0
+              S0=S0,I0=I0,R0=R0,pop=pop
             ) |>
             pfilter(Np=Np)
         })
@@ -173,7 +158,7 @@ params |>
 ## ----sirs3_plot,dependson="sirs1",fig.dim=c(8,2.8),out.width="100%"-----------
 plot_grid(
   A=sirs_tree |>
-    plot(points=FALSE,palette=c("#000000"))+
+    plot(points=FALSE,palette="#000000")+
     labs(x="time"),
   B=params |>
     ggplot(aes(x=gamma,y=logLik))+
@@ -201,7 +186,7 @@ plot_grid(
 ## ----seirs3-------------------------------------------------------------------
 seirs_params <- data.frame(
   Beta=3,sigma=1,gamma=0.5,psi=0.02,omega=0.08,
-  S0=70,E0=1,I0=0,R0=50,
+  S0=70/121,E0=1/121,I0=0,R0=50/121,pop=121,
   time=400
 )
 
@@ -213,7 +198,7 @@ bake(
     with(
       runSEIR(
         Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
-        S0=S0,E0=E0,I0=I0,R0=R0,
+        S0=S0,E0=E0,I0=I0,R0=R0,pop=pop,
         time=time
       )
     )
@@ -238,7 +223,7 @@ bake(
         seirs_tree |>
           seirs_pomp(
             Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
-            S0=S0,E0=E0,I0=I0,R0=R0
+            S0=S0,E0=E0,I0=I0,R0=R0,pop=pop
           )
       ) -> po
 
@@ -456,6 +441,39 @@ plot_grid(
 #       labs(x="effort",y=expression(group("|",bias,"|")))
 #   )
 # )
+
+
+## ----upo2b,results="hide",dependson="upo"-------------------------------------
+plot_grid(
+  x |>
+    curtail(time=7.7) |>
+    plot(
+      points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal,
+      legend.position="none",
+      axis.line=element_line(color=grey(0.8))
+    )+
+    expand_limits(x=9,y=3)+
+    labs(title=expression(P[8])),
+  x |>
+    curtail(time=8) |>
+    plot(
+      points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal,
+      legend.position="none",
+      axis.line=element_line(color=grey(0.8))
+    )+
+    expand_limits(x=9,y=3)+
+    labs(title=expression(P[9])),
+  x |>
+    curtail(time=8.8) |>
+    plot(
+      points=TRUE,prune=TRUE,obscure=FALSE,ladderize=FALSE,palette=pal,
+      legend.position="none",
+      axis.line=element_line(color=grey(0.8))
+    )+
+    expand_limits(x=9,y=3)+
+    labs(title=expression(P[10])),
+  ncol=1
+)
 
 
 ## ----sessioninfo,include=FALSE,purl=TRUE--------------------------------------

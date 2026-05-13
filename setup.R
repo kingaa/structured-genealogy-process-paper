@@ -34,9 +34,6 @@ options(
   pomp_archive_dir="results"
 )
 
-maize <- "#ffcb05"
-blue <- "#00274c"
-
 myround <- function (x, digits = 1L) {
   ## adapted from the broman package
   ## solves the bug that round() kills significant trailing zeros

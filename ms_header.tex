@@ -1,8 +1,9 @@
 \usepackage[round,elide]{natbib}
 \usepackage{times}
 \usepackage[neverdecrease]{paralist}
-\usepackage[pdftex,colorlinks=true]{hyperref}
+\usepackage[colorlinks=true]{hyperref}
 \usepackage{multirow,bigstrut}
+\usepackage[T1]{fontenc}
 
 \usepackage{tikz}
 \usetikzlibrary{arrows,arrows.meta,positioning,decorations,calc,math}
@@ -51,11 +52,20 @@
 \theoremstyle{remark}
 \newtheorem{remark}{Remark}
 \renewcommand\thethm{\arabic{thm}}
-\renewcommand\theprop{\thesection\arabic{prop}}
-\renewcommand\thelemma{\thesection\arabic{lemma}}
+\renewcommand\theprop{\arabic{prop}}
+\renewcommand\thelemma{\arabic{lemma}}
 
-\usepackage{algorithm}
+\usepackage{algorithm,caption}
 \usepackage[noend]{algpseudocode}
+
+%% \makeatletter
+%% \newcounter{HALG@line}
+%% \renewcommand{\theHALG@line}{\thealgorithm.\arabic{ALG@line}}
+%% \makeatother
+
+\captionsetup[algorithm]{labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=off}
+\captionsetup[figure]{aboveskip=1pt,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=off}
+\captionsetup[table]{aboveskip=1pt,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=off}
 
 %% \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 %% \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -89,8 +99,8 @@
 \Crefname{section}{\S}{\S\S}
 \crefformat{section}{#2\S#1#3}
 \Crefformat{section}{#2\S#1#3}
-\crefmultiformat{section}{#2\S\S#1#3}{ and~#2#1#3}{, #2#1#3}{, and~#2#1#3}
-\Crefmultiformat{section}{#2\S\S#1#3}{ and~#2#1#3}{, #2#1#3}{, and~#2#1#3}
+\crefmultiformat{section}{#2\S\S#1#3}{,~#2#1#3}{, #2#1#3}{,~#2#1#3}
+\Crefmultiformat{section}{#2\S\S#1#3}{,~#2#1#3}{, #2#1#3}{,~#2#1#3}
 \crefname{thm}{Theorem}{Theorems}
 \Crefname{thm}{Theorem}{Theorems}
 \crefname{algorithm}{Algorithm}{Algorithms}
