@@ -295,7 +295,7 @@ The adjoint form of the KFE is the Kolmogorov backward equation,
     F(T,x) = f(x).
   \end{gathered}
 \end{equation}
-If $F$ satisfies \cref{eq:kbe} for $s\in[0,T]$ and $x\in\Xspace$, then $F(s,x)=\CondExpect{f(\Xr-T)}{\Xr-s=x}$ for all $t\in[0,T]$ and $x\in\Xspace$.
+If $F$ satisfies \cref{eq:kbe} for $s\in[0,T]$ and $x\in\Xspace$, then $F(s,x)=\CondExpect{f(\Xr_T)}{\Xr_s=x}$ for all $t\in[0,T]$ and $x\in\Xspace$.
 
 \subsection{Inclusion of jumps at deterministic times}
 \label{sec:deltas}
@@ -816,16 +816,16 @@ Crucially, since it contains within itself all of its past history, the pruned g
 
 In the following, we will find that we need to count the deme-specific numbers of lineages present in a given pruned genealogy at a given time.
 Accordingly, suppose $P=(T,Z,Y)$ is a pruned genealogy and suppose $t\in[0,T]$.
-Let $\ell_i$ denote the number of lineages in deme $i$ at time $t$ and $\ell\coloneq(\ell_i)_{i\in\Demes}\in\Zp^{\Demes}$.
-Clearly, $\ell$ depends only on $Y_t$.
-Therefore, we can define $\ell$ as a function such that, whenever $P=(T,Z,Y)$ is a pruned genealogy, $\ell(Y_t)$ is the vector of deme-specific lineage counts at time $t$.
+Let $\ell_i$ denote the number of lineages in deme $i$ just after time $t$ and $\ell\coloneq(\ell_i)_{i\in\Demes}\in\Zp^{\Demes}$.
+Clearly, $\ell$ depends only on $\rightlim{Y}_t$.
+Therefore, we can define $\ell$ as a function such that, whenever $P=(T,Z,Y)$ is a pruned genealogy, $\ell(\rightlim{Y}_t)$ is the vector of deme-specific lineage counts at time $t$.
 We refer to $\ell$ as the \emph{lineage-count} function (cf.~\cref{fig:ells}).
 
 We will also have occasion to refer to the deme-specific number of lineages emerging from a given event.
 In particular, given a node time $t$ in a pruned genealogy $P=(T,Z,Y)$, the number $s_i$ of lineages of deme $i$ emerging from all nodes with time $t$ is well defined and we can write $s\coloneq\left(s_i\right)_{i\in\Demes}$.
-Like the lineage-count function, $s$ depends only on the local structure of $\P$.
-However, $s$ depends not only on $Y_t$, but also on $\leftlim{Y}_t$.
-Thus, we can define the \emph{saturation} function such that, whenever $P=(T,Z,Y)$ is a pruned genealogy, $s(\leftlim{Y}_t,Y_t)$ is the integer vector of deme-specific numbers of emerging lineages at time $t$.
+Like the lineage-count function, $s$ depends only on the local structure of $P$.
+However, $s$ depends not only on $Y_t$, but also on $\rightlim{Y}_t$.
+Thus, we can define the \emph{saturation} function such that, whenever $P=(T,Z,Y)$ is a pruned genealogy, $s(Y_t,\rightlim{Y}_t)$ is the integer vector of deme-specific numbers of emerging lineages at time $t$.
 \Cref{fig:ells} illustrates.
 
 \begin{figure}
@@ -855,12 +855,12 @@ Suppose $P$ is a pruned genealogy, with $\time(P)=T$ and $t\in{[0,T]}$.
 The local structure of $P$ at $t$ is, in general, compatible with only a subset of the possible jumps $\Jumps$.
 For example, if there is a branch node or a sample node at $t$, then it is compatible only with birth-type or sample-type jumps, respectively.
 Similarly, if a lineage moves from deme $i$ to deme $i'$ at $t$, then $u$ must be either of $i\to{i'}$ migration type or of a birth type with parent in $i$ and $r^u_{i'}>0$.
-To succinctly accommodate all possibilities, let us introduce the indicator function $Q$ such that $Q=1$ if the local genealogy structure---which is captured by the values of $P^{\lab{Y}}$ just before and at $t$---is compatible with an event of type $u$ and $Q=0$ otherwise.
+To succinctly accommodate all possibilities, let us introduce the indicator function $Q$ such that $Q=1$ if the local genealogy structure---which is captured by the values of $P^{\lab{Y}}$ at and just after $t$---is compatible with an event of type $u$ and $Q=0$ otherwise.
 That is, $Q_u(y,y')=1$ if and only if
 there is a feasible genealogy, $\G=(\T,\Z,\Y)$, and history, $\H$,
 and a $t\in{[0,\T]}$ such that,
 given $\Gr_\T=\G$ and $\Hr_\T=\H$,
-we have $\U_t=u$, $\Yt_t=y$, and $\Y_t=y'$.
+we have $\U_t=u$, $\Y_t=y$, and $\Yt_t=y'$.
 We refer to $Q$ as the \emph{compatibility indicator}.
 
 \subsubsection{Obscured genealogy}
@@ -1005,10 +1005,10 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
   \end{equation*}
   Suppose moreover that $\pi_u(t,x,x',y,y')>0$ whenever $\alpha_u(t,x,x')\,Q_u(y,y')>0$
   and that $q(x,y)>0$ whenever $\CondProb{\Pr_0^{\lab{Y}}=y}{\Xr_0=x}>0$.
-  Then there is a stochastic jump process $\yr_t$ with sample paths in $\fY(\Z)$ such that $(\Xr_t,\Ur_t,\yr_t)$ is Markov and
+  Then there is a stochastic jump process $\yr_t$ with \caglad\ sample paths in $\fY(\Z)$ such that $(\Xr_t,\Ur_t,\yr_t)$ is Markov and
   \begin{equation*}
     \CondProb{\Pr^{\lab{Z}}_\T=\Z}{\Hr_\T=\H}=
-    \Indicator{\event{\H}\supseteq\event{\Z}}\,\Expect{\frac{1}{q(X_0,\yr_0)}\,\prod_{t\in\event{\H}}{\frac{\phi^{}_{\U_t}(\X_t,\yrt_t,\yr_t)}{\pi_{\U_t}(t,\Xt_t,\X_t,\yrt_t,\yr_t)}}},
+    \Indicator{\event{\H}\supseteq\event{\Z}}\,\Expect{\frac{1}{q(X_0,\yr_0)}\,\prod_{t\in\event{\H}}{\frac{\phi^{}_{\U_t}(\X_t,\yr_t,\yrt_t)}{\pi_{\U_t}(t,\Xt_t,\X_t,\yr_t,\yrt_t)}}},
   \end{equation*}
   where $\phi$ is defined in \cref{eq:phidef} and
   the expectation is taken over the sample paths of $\yr_t$.
@@ -1044,7 +1044,7 @@ Our next result concerns the likelihood of a given obscured genealogy conditiona
   the expectation being taken with respect to the random process $\yr$.
   Here, by definition,
   \begin{equation*}
-    \pi(\yr\vert\H)=q(\X_0,\yr_0)\,\prod_{t\in\event{\H}}{\pi_{\U_{t}}(t,\Xt_{t},\X_{t},\yrt_{t},\yr_{t})}.
+    \pi(\yr\vert\H)=q(\X_0,\yr_0)\,\prod_{t\in\event{\H}}{\pi_{\U_{t}}(t,\Xt_{t},\X_{t},\yr_{t},\yrt_{t})}.
   \end{equation*}
   The result then follows from \cref{thm:pruned-lik}.
 \end{proof}
@@ -1065,7 +1065,7 @@ It is an immediate consequence of \cref{thm:obsc-lik,lemma:sing-filt}.
 
 \begin{thm}
   \label{thm:obsc-filter}
-  Let $V=(\T,\Z)$ be a given obscured genealogy.
+  Let $(\T,\Z)$ be a given obscured genealogy.
   Then there are probability kernels $q$ and $\pi$ as in \cref{thm:obsc-lik} such that if
   \begin{equation*}
     \begin{gathered}
@@ -1088,9 +1088,9 @@ It is an immediate consequence of \cref{thm:obsc-lik,lemma:sing-filt}.
       &t\in{\event{\Z}},
     \end{align}
   \end{mathsize}%
-  then the likelihood of $V$ is
+  then the likelihood of $(\T,\Z)$ is
   \begin{equation*}
-    \lik=\sum_{y\in\fY_T(\Z)}{\int{w(T,x,y)\,\dd{x}}}.
+    \lik=\sum_{y\in\fY_{\T}(\Z)}{\int{w(\T,x,y)\,\dd{x}}}.
   \end{equation*}
 \end{thm}
 
@@ -1099,9 +1099,9 @@ As before, there is also an adjoint form of \cref{thm:obsc-filter}, to wit:
 
 \begin{corol}
   \label[corol]{corol:obsc_filter}
-  Let $V=(\T,\Z)$ be a given obscured genealogy and let $\beta$ and $\varPsi$ be defined as in \cref{thm:obsc-filter}.
+  Let $(\T,\Z)$ be a given obscured genealogy and let $\beta$ and $\varPsi$ be defined as in \cref{thm:obsc-filter}.
   Suppose $F$ is \caglad\ and satisfies the final condition
-  $\rightlim{F}(T,x,y)=1$ for all $x\in\Xspace$, $y\in\fY_T(\Z)$ and also the adjoint filter equation
+  $\rightlim{F}(\T,x,y)=1$ for all $x\in\Xspace$, $y\in\fY_{\T}(\Z)$ and also the adjoint filter equation
   \begin{align}
     \label{eq:obsc-adj-reg}
     -&\frac{\partial{F}}{\partial{s}}=
@@ -1111,8 +1111,8 @@ As before, there is also an adjoint form of \cref{thm:obsc-filter}, to wit:
     &F(s,x,y)=\sum_{uy'}{\int{\beta_u(s,x,x',y,y')\,\varPsi_u(s,x,x',y,y')\,\rightlim{F}(s,x',y')\,\dd{x'}}},
     &s\in{\event{\Z}},
   \end{align}
-  for $0\le{s}\le{T}$.
-  Then the likelihood of $V$ is
+  for $0\le{s}\le{\T}$.
+  Then the likelihood of $(\T,\Z)$ is
   \begin{equation*}
     \lik=\sum_{y\in\fY_0(\Z)}{\int{F(0,x,y)\,p_0(x)\,\dd{x}}}.
   \end{equation*}
@@ -1295,7 +1295,7 @@ To satisfy the last case of \cref{eq:filter-lbdp-sing}, we note that $\leftlim{\
   \label[pluralequation]{eq:FGfc}
   G(T)=1-\rho, \qquad H(T)=1, \qquad C(T)=\frac{\rho^n}{n!}.
 \end{equation}
-Finally, upon substituting the ansatz into \cref{eq:filter-lbdp-reg}, we obtain for $s\notin{B\cup{S-0}\cup{S-1}\cup{\Set{T}}}$,
+Finally, upon substituting the ansatz into \cref{eq:filter-lbdp-reg}, we obtain for $s\notin{B\cup{S_0}\cup{S_1}\cup{\Set{T}}}$,
 \begin{equation*}
   \begin{split}
     -\frac{1}{F}\frac{\partial{F}}{\partial{s}}
@@ -1331,7 +1331,7 @@ In passing, we note that \cref{eq:FGeq} appear prominently in the very different
 %%     \delta=\sqrt{(\lambda+\mu+\psi)^2-4\,\lambda\,\mu}
 %%   \end{gathered}
 %% \end{equation*}
-\Cref{thm:obsc-filter} then states that $\lik=\int{F(0,x)\,p-0(x)\,\dd{x}}$.
+\Cref{thm:obsc-filter} then states that $\lik=\int{F(0,x)\,p_0(x)\,\dd{x}}$.
 In particular, conditional on $\Xr_0=x$, we have
 \begin{equation}
   \lik=\frac{x!}{(x-\ell(0))!}\,\frac{\rho^n}{n!}\,G(0)^{x-{\ell}(0)}\,H(0)^{{\ell}(0)}\,\psi^{|S_1|}\,\prod_{\mathclap{t\in{B}}}{\left(2\,\lambda\,H(t)\right)}\,\prod_{\mathclap{t\in{S_0}}}{\left(\psi\,{G(t)}{H(t)^{-1}}\right)}.
@@ -1345,7 +1345,7 @@ It should be clear, however, that even within the context of the unstructured, l
 \section{Worked examples}
 \label{sec:worked-examples}
 
-In this section, we illustrate the theory by working out the filter equations in the case of two familiar models.
+In this section, we illustrate the theory by working out the filter equations in the case of two familiar nonlinear models.
 In particular, we show how the general filter equation introduced in \cref{thm:obsc-filter} takes on a specific form that depends only on the model structure.
 In each case, we also provide results of some elementary numerical computations based on these filters, using methods described in \cref{sec:filter-eqns}.
 
@@ -1413,6 +1413,26 @@ The compatibility indicator is given by
 \end{mathsize}%
 (Recall that the swap, chop, and fork operators $\swap{}{}{}$, $\chop{}{}{}$, $\fork{}{}{}$ are defined in \cref{sec:swapnchop}).
 
+\begin{table}[h]
+  \caption{
+    \label{tab:sirs-model-elements}
+    Elements of the SIRS model pertinent to the genealogy process.
+    The population state is $x=(S,I,R)$ and there are four types of jumps, $x\mapsto{x'}=(S',I',R')$.
+    For each of these, the table shows the rate ($\alpha_u$), production ($r^u$), and event type (\cf~\cref{sec:event-types}).
+  }
+  %% \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{cccl}
+    \hline\hline
+    $u$ & $\alpha_u(t,x,x')$ \bigstrut & $r^u$ \bigstrut & Event type \\
+    \hline
+    $\jump{Trans}$  & $\frac{\beta S I}{N}\,\indicator{S'=S-1,I'=I+1}$ \bigstrut & 2 & pure birth \\
+    $\jump{Recov}$  & $\gamma\,I\,\indicator{I'=I-1,R'=R+1}$           \bigstrut & 0 & pure death \\
+    $\jump{Wane}$   & $\omega\,R\,\indicator{S'=S+1,R'=R-1}$           \bigstrut & 0 & neutral \\
+    $\jump{Sample}$ & $\psi\,I$                                        \bigstrut & 1 & pure sample \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+
 Now, suppose we are given an obscured genealogy $(T,Z)$ and wish to compute its likelihood under the SIRS model.
 The general form of the singular part of the filter equation (\cref{eq:obsc-filter-sing}) is
 \begin{equation*}
@@ -1463,7 +1483,7 @@ Finally, putting in the expressions from \cref{eq:sirs-binratio,tab:sirs-model-e
   \end{equation}
 \end{mathsize}%
 
-Let us now turn to the regular part of the filter equation (\cref{eq:obsc-filter-reg}), which holds for $t\notin{B\cup{S-0}\cup{S-1}}$,
+Let us now turn to the regular part of the filter equation (\cref{eq:obsc-filter-reg}), which holds for $t\notin{B\cup{S_0}\cup{S_1}}$,
 \ie in the intervals between events of $Z$.
 Again, since there is only one deme for this model, we have
 \begin{mathsize}{9pt}{10pt}
@@ -1490,7 +1510,7 @@ Using \cref{eq:phidef,eq:sirs-binratio,eq:sirs-Qs}, we can evaluate the sums in 
     \end{split}
   \end{equation}
 \end{mathsize}%
-Again, we now sum over $m$, obtaining
+Again, we sum over $m$, obtaining
 \begin{mathsize}{9pt}{10pt}
   \begin{equation}
     \label{eq:sirs3}
@@ -1526,26 +1546,6 @@ Note the presence in \cref{eq:sirs4} of the decay term proportional to $\psi$.
 
 \Cref{eq:sirs4,eq:sirs7} are identical to those obtained using the more specialized approach of \citet{King2022}.
 \Cref{fig:sirs-example} shows some numerical results obtained by integrating this filter equation using the scheme of \cref{sec:smc}.
-
-\begin{table}[H]
-  \caption{
-    \label{tab:sirs-model-elements}
-    Elements of the SIRS model pertinent to the genealogy process.
-    The population state is $x=(S,I,R)$ and there are four types of jumps, $x\mapsto{x'}=(S',I',R')$.
-    For each of these, the table shows the rate ($\alpha_u$), production ($r^u$), and event type (\cf~\cref{sec:event-types}).
-  }
-  %% \renewcommand{\arraystretch}{1.2}
-  \begin{tabular}{cccl}
-    \hline\hline
-    $u$ & $\alpha_u(t,x,x')$ \bigstrut & $r^u$ \bigstrut & Event type \\
-    \hline
-    $\jump{Trans}$  & $\frac{\beta S I}{N}\,\indicator{S'=S-1,I'=I+1}$ \bigstrut & 2 & pure birth \\
-    $\jump{Recov}$  & $\gamma\,I\,\indicator{I'=I-1,R'=R+1}$           \bigstrut & 0 & pure death \\
-    $\jump{Wane}$   & $\omega\,R\,\indicator{S'=S+1,R'=R-1}$           \bigstrut & 0 & neutral \\
-    $\jump{Sample}$ & $\psi\,I$                                        \bigstrut & 1 & pure sample \\
-    \hline\hline
-  \end{tabular}
-\end{table}
 
 <<sirs3>>=
 data.frame(
@@ -1769,7 +1769,7 @@ Applying \cref{eq:phidef} and the relevant cases of \cref{eq:seirs1,eq:seirs2}, 
   \end{equation*}
 \end{mathsize}%
 Note that, in \cref{eq:seirs21}, the sample label $a$, and the branches $b$ and $b'$ are determined unambiguously by $Z$.
-As in \cref{sec:sirs-example}, we sum over $m$, writing $w(t,x,d)=\sum-m{w(t,x,d,m)}$ to obtain
+As in \cref{sec:sirs-example}, we sum over $m$, writing $w(t,x,d)=\sum_m{w(t,x,d,m)}$ to obtain
 \begin{mathsize}{9pt}{10pt}
   \begin{equation}
     \label{eq:seirs22}
@@ -1875,6 +1875,26 @@ The kernels $\pi$ that appear in \cref{eq:seirs5} are normalized so that, for al
   \end{gathered}
 \end{equation}
 
+\begin{table}
+  \caption{
+    \label{tab:seirs-model-elements}
+    Elements of the SEIRS model pertinent to the genealogy process.
+    The population state is $x=(S,E,I,R)$ and there are four types of jumps, $x\mapsto{x'}=(S',E',I',R')$.
+    For each of these, the table shows the rate ($\alpha_u$), production ($r^u=(r^u_{\deme{E}},r^u_{\deme{I}})$), and event type.
+  }
+  \begin{tabular}{cccl}
+    \hline\hline
+    $u$ & $\alpha_u(t,x,x')$ \bigstrut & $r^u$ \bigstrut & Event type \\
+    \hline
+    $\jump{Trans}$  & $\frac{\beta S I}{N}\,\indicator{S'=S-1,E'=E+1}$ \bigstrut & $(1,1)$ & pure birth \\
+    $\jump{Prog}$   & $\sigma\,E\,\indicator{E'=E-1,I'=I+1}$           \bigstrut & $(0,1)$ & pure migration \\
+    $\jump{Recov}$  & $\gamma\,I\,\indicator{I'=I-1,R'=R+1}$           \bigstrut & $(0,0)$ & pure death \\
+    $\jump{Wane}$   & $\omega\,R\,\indicator{S'=S+1,R'=R-1}$           \bigstrut & $(0,0)$ & neutral \\
+    $\jump{Sample}$ & $\psi\,I$                                        \bigstrut & $(0,1)$ & pure sample \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+
 Comparing \cref{eq:seirs5,eq:seirs21} with the general form of a filter equation (\cref{sec:filter-eqns}, \cref{eq:filter-eq-defn-reg,eq:filter-eq-defn-sing}), one recognizes them as a filter equation on the $(x,d)$-space, with driver $\beta$, boost $B$, and decay $\lambda$, as follows.
 \begin{align}
   \begin{split}
@@ -1910,7 +1930,7 @@ Comparing \cref{eq:seirs5,eq:seirs21} with the general form of a filter equation
     -\int{\alpha_{\jump{Recov}}(t,x,x')\,\indicator{I\le\ellI}\,\dd{x'}}.\\
   \end{split}
 \end{align}
-One sees, in particular, that the importance-sampling kernels $\pi$ represent the probabilities of changing color on a particular branch (or on no branch), contingent on the population event.
+One sees, in particular, that the importance-sampling kernels $\pi$ represent the probabilities of changing color on a particular branch (or not doing so), contingent on the population event.
 For example, $\pi_{\deme{EI}}^{b}(t,x)$ is the probability of proposing an $\deme{E}\to\deme{I}$ change on branch $b$ at time $t$ given state $x$, given that a $\jump{Prog}$ event occurs at that time.
 The complementary probability $\pi_{\deme{EI}}^{\emptyset}(t,x)$ is that of proposing no change to any branch.
 As another example $\pi_{\deme{IE}}^{bb'}(t,x)$ is the probability of proposing, at a genealogical branch-point, that branch $b$ is put into deme $\deme{I}$ and $b'$ is put into $\deme{E}$;
@@ -1926,30 +1946,10 @@ Similarly, $\pi_{\deme{IE}}^b=\tfrac{1}{I}$ and $\pi_{\deme{IE}}^{\emptyset}=\tf
 At branch points, the two possibilities are given equal probabilities, \ie $\pi_{\deme{IE}}^{bb'}=\pi_{\deme{EI}}^{bb'}=\tfrac{1}{2}$.
 \Cref{fig:seirs-example} shows the results of a numerical calculation based on these choices.
 
-With the na\"ive choice of important-sampling kernels, it can happen that the coloring process puts a lineage into a deme that is inconsistent with the data.
+With the na\"ive choice of importance-sampling kernels, it can happen that the coloring process puts a lineage into a deme that is inconsistent with the data.
 For example, at a branch point or at a sample, the parent lineage might be in deme $\deme{E}$.
 Observe that, in this case, according to \cref{eq:seirs-boost}, the boost factor will be $0$, which is the correct penalty to apply.
-As we point out in \cref{rem:part-obsc}, a different choice of $\pi$ that anticipates the necessary deme-location, might prove more efficient.
-
-\begin{table}[H]
-  \caption{
-    \label{tab:seirs-model-elements}
-    Elements of the SEIRS model pertinent to the genealogy process.
-    The population state is $x=(S,E,I,R)$ and there are four types of jumps, $x\mapsto{x'}=(S',E',I',R')$.
-    For each of these, the table shows the rate ($\alpha_u$), production ($r^u=(r^u_{\deme{E}},r^u_{\deme{I}})$), and event type.
-  }
-  \begin{tabular}{cccl}
-    \hline\hline
-    $u$ & $\alpha_u(t,x,x')$ \bigstrut & $r^u$ \bigstrut & Event type \\
-    \hline
-    $\jump{Trans}$  & $\frac{\beta S I}{N}\,\indicator{S'=S-1,E'=E+1}$ \bigstrut & $(1,1)$ & pure birth \\
-    $\jump{Prog}$   & $\sigma\,E\,\indicator{E'=E-1,I'=I+1}$           \bigstrut & $(0,1)$ & pure migration \\
-    $\jump{Recov}$  & $\gamma\,I\,\indicator{I'=I-1,R'=R+1}$           \bigstrut & $(0,0)$ & pure death \\
-    $\jump{Wane}$   & $\omega\,R\,\indicator{S'=S+1,R'=R-1}$           \bigstrut & $(0,0)$ & neutral \\
-    $\jump{Sample}$ & $\psi\,I$                                        \bigstrut & $(0,1)$ & pure sample \\
-    \hline\hline
-  \end{tabular}
-\end{table}
+As we point out in \cref{rem:part-obsc}, a different choice of $\pi$ that anticipates the necessary deme-location, might avoid such extreme penalties and thereby prove more efficient.
 
 <<seirs3>>=
 seirs_params <- data.frame(
@@ -2291,12 +2291,22 @@ This will be developed in a sequel.
 
 The price of the theory's flexibility is primarily computational.
 When sequential Monte Carlo is used to evaluate the likelihood in \cref{thm:obsc-filter}, the computational complexity scales linearly with the number of genomic samples.
-In its most straightforward implementation---using an event-driven algorithm \citep[\eg][]{Gillespie1977a}---it scales nonlinearly with population size in general.
+In its most straightforward implementation---using an event-driven algorithm \citep[\eg][]{Gillespie1977a}---it scales super-linearly with population size in general.
 However, stochastic simulation schemes are available that scale independently of population size \citep{Higham2008}.
 On the other hand, the importance sampling underlying \cref{thm:obsc-filter} will in general require effort that is exponential in the number of demes.
 For models with many demes, therefore, approaches for ameliorating or circumventing this curse of dimensionality may be necessary.
 Critically, the substantial freedom one has in the choice of the importance-sampling kernel $\pi$ can be exploited for this purpose.
 In particular, since it is permissible to ``borrow information'' from the future by means of the importance sampling, there is hope for highly efficient algorithmic computation.
+
+\phantomsection
+\addcontentsline{toc}{section}{Acknowledgments}
+\section*{Acknowledgments}
+
+We thank Erik Volz, Caroline Colijn, Cris Moore, Ethan Romero-Seversen, and three anonymous reviewers for their valuable suggestions.
+This work was supported by grants from
+the U.S. National Science Foundation (Grants \#2526827, \#1761603),
+the U.S. National Institutes of Health, (Grants \#1R01AI143852, \#1U54GM111274).
+QL acknowledges the support of the Michigan Institute for Data Science.
 
 \clearpage
 
@@ -2356,17 +2366,6 @@ In particular, since it is permissible to ``borrow information'' from the future
   \end{tabular}
 \end{table}
 
-
-\phantomsection
-\addcontentsline{toc}{section}{Acknowledgments}
-\section*{Acknowledgments}
-
-We thank Erik Volz, Caroline Colijn, Cris Moore, Ethan Romero-Seversen, and three anonymous reviewers for their valuable suggestions.
-This work was supported by grants from
-the U.S. National Institutes of Health, (Grant \#1R01AI143852 to AAK, \#1U54GM111274 to AAK and ELI)
-and a grant from the Interface program, jointly operated by the U.S. National Science Foundation and the National Institutes of Health (Grant \#1761603 to ELI and AAK).
-QL acknowledges the support of the Michigan Institute for Data Science.
-
 \phantomsection
 \bibliographystyle{preprint}
 \bibliography{phylopomp}
@@ -2390,32 +2389,32 @@ QL acknowledges the support of the Michigan Institute for Data Science.
 
 We are given a pruned genealogy $\P=(\T,\Z,\Y)$ and a history $\H$ and wish to compute $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}$.
 First, note that if $\event{\H}\nsupseteq\event{\P}$, then $\H$ and $\P$ are incompatible and $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}=0$.
-Similarly, if any event of $\H$ is incompatible with the local structure of $\P$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr-\T=\P}{\Hr-\T=\H}=0$.
+Similarly, if any event of $\H$ is incompatible with the local structure of $\P$ in the sense of \cref{sec:compatibility}, then $\CondProb{\Pr_\T=\P}{\Hr_\T=\H}=0$.
 In either case, the conclusion of the theorem follows.
 Let us therefore suppose that neither of these conditions hold.
 
 We can always construct a time-respecting, but otherwise arbitrary ordering of the sample nodes.
-Let $\P_j$ represent the genealogy spanned by the first $j$ samples in this ordering.
-Since each $\P_j$ contains $\P_{j'}$ for all $j'<j$, $\P_j$ is a Markov chain.
+Let $\Ph_j$ represent the embedded chain of the pruned genealogy process, \ie the genealogy subtended by the first $j$ samples in this ordering.
+Since each $\Ph_j$ contains $\Ph_{j'}$ for all $j'<j$, $\Ph_j$ is a Markov chain.
 Therefore, we have the factorization
 \begin{equation*}
-  \CondProb{\P}{\H}=\prod_{j}{\CondProb{\P_j}{\P_{j-1},\H}}.
+  \CondProb{\P}{\H}=\prod_{j}{\CondProb{\Ph_j}{\Ph_{j-1},\H}}.
 \end{equation*}
-Each factor, $\CondProb{\P_j}{\P_{j-1},\H}$, can itself be factorized.
-In particular, suppose $\H$ and $\P_{j-1}$ are given and suppose that it is the $K$-th event in $\H$ that introduces the $j$-th sample.
-The $j$-th lineage extends backward in time until it either coalesces with $\P_{j-1}$ or reaches $t=0$ (\cref{fig:embedded-chain}).
+Each factor, $\CondProb{\Ph_j}{\Ph_{j-1},\H}$, can itself be factorized.
+In particular, suppose $\H$ and $\Ph_{j-1}$ are given and suppose that it is the $K$-th event in $\H$ that introduces the $j$-th sample.
+The $j$-th lineage extends backward in time until it either coalesces with $\Ph_{j-1}$ or reaches $t=0$ (\cref{fig:embedded-chain}).
 Moreover, since $\P$ is compatible with $\H$, nothing can happen to this lineage between events of $\H$.
 Therefore, we proceed backward, event by event, as follows.
 Since the type of event $K$ is given, the color of the $j$-th lineage just prior to that event is known.
 At each subsequent event, the lineage either emerges from the event or does not.
 Moreover, if the lineage does emerge from the event, the color prior to the event is determined and the color remains unchanged if it does not.
 Suppose that lineage $j$ is in deme $i$ just to the right of event $k<K$ and that the deme-$i$ occupancy and production are $n_i$, $r_i$, respectively.
-Let $\ell_{ij}$, $s_{ij}$ be the lineage count and saturation at this event in $\P_{j-1}$.
+Let $\ell_{ij}$, $s_{ij}$ be the lineage count and saturation at this event in $\Ph_{j-1}$.
 Then the new lineage can be any one of the $n_i-\ell_i$ lineages as yet unaccounted for.
 Of these, $r_i-s_{ij}$ emerge from the event.
 Therefore, the probability that lineage $j$ emerges from the event is $(r_i-s_{ij})/(n_i-\ell_{ij})$ and the probability that it does not is $(n_i-r_i-\ell_{ij}+s_{ij})/(n_i-\ell_{ij})$.
 Let $q_{jk}$ be the former if lineage $j$ does in fact emerge from the event and the latter if it does not.
-Then $\CondProb{\P_j}{\P_{j-1},\H}=\prod_{k}{q_{jk}}$ and $\CondProb{\P}{\H}=\prod_{jk}{q_{jk}}$.
+Then $\CondProb{\Ph_j}{\Ph_{j-1},\H}=\prod_{k}{q_{jk}}$ and $\CondProb{\P}{\H}=\prod_{jk}{q_{jk}}$.
 
 \begin{figure}[b]
   <<upo2b,results="hide",dependson="upo">>=
@@ -2482,7 +2481,7 @@ the latter being the binomial ratio defined in \cref{sec:binomial-ratio}.
 
 Alternatively, one can reason as follows.
 Conditional on $\Hr_\T=\H$, at each time $t\in\event{\H}$, a jump of mark $\U_t$ occurred, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
-In $\P$, at time $t$, there are $\ell_i=\ell_i(\Y_t)$ lineages in deme $i$, of which $s_i=s_i(\Yt_t,\Y_t)$ are emergent.
+In $\P$, at time $t$, there are $\ell_i=\ell_i(\Yt_t)$ lineages in deme $i$, of which $s_i=s_i(\Y_t,\Yt_t)$ are emergent.
 By assumption, at each genealogical event, lineages within a deme are exchangeable:
 each has an identical probability of being involved.
 This exchangeability implies that each lineage present in a deme at time $t$ was equally likely to have been one of the emergent lineages.
@@ -2494,7 +2493,7 @@ Because the lineages are labeled, each of the $\tbinom{\ell_i}{s_i}$ equally pro
 just one of these is the one present in $\P$.
 Moreover, since, again conditional on $\Hr_\T=\H$, the identities of the lineages involved in a genealogical event are random and independent of the identities selected at all other events, we have established that
 \begin{equation*}
-  \CondProb{\Pr_\T=\P}{\Hr_\T=\H}=\prod_{t\in\event{\H}}{\binratio{n(\X_t)}{\ell(\Y_t)}{r^{\U_t}}{s(\Yt_t,\Y_t)}}.
+  \CondProb{\Pr_\T=\P}{\Hr_\T=\H}=\prod_{t\in\event{\H}}{\binratio{n(\X_t)}{\ell(\Yt_t)}{r^{\U_t}}{s(\Y_t,\Yt_t)}}.
 \end{equation*}
 
 Returning to the possibility that $\H$ is incompatible with $\P$, since $\Prob{\Pr_\T=\P}=0$ if either any $Q^{}_{\U_t}=0$ or $\event{\P}\nsubseteq\event{\H}$, we obtain the result.
@@ -2537,8 +2536,8 @@ This extremely convenient formalism has, to our knowledge, not been thoroughly e
       \label{eq:filter-eq-defn-sing}
     \end{align}
   \end{mathsize}%
-  is called the \emph{filter equation} \emph{generated by} $\beta$, with \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observed event times} $S$.
-  The process $\Xr_t$ is said to be the \emph{driver} of the filter equation.
+  is called the \emph{filter equation} \emph{driven by} $\beta$, with \emph{boost} $B$, \emph{decay} $\lambda$, and \emph{observed event times} $S$.
+  Without important confusion, the process $\Xr_t$ can also be said to drive the filter equation.
   \Cref{eq:filter-eq-defn-reg} is the \emph{regular part} of the filter equation;
   \Cref{eq:filter-eq-defn-sing} is known as the \emph{singular part}.
 \end{defn}
@@ -2698,7 +2697,7 @@ This is facilitated by the following Lemma, the statement of which uses a one-si
 
 \begin{lemma}
   \label{lemma:monte-carlo}
-  \Cref{eq:filter-eq-defn-reg,eq:filter-eq-defn-sing} are satisfied by $w(t,x)=\int-0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u(t,x,v)$ satisfies the KFE
+  \Cref{eq:filter-eq-defn-reg,eq:filter-eq-defn-sing} are satisfied by $w(t,x)=\int_0^{\infty}{v\,u(t,x,v)\,\dd{v}}$, where $u(t,x,v)$ satisfies the KFE
   \begin{mathsize}{9pt}{10pt}
     \begin{equation}
       \begin{aligned}
@@ -2812,6 +2811,8 @@ Our purpose here is merely to illustrate the implications of \cref{lemma:monte-c
 %% \item Weight the realization by the product of the $B$ factors.
 %%   Note that this makes the appropriate importance-sampling correction.
 %% \end{compactenum}
+
+\clearpage
 
 \begin{algorithm}[H]
   \caption{
