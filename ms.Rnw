@@ -37,7 +37,7 @@
 
 \hypersetup{pdftitle={Exact Phylodynamic Likelihood via Structured Markov Genealogy Processes}}
 \hypersetup{pdfauthor={A.A. King, Q.-Y. Lin, E.L. Ionides}}
-\hypersetup{urlcolor=blue,citecolor=blue,linkcolor=blue,filecolor=blue}
+\hypersetup{urlcolor=black,citecolor=black,linkcolor=black,filecolor=black}
 
 <<prefix,include=FALSE,cache=FALSE,purl=FALSE>>=
 prefix <- "sgp"
@@ -122,7 +122,6 @@ For this reason, there is interest in improved phylodynamic inference techniques
 What would an ideal phylodynamic inference method look like?
 First, it would allow us to ask the questions we wish to ask.
 Since the set of scientifically interesting hypotheses is not contained within the set of statistically convenient models, an ideal phylodynamic inference methodology would put no restrictions on the form of the models that it can accommodate.
-%% Since the sets of scientific method can lead us to hypothesize models , an ideal phylodynamic inference methodology would put no restrictions on the form of the models that it can accommodate.
 In particular, since nonlinearity, nonstationarity, noise, and measurement error are prominent and ubiquitous in epidemiology, such a method would accommodate nonlinear, time-inhomogeneous, stochastic transmission models.
 Moreover, because many of the most scientifically and practically important uncertainties concern heterogeneities in transmission rates and the susceptibility, behavior, age, and location of hosts, it would accommodate host populations structured by these and other factors.
 Second, it would be both statistically efficient and robust to model misspecification.
@@ -197,6 +196,8 @@ Note that, if $\Phir_t$ is \cadlag, then $\Phirt_t$ is \caglad\ and if $\Phir_t$
 If $\Phir_t$, $t\in\Rp$ is a pure jump process, knowledge of its sample path is equivalent to knowledge of the number, $\Kr_t$, of jumps it has taken as of time $t$, the jump times $\Trh_k$, and the embedded chain $\Phirh^{}_k\coloneq{\Phir_{\Trh^{}_k}}$, $k=0,\dots,\Kr^{}_t$.
 In particular, $\Phir_t$ has \cadlag\ sample paths and we adopt the convention that $\Trh_0=0$ and $\Trh_{\Kr_t+1}=t$, then
 $\Phir_s=\Phirh_k$ for $s\in\halfopen{\Trh_k,\Trh_{k+1}}$, $k=0,\dots,\Kr_t$.
+
+We will use the symbol $\indicator{P}$ or $\Indicator{P}$ to denote an indicator, which is $1$ when $P$ is true and $0$ when it is false.
 
 \subsection{Population process}
 \label{sec:population-process}
@@ -325,20 +326,18 @@ In this notation, $\pi(t,x',\dd{x})/\dd{x}$ is the density (\ie Radon-Nikodym de
 As a matter of notation, one can represent \cref{eq:kfe-reg,eq:kfe-sing} as a single equation in the form of \cref{eq:kfe}.
 In particular, if in \cref{eq:kfe} we make the substitution
 \begin{equation*}
-  \alpha(t,x,x')\,\dd{x'}\mapsto\alpha(t,x,x')\,\dd{x'}+\sum_{s\in{S}}{\delta(t,s)\,\pi(t,x,\dd{x'})},
+  \alpha(t,x,x')\,\dd{x'}\mapsto\alpha(t,x,x')\,\dd{x'}+\sum_{s\in{S}}{\delta(s,t)\,\pi(t,x,\dd{x'})},
 \end{equation*}
 we obtain an equation which we can view as shorthand for \cref{eq:kfe-reg,eq:kfe-sing}.
-Here, $\delta(t,s)$ is the one-sided Dirac delta function satisfying $\delta(t,s)=0$ for $t\ne{s}$ and
+Here, $\delta(s,t)$ is the one-sided Dirac delta function satisfying $\delta(s,t)=0$ for $s\ne{t}$ and
 \begin{equation*}
-  \int_a^b{f(t)\,\delta(t,s)\,\dd{t}}=f(s)\,\Indicator{s\in\halfopen{a,b}},
+  \int_a^b{f(t)\,\delta(s,t)\,\dd{t}}=f(s)\,\Indicator{s\in\halfopen{a,b}},
 \end{equation*}
 whenever $f$ is \cadlag\ and $-\infty\le{a}<{b}\le{\infty}$.
 %% To be even more parsimonious, we can refer to \cref{eq:kfe-reg,eq:kfe-sing} as the $(\alpha,\pi,S)$ KFE.
 
 \subsection{Jump marks}
 \label{sec:jump-marks}
-
-%% Another perspective on the Markov processes is to be had from its Markov state transition diagram (\cref{fig:markov-state}).
 
 \begin{figure}
   \input{markov_diagram}
@@ -404,7 +403,6 @@ $\Demes=\Set{\deme{E},\deme{I}}$.
 We can take the state space to be $\Zp^4$:
 the state $x=(S,E,I,R)$ is defined by the numbers of hosts in each of the four compartments.
 The deme occupancy function in this case is $n(x)=(E,I)$.
-%% Note that the terms associated with sampling cancel each other in the KFE, since, in this model, sampling has no effect on the state.
 The genealogies depicted in \cref{fig:geneal,fig:upo} pertain to this model and, in \cref{sec:seirs-example}, we work out the theory for the SEIRS model in detail and display results of some numerical computations.
 
 \paragraph{Two-strain competition model}
@@ -915,7 +913,6 @@ One can alternatively express the likelihood of a pruned genealogy using the adj
   In consequence, the likelihood given above will differ by a factor of $n!$ from the likelihood computed ignoring ordering of samples.
   From the standpoint of parameter estimation, this is immaterial, since factors that depend only on the data drop out of the score function.
   This consideration is relevant, however, in the context of model comparison.
-  %% In effect, we are assuming that the ordering of samples is part of the data.
 \end{remark}
 
 \subsection{Likelihood for obscured genealogies}
@@ -1340,6 +1337,7 @@ However, it would be fairly straightforward to extend the notation to deal with 
 Finally, let us define reversals of these operators.
 It is easy to verify that there are well defined operators $\backchop{}{}{}$, $\backswap{}{}{}$, and $\backfork{}{}{}$ such that
 \begin{equation}
+  \label{eq:swapnchop}
   \begin{aligned}
     z'=\chop{}{a\emptyset}{z},\ y'=\chop{i}{a\emptyset}{y},\ \Set{a}\in\cols{i}{y}
     &\Longleftrightarrow
@@ -1416,7 +1414,7 @@ The compatibility indicator is given by
 \end{mathsize}%
 (Recall that the swap, chop, and fork operators $\swap{}{}{}$, $\chop{}{}{}$, $\fork{}{}{}$ are defined in \cref{sec:swapnchop}).
 
-\begin{table}[h]
+\begin{table}
   \caption{
     \label{tab:sirs-model-elements}
     Elements of the SIRS model pertinent to the genealogy process.
@@ -1431,7 +1429,7 @@ The compatibility indicator is given by
     $\jump{Trans}$  & $\frac{\beta S I}{N}\,\indicator{S'=S-1,I'=I+1}$ \bigstrut & 2 & pure birth \\
     $\jump{Recov}$  & $\gamma\,I\,\indicator{I'=I-1,R'=R+1}$           \bigstrut & 0 & pure death \\
     $\jump{Wane}$   & $\omega\,R\,\indicator{S'=S+1,R'=R-1}$           \bigstrut & 0 & neutral \\
-    $\jump{Sample}$ & $\psi\,I$                                        \bigstrut & 1 & pure sample \\
+    $\jump{Sample}$ & $\psi\,I\,\indicator{x'=x}$                      \bigstrut & 1 & pure sample \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -1845,7 +1843,7 @@ As in \cref{sec:sirs-example}, we then sum over $m$, obtaining
     \end{split}
   \end{equation*}
 \end{mathsize}%
-Simplifying using \cref{eq:seirs1,eq:chu-vandermonde} and splitting the final sum over $u$, we obtain, for $E\ge{\ellE}$, $I\ge{\ellE}$,
+Simplifying using \cref{eq:seirs1,eq:chu-vandermonde,eq:swapnchop} and splitting the final sum over $u$, we obtain, for $E\ge{\ellE}$, $I\ge{\ellE}$,
 \begin{mathsize}{9pt}{10pt}
   \begin{equation}
     \label{eq:seirs5}
@@ -1893,7 +1891,7 @@ The kernels $\pi$ that appear in \cref{eq:seirs5} are normalized so that, for al
     $\jump{Prog}$   & $\sigma\,E\,\indicator{E'=E-1,I'=I+1}$           \bigstrut & $(0,1)$ & pure migration \\
     $\jump{Recov}$  & $\gamma\,I\,\indicator{I'=I-1,R'=R+1}$           \bigstrut & $(0,0)$ & pure death \\
     $\jump{Wane}$   & $\omega\,R\,\indicator{S'=S+1,R'=R-1}$           \bigstrut & $(0,0)$ & neutral \\
-    $\jump{Sample}$ & $\psi\,I$                                        \bigstrut & $(0,1)$ & pure sample \\
+    $\jump{Sample}$ & $\psi\,I\,\indicator{x'=x}$                      \bigstrut & $(0,1)$ & pure sample \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -1903,23 +1901,23 @@ Comparing \cref{eq:seirs5,eq:seirs21} with the general form of a filter equation
   \begin{split}
     \label{eq:seirs-driver}
     \beta(t,x,&x',d,d')=
-    \alpha_{\jump{Trans}}(t,x,x')\,\left(\pi_{\jump{Trans}}^{\emptyset}(t,x)\,\indicator{d'=d}+\sum_{bd'}{\pi_{\jump{Trans}}^b(t,x)\,\indicator{d'=\swap{\deme{IE}}{b}{d}}}\right)\\
-    &+\alpha_{\jump{Prog}}(t,x,x')\,\left(\pi_{\jump{Prog}}^{\emptyset}(t,x)\,\indicator{d'=d}+\sum_{bd'}{\pi_{\jump{Prog}}^b(t,x)\,\indicator{d'=\swap{\deme{EI}}{b}{d}}}\right)\\
+    \alpha_{\jump{Trans}}(t,x,x')\,\left(\pi_{\jump{Trans}}^{\emptyset}(t,x)\,\indicator{d'=d}+\sum_{b}{\pi_{\jump{Trans}}^b(t,x)\,\indicator{d'=\swap{\deme{IE}}{b}{d}}}\right)\\
+    &+\alpha_{\jump{Prog}}(t,x,x')\,\left(\pi_{\jump{Prog}}^{\emptyset}(t,x)\,\indicator{d'=d}+\sum_{b}{\pi_{\jump{Prog}}^b(t,x)\,\indicator{d'=\swap{\deme{EI}}{b}{d}}}\right)\\
     &+\alpha_{\jump{Recov}}(t,x,x')\,\indicator{I>\ellI}\,\indicator{d'=d}+\alpha_{\jump{Wane}}(t,x,x')\,\indicator{d'=d}\\
-    &+\sum_{e\in{S_0}}{\indicator{b_e\in\cols{\deme{I}}{d}}\,\indicator{d'=\chop{\deme{I}}{b_e}{d}}\,\delta(t,e)}
-    +\sum_{e\in{S_1}}{\indicator{b_e\in\cols{\deme{I}}{d}}\,\indicator{d'=\chop{\deme{II}}{a_eb_e}{d}}\,\delta(t,e)}\\
-    &+\sum_{e\in{B}}{\indicator{b_e\cup{b'_e}\in\cols{\deme{I}}{d}}\,\left[\pi_{\jump{Trans}}^{b_eb_e'}(t,x)\,\indicator{d'=\fork{\deme{IIE}}{b_eb_e'}{d}}+\pi_{\jump{Trans}}^{b_e'b_e}(t,x)\,\indicator{d'=\fork{\deme{IIE}}{b_e'b_e}{d}}\right]\,\delta(t,e)}.\\
+    &+\sum_{e\in{S_0}}{\indicator{b_e\in\cols{\deme{I}}{d}}\,\indicator{d'=\chop{\deme{I}}{b_e}{d}}\,\delta(e,t)}
+    +\sum_{e\in{S_1}}{\indicator{b_e\in\cols{\deme{I}}{d}}\,\indicator{d'=\chop{\deme{II}}{a_eb_e}{d}}\,\delta(e,t)}\\
+    &+\sum_{e\in{B}}{\indicator{b_e\cup{b'_e}\in\cols{\deme{I}}{d}}\,\left[\pi_{\jump{Trans}}^{b_eb_e'}(t,x)\,\indicator{d'=\fork{\deme{IIE}}{b_eb_e'}{d}}+\pi_{\jump{Trans}}^{b_e'b_e}(t,x)\,\indicator{d'=\fork{\deme{IIE}}{b_e'b_e}{d}}\right]\,\delta(e,t)}.\\
   \end{split}\\
   \begin{split}
     \label{eq:seirs-boost}
     B_u(t,x,&x',d,d')=
     \indicator{u=\jump{Trans}}\,\left(
     \tfrac{E-\ellE}{E}\,\tfrac{\Indicator{d'=d}}{\pi_{\jump{Trans}}^{\emptyset}(t,x')}
-    +\tfrac{I-\ellI}{EI}\,\tfrac{\Indicator{d'=\swap{\deme{IE}}{b}{d}}}{\pi_{\jump{Trans}}^b(t,x')}
+    +\tfrac{I-\ellI}{EI}\,\sum_b{\tfrac{\Indicator{d'=\swap{\deme{IE}}{b}{d}}}{\pi_{\jump{Trans}}^b(t,x')}}
     \right)\\
     &+\indicator{u=\jump{Prog}}\,\left(
     \tfrac{I-\ellI}{I}\,\tfrac{\Indicator{d'=d}}{\pi_{\jump{Prog}}^{\emptyset}(t,x')}
-    +\tfrac{1}{I}\,\tfrac{\Indicator{d'=\swap{\deme{EI}}{b}{d}}}{\pi_{\jump{Prog}}^b(t,x')}
+    +\tfrac{1}{I}\,\sum_b{\tfrac{\Indicator{d'=\swap{\deme{EI}}{b}{d}}}{\pi_{\jump{Prog}}^b(t,x')}}
     \right)
     +\indicator{u=\jump{Recov}}
     +\indicator{u=\jump{Wane}}\\
@@ -1931,7 +1929,7 @@ Comparing \cref{eq:seirs5,eq:seirs21} with the general form of a filter equation
     \label{eq:seirs-decay}
     \lambda(t,x,d)=&
     \int{\alpha_{\jump{Sample}}(t,x,x')\,\dd{x'}}
-    -\int{\alpha_{\jump{Recov}}(t,x,x')\,\indicator{I\le\ellI}\,\dd{x'}}.\\
+    +\int{\alpha_{\jump{Recov}}(t,x,x')\,\indicator{I\le\ellI}\,\dd{x'}}.\\
   \end{split}
 \end{align}
 One sees, in particular, that the importance-sampling kernels $\pi$ represent the probabilities of changing color on a particular branch (or not doing so), contingent on the population event.
@@ -2322,7 +2320,6 @@ QL acknowledges the support of the Michigan Institute for Data Science.
   \caption{
     Index of symbols and acronyms used in the text.
     \textbf{Bold face} is used to distinguish random elements.
-    %%    The over-tilde (\eg $\leftlim{\alpha}$) denotes the left-limit of a right-continuous function, while the under-tilde (\eg $\rightlim{\alpha}$) denotes the right-limit of a left-continuous function.
     \label{tab:symbols}
   }
   \vspace{1ex}
@@ -2333,6 +2330,7 @@ QL acknowledges the support of the Michigan Institute for Data Science.
     $t\in\Rp$ & time & \cref{sec:notation} \\
     \cadlag & right-continuous with left limits & \cref{sec:notation} \\
     \caglad & left-continuous with right limits & \cref{sec:notation} \\
+    $\indicator{}$ & indicator & \cref{sec:notation} \\
     $\Xrt_t,\Yrt_t,\vt(t,x)$, etc. & left-limits of $\Xr_t,\Yr_t,v(t,x)$, etc. & \cref{sec:notation} \\
     $\rightlim{F},\rightlim{C}$, etc. & right-limits of $\Yr_t,F,C$, etc. & \cref{sec:notation} \\
     $\Xspace$ & state-space of the population process & \cref{sec:population-process} \\
@@ -2643,7 +2641,7 @@ Given driver, boost, and decay functions, a filter equation determines a family 
 Specifically, suppose that, for $s\le{t}$ and $S\subset{\R}$ locally finite, $w(s,x,t,x')$ satisfies the filter equation
 \begin{align}
   \label{eq:gen-filt1}
-  w(s,x,s,x') = &\delta(x,x')\\
+  w(s,x,s,x') = &\indicator{x'=x}\\
   \label{eq:gen-filt2}
   \frac{\partial{w}}{\partial{t}}(s,x,t,x')=
   &\int{w(s,x,t,\xi)\,\beta(t,\xi,x')\,B(t,\xi,x')\,\dd{\xi}}\\
@@ -2692,7 +2690,7 @@ For $s\in{S}$, we have
   =\int{\beta(s,x,\xi)\,B(s,x,\xi)\,\rightlim{F}(s,\xi)\,\dd{\xi}},
 \end{equation}
 where $\rightlim{F}$ denotes the right-limit of $F$.
-\Cref{eq:adjfilt1,eq:adjfilt2} constitute the \emph{adjoint form} of \cref{eq:gen-filt1,eq:gen-filt2,eq:gen-filt3}.
+\Cref{eq:adjfilt1,eq:adjfilt2} constitute the \emph{adjoint form} of \cref{eq:gen-filt2,eq:gen-filt3}.
 Together with the final condition $F(t,x)=f(x)$, these determine $\omega(s,x,t,f)$ for all $s\le{t}$.
 Note that, when $B=1$ and $\lambda=0$, the adjoint filter equation becomes the familiar Kolmogorov backward equation (\cref{eq:kbe}) for the driving process.
 
@@ -2711,11 +2709,11 @@ This is facilitated by the following Lemma, the statement of which uses a one-si
         \label[pluralequation]{eq:filterlemma}
         \frac{\partial{u}}{\partial{t}}(t,x,v)=
         &\frac{\partial}{\partial{v}}\left[\lambda(t,x)\,v\,u(t,x,v)\right]
-        +\int_0^{\infty}\int{u(t,x',v')\,\beta(t,x',x)\,\delta\!\left(v,B(t,x',x)\,v'\right)\,\dd{x'}\,\dd{v'}}\\
-        &\quad-\int_0^{\infty}\int{u(t,x,v)\,\beta(t,x,x')\,\delta\!\left(v',B(t,x,x')\,v\right)\,\dd{x'}\,\dd{v'}},
+        +\int_0^{\infty}\int{u(t,x',v')\,\beta(t,x',x)\,\delta\!\left(B(t,x',x)\,v',v\right)\,\dd{x'}\,\dd{v'}}\\
+        &\quad-\int_0^{\infty}\int{u(t,x,v)\,\beta(t,x,x')\,\delta\!\left(B(t,x,x')\,v,v'\right)\,\dd{x'}\,\dd{v'}},
         &t\notin{S},\\
         u(t,x,v)\,\dd{x}=
-        &\int_0^{\infty}\int{\ut(t,x',v')\,\pi(t,x',\dd{x})\,\delta\!\left(v,A(t,x')\,B(t,x',x)\,v'\right)\,\dd{x'}\,\dd{v'}},&t\in{S}.
+        &\int_0^{\infty}\int{\ut(t,x',v')\,\pi(t,x',\dd{x})\,\delta\!\left(A(t,x')\,B(t,x',x)\,v',v\right)\,\dd{x'}\,\dd{v'}},&t\in{S}.
       \end{aligned}
     \end{equation}
   \end{mathsize}%
@@ -2729,8 +2727,8 @@ This is facilitated by the following Lemma, the statement of which uses a one-si
       \begin{aligned}
         \frac{\partial{w}}{\partial{t}}(t,x)
         =&\int_0^{\infty}{v\,\frac{\partial{u}}{\partial{t}}(t,x,v)\,\dd{v}}\\
-        =&\int_0^{\infty}\int\int_0^{\infty}{v\,u(t,x',v')\,\beta(t,x',x)\,\delta\!\left(v,B(t,x',x)\,v'\right)\,\dd{v}\,\dd{x'}\,\dd{v'}}\\
-        &\qquad-\int_0^{\infty}\int\int_0^{\infty}{v\,u(t,x,v)\,\beta(t,x,x')\,\delta\!\left(v',B(t,x,x')\,v\right)\,\dd{v}\,\dd{x'}\,\dd{v'}}\\
+        =&\int_0^{\infty}\int\int_0^{\infty}{v\,u(t,x',v')\,\beta(t,x',x)\,\delta\!\left(B(t,x',x)\,v',v\right)\,\dd{v}\,\dd{x'}\,\dd{v'}}\\
+        &\qquad-\int_0^{\infty}\int\int_0^{\infty}{v\,u(t,x,v)\,\beta(t,x,x')\,\delta\!\left(B(t,x,x')\,v,v'\right)\,\dd{v}\,\dd{x'}\,\dd{v'}}\\
         &\qquad+\int_0^{\infty}{v\,\tfrac{\partial}{\partial{v}}\left[\lambda(t,x)\,v\,u(t,x,v)\right]\,\dd{v}}.\\
       \end{aligned}
     \end{equation*}
@@ -2758,7 +2756,7 @@ This is facilitated by the following Lemma, the statement of which uses a one-si
     \begin{equation*}
       \begin{aligned}
         w(t,x)\,\dd{x}
-        =&\int_0^{\infty}\int\int_0^{\infty}{v\,\ut(t,x',v')\,\pi(t,x',\dd{x})\,\delta\!\left(v,A(t,x')\,B(t,x',x)\,v'\right)\,\dd{x'}\,\dd{v'}\,\dd{v}}\\
+        =&\int_0^{\infty}\int\int_0^{\infty}{v\,\ut(t,x',v')\,\pi(t,x',\dd{x})\,\delta\!\left(A(t,x')\,B(t,x',x)\,v',v\right)\,\dd{x'}\,\dd{v'}\,\dd{v}}\\
         =&\int_0^{\infty}\int{v'\,\ut(t,x',v')\,\pi(t,x',\dd{x})\,A(t,x')\,B(t,x',x)\,\dd{x'}\,\dd{v'}}\\
         =&\int{\wt(t,x')\,\beta(t,x',x)\,B(t,x',x)\,\dd{x'}}\,\dd{x}.
       \end{aligned}
