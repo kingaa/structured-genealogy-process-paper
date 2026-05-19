@@ -1849,7 +1849,7 @@ Simplifying using \cref{eq:seirs1,eq:chu-vandermonde,eq:swapnchop} and splitting
     \label{eq:seirs5}
     \begin{split}
       \frac{\partial{w}}{\partial{t}}(t,x,d)=
-      &\int{w(t,x',d)\,\alpha_{\jump{Trans}}(t,x',x)\,\frac{\pi_{\jump{Trans}}^{\emptyset}(t,x')}{\pi_{\deme{Trans}}^{\emptyset}(t,x')}\,\left(\tfrac{E-\ellE}{E}\right)\,\dd{x'}}
+      &\int{w(t,x',d)\,\alpha_{\jump{Trans}}(t,x',x)\,\frac{\pi_{\jump{Trans}}^{\emptyset}(t,x')}{\pi_{\jump{Trans}}^{\emptyset}(t,x')}\,\left(\tfrac{E-\ellE}{E}\right)\,\dd{x'}}
       -\int{w(t,x,d)\,\alpha_{\jump{Trans}}(t,x,x')\,\pi_{\jump{Trans}}^{\emptyset}(t,x)\,\dd{x'}}\\
       &+\sum_{bd'}\left\{\int{w(t,x',d')\,\alpha_{\jump{Trans}}(t,x',x)\,\frac{\pi_{\jump{Trans}}^b(t,x')}{\pi_{\jump{Trans}}^b(t,x')}\,\indicator{d=\swap{\deme{IE}}{b}{d'}}\,\left(\tfrac{I-\ellI}{EI}\right)\,\dd{x'}}\right.\\
       &\qquad\qquad\left.-\int{w(t,x,d)\,\alpha_{\jump{Trans}}(t,x,x')\,\pi_{\jump{Trans}}^b(t,x)\,\indicator{d'=\swap{\deme{IE}}{b}{d}}\,\dd{x'}}\right\}\\
@@ -1912,18 +1912,18 @@ Comparing \cref{eq:seirs5,eq:seirs21} with the general form of a filter equation
     \label{eq:seirs-boost}
     B_u(t,x,&x',d,d')=
     \indicator{u=\jump{Trans}}\,\left(
-    \tfrac{E-\ellE}{E}\,\tfrac{\Indicator{d'=d}}{\pi_{\jump{Trans}}^{\emptyset}(t,x')}
-    +\tfrac{I-\ellI}{EI}\,\sum_b{\tfrac{\Indicator{d'=\swap{\deme{IE}}{b}{d}}}{\pi_{\jump{Trans}}^b(t,x')}}
+    \tfrac{E'-\ellE'}{E'}\,\tfrac{\Indicator{d'=d}}{\pi_{\jump{Trans}}^{\emptyset}(t,x)}
+    +\tfrac{I'-\ellI'}{E'I'}\,\sum_b{\tfrac{\Indicator{d'=\swap{\deme{IE}}{b}{d}}}{\pi_{\jump{Trans}}^b(t,x)}}
     \right)\\
     &+\indicator{u=\jump{Prog}}\,\left(
-    \tfrac{I-\ellI}{I}\,\tfrac{\Indicator{d'=d}}{\pi_{\jump{Prog}}^{\emptyset}(t,x')}
-    +\tfrac{1}{I}\,\sum_b{\tfrac{\Indicator{d'=\swap{\deme{EI}}{b}{d}}}{\pi_{\jump{Prog}}^b(t,x')}}
+    \tfrac{I'-\ellI'}{I'}\,\tfrac{\Indicator{d'=d}}{\pi_{\jump{Prog}}^{\emptyset}(t,x)}
+    +\tfrac{1}{I'}\,\sum_b{\tfrac{\Indicator{d'=\swap{\deme{EI}}{b}{d}}}{\pi_{\jump{Prog}}^b(t,x)}}
     \right)
     +\indicator{u=\jump{Recov}}
     +\indicator{u=\jump{Wane}}\\
-    &+\indicator{u=\jump{Sample}}\,\sum_{e\in{S_0}}{\alpha_{\jump{Sample}}(t,x,x')\,\indicator{b_e\in\cols{\deme{I}}{d}}\,\left(\tfrac{I-\ellI}{I}\right)\,\indicator{t=e}}\\
-    &+\indicator{u=\jump{Sample}}\,\sum_{e\in{S_1}}{\alpha_{\jump{Sample}}(t,x,x')\,\indicator{b_e\in\cols{\deme{I}}{d}}\,\tfrac{1}{I}\,\indicator{t=e}}\\
-    &+\indicator{u=\jump{Trans}}\,\sum_{e\in{B}}{\alpha_{\jump{Trans}}(t,x,x')\,\indicator{b_e\cup{b'_e}\in\cols{\deme{I}}{d}}\,\tfrac{1}{EI}\,\left[\tfrac{\Indicator{d'=\fork{\deme{IIE}}{b_eb_e'}{d}}}{\pi_{\jump{Trans}}^{b_eb_e'}(t,x)}+\tfrac{\Indicator{d'=\fork{\deme{IIE}}{b_e'b_e}{d}}}{\pi_{\jump{Trans}}^{b_e'b_e}(t,x)}\right]\,\indicator{t=e}}.\\
+    &+\indicator{u=\jump{Sample}}\,\sum_{e\in{S_0}}{\alpha_{\jump{Sample}}(t,x,x')\,\indicator{b_e\in\cols{\deme{I}}{d}}\,\left(\tfrac{I'-\ellI'}{I'}\right)\,\indicator{t=e}}\\
+    &+\indicator{u=\jump{Sample}}\,\sum_{e\in{S_1}}{\alpha_{\jump{Sample}}(t,x,x')\,\indicator{b_e\in\cols{\deme{I}}{d}}\,\tfrac{1}{I'}\,\indicator{t=e}}\\
+    &+\indicator{u=\jump{Trans}}\,\sum_{e\in{B}}{\alpha_{\jump{Trans}}(t,x,x')\,\indicator{b_e\cup{b'_e}\in\cols{\deme{I}}{d}}\,\tfrac{1}{E'I'}\,\left[\tfrac{\Indicator{d'=\fork{\deme{IIE}}{b_eb_e'}{d}}}{\pi_{\jump{Trans}}^{b_eb_e'}(t,x)}+\tfrac{\Indicator{d'=\fork{\deme{IIE}}{b_e'b_e}{d}}}{\pi_{\jump{Trans}}^{b_e'b_e}(t,x)}\right]\,\indicator{t=e}}.\\
   \end{split}\\
   \begin{split}
     \label{eq:seirs-decay}
