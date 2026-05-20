@@ -1,0 +1,201 @@
+\begin{center}
+  \resizebox{0.8\linewidth}{!}{
+    \begin{tikzpicture}[scale=1.8]
+      \usetikzlibrary{shapes,arrows,positioning}
+      \usetikzlibrary{arrows.meta,positioning,decorations}
+      \tikzstyle{label}=[font=\Large]
+      \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
+      \tikzstyle{deme1}=[color=grey, line width=3pt]
+      \tikzstyle{deme1H}=[color=grey, line width=3pt, densely dotted]
+      \tikzstyle{deme2}=[color=maize, line width=3pt]
+      \tikzstyle{deme2H}=[color=maize, line width=3pt, densely dotted]
+      \tikzstyle{axis}=[color=black, thick, >=stealth]
+      \tikzstyle{timepoint}=[color=red!70!black]
+
+      \def\ysp{0.2} %% spacing between adjacent lineages
+
+      %% Chop to emptyset
+      \begin{scope}[shift={(0,0)}]
+        \coordinate (origin) at (0,0);
+        \node[label] (lab) at (origin) {\textbf{A}};
+        \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+        \coordinate (right) at ($(left)+(1,0)$);
+        \coordinate (before) at ($(left)!0.3!(right)$);
+        \coordinate (mid) at ($(left)!0.5!(right)$);
+        \coordinate (at) at ($(left)!0.6!(right)$);
+        \coordinate (uright) at ($(right)+(0.1,0)$);
+        \coordinate (bleft) at ($(left)+(0,-7*\ysp)$);
+        \coordinate (bright) at (uright |- bleft);
+        \coordinate (text) at ($(bleft)+(0,-\ysp)$);
+        \coordinate (temp) at ($(origin)+(0,-3*\ysp)$);
+        \draw[timepoint] (at) -- (at |- bleft);
+        \draw[timepoint] (before) -- (before |- bleft);
+        \draw[deme2] (left |- temp) -- (at |- temp);
+        \node[font=\footnotesize,anchor=east] at (left |- temp) {$\Set{a}$};
+        \node[text=royalblue,font=\Huge] at (at |- temp) {$\bullet$};
+        \node[text=white,font=\footnotesize] at (at |- temp) {$a$};
+        \foreach \y in {1,2,6} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme1] (left |- temp) -- (right |- temp);
+        }
+        \foreach \y in {4,5,7} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme2] (left |- temp) -- (right |- temp);
+        }
+        \draw[axis,->] (bleft) -- (bright);
+        \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \node (y) at (before |- lab) {$y^{\phantom{\prime}}$};
+        \node (yprime) at (at |- lab) {$y^{\prime}$};
+        \node at (mid |- text) {$y'=\chop{\deme{I}}{a\emptyset}{y}$};
+      \end{scope}
+
+      %% Chop to non-empty set
+      \begin{scope}[shift={(1.8,0)}]
+        \coordinate (origin) at (0,0);
+        \node[label] (lab) at (origin) {\textbf{B}};
+        \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+        \coordinate (right) at ($(left)+(1,0)$);
+        \coordinate (before) at ($(left)!0.3!(right)$);
+        \coordinate (mid) at ($(left)!0.5!(right)$);
+        \coordinate (at) at ($(left)!0.6!(right)$);
+        \coordinate (uright) at ($(right)+(0.1,0)$);
+        \coordinate (bleft) at ($(left)+(0,-7*\ysp)$);
+        \coordinate (bright) at (uright |- bleft);
+        \coordinate (text) at ($(bleft)+(0,-\ysp)$);
+        \coordinate (temp) at ($(origin)+(0,-5*\ysp)$);
+        \draw[timepoint] (at) -- (at |- bleft);
+        \draw[timepoint] (before) -- (before |- bleft);
+        \draw[deme2] (left |- temp) -- (right |- temp);
+        \node[font=\footnotesize,anchor=east] at (left |- temp) {$\Set{a}\cup{b}$};
+        \node[font=\footnotesize,anchor=west] at (right |- temp) {$b$};
+        \node[text=royalblue,font=\Huge] at (at |- temp) {$\bullet$};
+        \node[text=white,font=\footnotesize] at (at |- temp) {$a$};
+        \foreach \y in {2,4,7} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme1] (left |- temp) -- (right |- temp);
+        }
+        \foreach \y in {1,3,6} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme2] (left |- temp) -- (right |- temp);
+        }
+        \draw[axis,->] (bleft) -- (bright);
+        \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \node (y) at (before |- lab) {$y^{\phantom{\prime}}$};
+        \node (yprime) at (at |- lab) {$y^{\prime}$};
+        \node at (mid |- text) {$y'=\chop{\deme{II}}{ab}{y}$};
+      \end{scope}
+
+      %% Swap
+      \begin{scope}[shift={(3.6,0)}]
+        \coordinate (origin) at (0,0);
+        \node[label] (lab) at (origin) {\textbf{C}};
+        \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+        \coordinate (right) at ($(left)+(1,0)$);
+        \coordinate (before) at ($(left)!0.3!(right)$);
+        \coordinate (mid) at ($(left)!0.5!(right)$);
+        \coordinate (at) at ($(left)!0.6!(right)$);
+        \coordinate (uright) at ($(right)+(0.1,0)$);
+        \coordinate (bleft) at ($(left)+(0,-7*\ysp)$);
+        \coordinate (bright) at (uright |- bleft);
+        \coordinate (text) at ($(bleft)+(0,-\ysp)$);
+        \coordinate (temp) at ($(origin)+(0,-2*\ysp)$);
+        \draw[timepoint] (at) -- (at |- bleft);
+        \draw[timepoint] (before) -- (before |- bleft);
+        \node[font=\footnotesize,anchor=east] at (left |- temp) {$b$};
+        \node[font=\footnotesize,anchor=west] at (right |- temp) {$b$};
+        \draw[deme1] (left |- temp) -- (at |- temp);
+        \draw[deme2] (at |- temp) -- (right |- temp);
+        \node[text=darkgreen,font=\Huge] at (at |- temp) {$\bullet$};
+        \foreach \y in {1,4,6,7} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme1] (left |- temp) -- (right |- temp);
+        }
+        \foreach \y in {3,5} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme2] (left |- temp) -- (right |- temp);
+        }
+        \draw[axis,->] (bleft) -- (bright);
+        \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \node (y) at (before |- lab) {$y^{\phantom{\prime}}$};
+        \node (yprime) at (at |- lab) {$y^{\prime}$};
+        \node at (mid |- text) {$y'=\swap{\deme{EI}}{b}{y}$};
+      \end{scope}
+
+      %% Swap (no color change)
+      \begin{scope}[shift={(5.4,0)}]
+        \coordinate (origin) at (0,0);
+        \node[label] (lab) at (origin) {\textbf{D}};
+        \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+        \coordinate (right) at ($(left)+(1,0)$);
+        \coordinate (before) at ($(left)!0.3!(right)$);
+        \coordinate (mid) at ($(left)!0.5!(right)$);
+        \coordinate (at) at ($(left)!0.6!(right)$);
+        \coordinate (uright) at ($(right)+(0.1,0)$);
+        \coordinate (bleft) at ($(left)+(0,-7*\ysp)$);
+        \coordinate (bright) at (uright |- bleft);
+        \coordinate (text) at ($(bleft)+(0,-\ysp)$);
+        \coordinate (temp) at ($(origin)+(0,-4*\ysp)$);
+        \draw[timepoint] (at) -- (at |- bleft);
+        \draw[timepoint] (before) -- (before |- bleft);
+        \node[font=\footnotesize,anchor=east] at (left |- temp) {$b$};
+        \node[font=\footnotesize,anchor=west] at (right |- temp) {$b$};
+        \draw[deme2] (left |- temp) -- (at |- temp);
+        \draw[deme2] (at |- temp) -- (right |- temp);
+        \node[text=darkgreen,font=\Huge] at (at |- temp) {$\bullet$};
+        \foreach \y in {3,5,6} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme1] (left |- temp) -- (right |- temp);
+        }
+        \foreach \y in {1,2,7} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme2] (left |- temp) -- (right |- temp);
+        }
+        \draw[axis,->] (bleft) -- (bright);
+        \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \node (y) at (before |- lab) {$y^{\phantom{\prime}}$};
+        \node (yprime) at (at |- lab) {$y^{\prime}$};
+        \node at (mid |- text) {$y'=\swap{\deme{II}}{b}{y}$};
+      \end{scope}
+
+      %% Fork
+      \begin{scope}[shift={(7.2,0)}]
+        \coordinate (origin) at (0,0);
+        \node[label] (lab) at (origin) {\textbf{E}};
+        \coordinate (left) at ($(origin)+(0.1,-0.1)$);
+        \coordinate (right) at ($(left)+(1,0)$);
+        \coordinate (before) at ($(left)!0.3!(right)$);
+        \coordinate (mid) at ($(left)!0.5!(right)$);
+        \coordinate (at) at ($(left)!0.6!(right)$);
+        \coordinate (uright) at ($(right)+(0.1,0)$);
+        \coordinate (bleft) at ($(left)+(0,-7*\ysp)$);
+        \coordinate (bright) at (uright |- bleft);
+        \coordinate (text) at ($(bleft)+(0,-\ysp)$);
+        \coordinate (temp) at ($(origin)+(0,-5*\ysp)$);
+        \coordinate (temp1) at ($(temp)+(0,-\ysp)$);
+        \draw[timepoint] (at) -- (at |- bleft);
+        \draw[timepoint] (before) -- (before |- bleft);
+        \node[font=\footnotesize,anchor=east] at (left |- temp) {$b\cup{b'}$};
+        \node[font=\footnotesize,anchor=west] at (right |- temp) {$b$};
+        \node[font=\footnotesize,anchor=west] at (right |- temp1) {$b'$};
+        \draw[deme2] (left |- temp) -- (at |- temp);
+        \draw[deme2] (at |- temp) -- (right |- temp);
+        \draw[deme1] (at |- temp) -- (at |- temp1) -- (right |- temp1);
+        \node[text=darkgreen,font=\Huge] at (at |- temp) {$\bullet$};
+        \foreach \y in {2,3} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme1] (left |- temp) -- (right |- temp);
+        }
+        \foreach \y in {1,4,7} {
+          \coordinate (temp) at ($(origin)+(0,-\y*\ysp)$);
+          \draw[deme2] (left |- temp) -- (right |- temp);
+        }
+        \draw[axis,->] (bleft) -- (bright);
+        \node[xshift=1ex] (tlab) at (bright.east) {$t$};
+        \node (y) at (before |- lab) {$y^{\phantom{\prime}}$};
+        \node (yprime) at (at |- lab) {$y^{\prime}$};
+        \node at (mid |- text) {$y'=\fork{\deme{IIE}}{bb'}{y}$};
+      \end{scope}
+
+    \end{tikzpicture}
+  }
+\end{center}

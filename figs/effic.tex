@@ -1,0 +1,24 @@
+\begin{center}
+  \resizebox{0.5\linewidth}{!}{
+    \usetikzlibrary{arrows.meta,bending,fit,calc}
+    \begin{tikzpicture}
+      \tikzstyle{coordinate}=[inner sep=0pt,outer sep=0pt]
+      \tikzstyle{label}=[font=\scriptsize]
+      \coordinate (a1) at (0,0);
+      \coordinate (a2) at ($(a1)+(1,0)$);
+      \coordinate (b1) at ($(a2)+(-9pt,8pt)$);
+      \coordinate (b2) at ($(b1)+(1.5,0)$);
+      \coordinate (c1) at ($(a2)+(-9pt,-3pt)$);
+      \coordinate (c2) at ($(c1)+(1,-1)$);
+      \coordinate (a3) at ($(a1)-(0.2,0)$);
+      \coordinate (b3) at ($(b2)+(0.2,0)$);
+      \coordinate (c3) at ($(c2)+(0,-0.2)$);
+      \node[label,rotate=90] at (a3) {data};
+      \node[label,rotate=-90] at (b3) {model};
+      \node[label,rotate=0] at (c3) {lost};
+      \path[draw=green,line width=10pt,-{Triangle[width=11pt,length=5pt,bend]},shorten >=1mm,shorten <=0.5mm] (b1) to (b2);
+      \path[draw=red,line width=16pt,-{Triangle[width=19pt,length=5pt,bend]},shorten >=1mm,shorten <=0.5mm] (c1) to [bend left] (c2);
+      \path[draw=blue,line width=26pt,-{Triangle[width=29pt,length=5pt,bend]}] (a1) to (a2);
+    \end{tikzpicture}
+  }
+\end{center}
