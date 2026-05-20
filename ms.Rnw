@@ -2347,7 +2347,7 @@ In particular, since it is permissible to employ an importance sampling distribu
 \addcontentsline{toc}{section}{Acknowledgments}
 \section*{Acknowledgments}
 
-We thank Erik Volz, Caroline Colijn, Cris Moore, Ethan Romero-Seversen, and three anonymous reviewers for their valuable suggestions.
+We thank Erik Volz, Caroline Colijn, Cris Moore, Ethan Romero-Seversen, Castedo Ellerman, and three anonymous reviewers for their valuable suggestions.
 This work was supported by grants from
 the U.S. National Science Foundation (Grants \#2526827, \#1761603),
 the U.S. National Institutes of Health, (Grants \#1R01AI143852, \#1U54GM111274).
