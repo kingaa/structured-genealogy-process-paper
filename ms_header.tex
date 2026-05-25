@@ -79,46 +79,48 @@
 \newcommand\QYL[1]{\textcolor{purple!50!black}{#1}}
 \newcommand\ELI[1]{\textcolor{brown!70!black}{#1}}
 
-\usepackage[sort&compress]{cleveref}
-\crefname{textbox}{Box}{Boxes}
-\Crefname{textbox}{Box}{Boxes}
-\crefname{figure}{Fig.}{Figs.}
-\Crefname{figure}{Fig.}{Figs.}
-\crefname{table}{Table}{Tables}
-\Crefname{table}{Table}{Tables}
-\crefname{equation}{Eq.}{Eqs.}
-\Crefname{equation}{Eq.}{Eqs.}
-\crefname{pluralequation}{Eqs.}{Eqs.}
-\Crefname{pluralequation}{Eqs.}{Eqs.}
-\creflabelformat{equation}{#2#1#3}
-\crefname{appendix}{Appendix}{Appendices}
-\Crefname{appendix}{Appendix}{Appendices}
-\crefname{chapter}{Ch.}{Chs.}
-\Crefname{chapter}{Ch.}{Chs.}
-\crefname{section}{\S}{\S\S}
-\Crefname{section}{\S}{\S\S}
-\crefformat{section}{#2\S#1#3}
-\Crefformat{section}{#2\S#1#3}
-\crefmultiformat{section}{#2\S\S#1#3}{,~#2#1#3}{, #2#1#3}{,~#2#1#3}
-\Crefmultiformat{section}{#2\S\S#1#3}{,~#2#1#3}{, #2#1#3}{,~#2#1#3}
-\crefname{thm}{Theorem}{Theorems}
-\Crefname{thm}{Theorem}{Theorems}
-\crefname{algorithm}{Algorithm}{Algorithms}
-\Crefname{algorithm}{Algorithm}{Algorithms}
-\crefname{corol}{Corollary}{Corollaries}
-\Crefname{corol}{Corollary}{Corollaries}
-\crefname{prop}{Proposition}{Propositions}
-\Crefname{prop}{Proposition}{Propositions}
-\crefname{conj}{Conjecture}{Conjectures}
-\Crefname{conj}{Conjecture}{Conjectures}
-\crefname{lemma}{Lemma}{Lemmas}
-\Crefname{lemma}{Lemma}{Lemmas}
-\crefname{defn}{Definition}{Definitions}
-\Crefname{defn}{Definition}{Definitions}
-\crefname{remark}{Remark}{Remarks}
-\Crefname{remark}{Remark}{Remarks}
-\crefname{inpar}{}{}
-\Crefname{inpar}{Item}{Items}
-\crefformat{inpar}{(#2#1#3)}
-\newcommand{\crefrangeconjunction}{--}
-\newcommand{\creflastconjunction}{, and~}
+\usepackage{zref-clever}
+\zcsetup{cap=true,sort=true,comp=true,}
+\zcRefTypeSetup{thm}{
+Name-sg = Theorem,
+Name-pl = Theorems,
+}
+\zcRefTypeSetup{lemma}{
+Name-sg = Lemma,
+Name-pl = Lemmas,
+}
+\zcRefTypeSetup{figure}{
+Name-sg = Fig.,
+Name-pl = Figs.,
+}
+\zcRefTypeSetup{equation}{
+Name-sg = Eq.,
+Name-pl = Eqs.,
+refbounds = {,,,},
+}
+\zcRefTypeSetup{pluralequation}{
+Name-sg = Eqs.,
+Name-pl = Eqs.,
+refbounds = {,,,},
+}
+\zcRefTypeSetup{section}{
+Name-sg = \S\!,
+Name-pl = \S\S\!,
+}
+%% \crefname{corol}{Corollary}{Corollaries}
+%% \Crefname{corol}{Corollary}{Corollaries}
+%% \crefname{prop}{Proposition}{Propositions}
+%% \Crefname{prop}{Proposition}{Propositions}
+%% \crefname{conj}{Conjecture}{Conjectures}
+%% \Crefname{conj}{Conjecture}{Conjectures}
+%% \crefname{lemma}{Lemma}{Lemmas}
+%% \Crefname{lemma}{Lemma}{Lemmas}
+%% \crefname{defn}{Definition}{Definitions}
+%% \Crefname{defn}{Definition}{Definitions}
+%% \crefname{remark}{Remark}{Remarks}
+%% \Crefname{remark}{Remark}{Remarks}
+%% \crefname{inpar}{}{}
+%% \Crefname{inpar}{Item}{Items}
+%% \crefformat{inpar}{(#2#1#3)}
+%% \newcommand{\crefrangeconjunction}{--}
+%% \newcommand{\creflastconjunction}{, and~}
