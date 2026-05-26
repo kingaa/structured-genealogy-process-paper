@@ -2538,7 +2538,7 @@ the latter being the binomial ratio defined in \zcref{sec:binomial-ratio}.
 
 Alternatively, one can reason as follows.
 Conditional on $\Hr_\T=\H$, at each time $t\in\event{\H}$, a jump of mark $\U_t$ occurred, with a production of $r^{\U_t}=(r_i)_{i\in\Demes}$, resulting in a deme-occupancy of $n(\X_t)=(n_i)_{i\in\Demes}$.
-In $\P$, at time $t$, there are $\ell_i=\ell_i(\Yt_t)$ lineages in deme $i$, of which $s_i=s_i(\Y_t,\Yt_t)$ are emergent.
+In $\P$, at time $t$, there are $\ell_i=\ell_i(\Y_t)$ lineages in deme $i$, of which $s_i=s_i(\Y_t)$ are emergent.
 By assumption, at each genealogical event, lineages within a deme are exchangeable:
 each has an identical probability of being involved.
 This exchangeability implies that each lineage present in a deme at time $t$ was equally likely to have been one of the emergent lineages.
