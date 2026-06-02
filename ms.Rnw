@@ -856,7 +856,7 @@ In \zcref{sec:special-cases}, we demonstrate that the closed-form likelihood for
   Suppose $\P=(\T,\Z,\Y)$ is a given pruned genealogy.
   Define
   \begin{equation}\label{eq:phidef}
-    \phi^{}_u(x,y,y')\coloneq\binratio{n(x)}{\ell(y')}{r^{u}}{s(y')}\,Q_{u}(y,y'),
+    \phi^{}_u(x,y',y)\coloneq\binratio{n(x)}{\ell(y)}{r^{u}}{s(y)}\,Q_{u}(y',y),
   \end{equation}
   where $n$ is the deme occupancy (\zcref{sec:demes}), $r^u$ is the production (\zcref{sec:production}), $\ell$ and $s$ are the lineage-count and saturation functions, respectively (\zcref{sec:ells}), $Q$ is the compatibility indicator (\zcref{sec:compatibility}), and the binomial ratio is as defined in \zcref{sec:binomial-ratio}.
   Then
