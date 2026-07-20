@@ -48,6 +48,8 @@ ROOT_DIR := $(shell git rev-parse --show-toplevel)
 %.ind: %.idx
 	$(MAKEIDX) $*
 
+.PHONY: .clean .fresh
+
 .clean:
 	$(RM) *.log *.blg *.ilg *.aux *.lof *.lot *.toc *.idx
 	$(RM) *.ttt *.fff *.out *.nav *.snm *.bak

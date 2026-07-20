@@ -185,7 +185,7 @@ plot_grid(
 
 ## ----seirs3-------------------------------------------------------------------
 seirs_params <- data.frame(
-  Beta=3,sigma=1,gamma=0.5,psi=0.02,omega=0.08,
+  Beta=3,sigma=1,gamma=0.5,psi=0.02,omega=0.08,chi=0,
   S0=70/121,E0=1/121,I0=0,R0=50/121,pop=121,
   time=400
 )
