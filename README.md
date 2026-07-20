@@ -3,6 +3,9 @@
 The paper is available on the arXiv:  
 [![](https://img.shields.io/badge/doi-10.48550/arxiv.2405.17032-yellow.svg)](https://doi.org/10.48550/arxiv.2405.17032)
 
+The codes needed to generate the figures are archived on Zenodo:  
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21461035.svg)](https://doi.org/10.5281/zenodo.21461035)
+
 ## Software
 
 The figures and numerical results in the paper were prepared using the **R** package **phylopomp**:  
