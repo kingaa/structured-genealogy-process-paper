@@ -167,8 +167,7 @@ Indeed, the filter equations for the models on which these approaches are based 
 In appendices, we develop the properties of filter equations generally, provide a sequential Monte Carlo algorithm that can be used when numerical integration is needed for their solution, and work out the filter equations and their solutions in two examples.
 At the end of the main text, \zcref{tab:symbols} is an index of the mathematical notation used in the paper.
 
-Codes sufficient for the reproduction of all the figures in this paper are freely available for download at \url{https://github.com/kingaa/structured-genealogy-process-paper}.
-An archival version of these will be stored on Zenodo or its equivalent upon publication of a peer-reviewed version of this paper [and this sentence will be accordingly revised].
+The codes used to generate the figures in this paper are archived on Zenodo (DOI:~\href{https://doi.org/10.5281/zenodo.21461034}{10.5281/zenodo.21461034}).
 The open-source \pkg{R} package \pkg{phylopomp} (\url{https://github.com/kingaa/phylopomp}) implements the simulation and likelihood-computation algorithms employed here.
 
 
