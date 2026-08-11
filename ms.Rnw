@@ -531,7 +531,7 @@ These occur whenever the color changes along a branch, but can also occur withou
 
 Formally, we define a genealogy by extending the original construction of \citet{Kingman1982a}.
 Specifically, we define a genealogy $G$, to be a triple, $(T,Z,Y)$, where $T=\time(G)\in\Rp$ is the \emph{genealogy time}, $Z$ specifies the genealogy's \emph{tree structure}, and $Y$ gives the \emph{coloring}.
-In particular, let $\leaves$ be a countable set of labels---referring to samples and/or extant lineages---and let $\partit(\leaves)$ be the collection of all partititions of subsets of $\leaves$.
+In particular, let $\leaves$ be a countable set of labels---referring to samples and/or extant lineages---and let $\partit(\leaves)$ be the collection of all partitions of subsets of $\leaves$.
 That is, an element $z\in{\partit(\leaves)}$ is a collection of nonempty, mutually disjoint subsets of $\leaves$.
 Partition \emph{fineness} defines a partial order on $\partit(\leaves)$.
 Specifically, for $z,z'\in{\partit(\leaves)}$, we say $z\preceq{z'}$ if and only if for every $b'\in{z'}$ there is $b\in{z}$ such that $b\supseteq{b'}$.
@@ -550,7 +550,7 @@ We call $\col{Y_t(a)}$ the \emph{color} of the branch bearing $a$ at $t$ and $\c
 
 Since $a,a'\in{b}\in{Z_t}$ implies $Y_t(a)=Y_t(a')$, one can equally well think of $Y_t$ as a map $Z_t\to\ColorSet$ and we will find it useful to think of it in this way most of the time.
 Likewise, in an abuse of notation that risks little confusion, one sees that, given $Y$, $\col{Y}:Z\to\Demes$ and $\ctr{Y}:Z\to\Set{0,1}$ are well defined in the obvious way.
-In particular, $\ctr{Y}\circ{Z}:[0,T]\to\Set{0,1}$ has finite support and we take $\col{Y}\circ{Z}:[0,T]\to\Demes$ to be \cadlag.
+In particular, $\ctr{Y}\circ{Z}$ has finite support and we take $\col{Y}\circ{Z}$ to be \cadlag.
 
 Given a tree $Z$, we let $\fY(Z)$ denote the set of colorings $Y$ that are compatible with $Z$.
 We moreover define $\fY_t(Z)\coloneq\CondSet{Y_t}{Y\in{\fY(Z)}}$.
@@ -844,7 +844,7 @@ whenever $n_i\ge{\Set{\ell_i,r_i}}\ge{0}$ for all $i$.
 In the following, \zcref{thm:pruned-lik} establishes the likelihood of a given pruned genealogy conditional on the history of the population process.
 \zcref[S]{thm:pruned-filter} then shows how the history can be integrated out.
 \zcref[S]{thm:obsc-lik} gives the likelihood of an obscured genealogy conditional on the population history via an auxiliary coloring process.
-The main result, \zcref{thm:obsc-filter} integrates out the history and coloring processes jointly to obtain the likelihood.
+The main result, \zcref{thm:obsc-filter}, integrates out the history and coloring processes jointly to obtain the likelihood.
 \zcref[S]{corol:pruned-filter,corol:obsc-filter} provide the adjoint (backward) formulations of the filter equations derived in \zcref{thm:pruned-filter,thm:obsc-filter}, respectively.
 In \zcref{sec:special-cases}, we demonstrate that the closed-form likelihood formulas for the \citet{Kingman1982a} coalescent and linear birth-death-sampling processes fall out as special cases of these results.
 
@@ -894,9 +894,9 @@ In particular, the following theorem follows immediately from \zcref{thm:pruned-
 
 \begin{remark}
   \label{rem:w-interpretation}
-  The quantity $w(t,x)$ appearing in \zcref{eq:pruned-filter-eqn} is not itself obviously a probability, except at $t=T$.
+  The quantity $w(t,x)$ appearing in \zcref{eq:pruned-filter-eqn} is not itself obviously a probability density, except at $t=T$.
   Rather, as $t$ increases, $w(t,x)$ accumulates the contributions to the likelihood associated with progressively greater portions of the genealogy.
-  Specifically, $w(t,x)$ represents an expectation of partial versions of the products appearing in \zcref{thm:pruned-lik} (containing only the factors for times $<t$) over population trajectories having terminal value $x$ at time $t$.
+  Specifically, $w(t,x)$ represents an expectation of partial versions of the products appearing in \zcref{thm:pruned-lik} (containing only the factors for times $\le{t}$) over population trajectories having terminal value $x$ at time $t$.
 \end{remark}
 
 One can alternatively express the likelihood of a pruned genealogy using the adjoint form of the filter equation (see \zcref{sec:adjoint-filter}).
@@ -1345,7 +1345,7 @@ Finally, for $i\in\Demes$, let $\cols{i}{y}\coloneq\CondSet{b}{\col{y}(b)=i}$ be
 Suppose $a\in\leaves$ is a label, $b\in{z}$ is a branch, $a\in{b}$, and $i,j\in\Demes$.
 Let $b'=b\setminus\Set{a}$.
 If $b'\ne\emptyset$, we define $\chop{}{ab'}{z}={z\cup\Set{b'}\setminus\Set{b}}$ and we let $\chop{}{a\emptyset}{z}={z\setminus\Set{\Set{a}}}$.
-This means that the sets of branches $z$ and $\chop{}{ab'}{z}$ are alike except that, in the latter, the label $a$ has been deleted.
+This means that the sets of branches $z$ and $\chop{}{ab'}{z}$ are alike except that, in the latter, the label $a$ has been deleted (\zcref{fig:swapnchop}A--B).
 Moreover, if $b\in\cols{i}{y}$ and $z'=\chop{}{ab'}{z}$,
 define $\chop{ij}{ab'}{y}:z'\to\ColorSet$ by
 $\chop{ij}{ab'}{y}(b')=(j,1)$ and $\chop{ij}{ab'}{y}(c)=y(c)$ for $c\ne{b'}$.
@@ -1361,7 +1361,7 @@ We call $\chop{}{}{}$ the \emph{chop operator}.
 Again suppose $b\in{z}$ and $i,j\in\Demes$.
 If $b\in\cols{i}{y}$, then
 define $\swap{ij}{b}{y}:z\to\ColorSet$ to be another coloring of $z$ that agrees with $y$ everywhere but on branch $b$.
-On branch $b$, the color is swapped from $i$ to $j$ and the indicator is set to 1.
+On branch $b$, the color is swapped from $i$ to $j$ and the indicator is set to 1 (\zcref{fig:swapnchop}C--D).
 That is, $\swap{ij}{b}{y}(b)=(j,1)$ and $\swap{ij}{b}{y}(c)=y(c)$ for all $c\ne{b}$.
 Again, we make the natural definitions $\swap{ij}{b}{\col{y}}=\col{\swap{ij}{b}{y}}$ and $\swap{}{b}{\ctr{y}}=\ctr{\swap{ij}{b}{y}}$,
 the latter holding for any $j$ as long as $y(b)=i$.
@@ -1370,7 +1370,7 @@ We refer to $\swap{}{}{}$ as the \emph{swap operator}.
 
 Now let us suppose that $c,c'$ are disjoint, nonempty subsets of $\leaves$, such that $c\cup{c'}=b\in{z}$.
 Let $\fork{}{cc'}{z}=z\cup\Set{c,c'}\setminus\Set{b}$.
-Thus $\fork{}{cc'}{z}$ is identical to $z$ except in that $b$ has been forked into two branches, $c$ and $c'$.
+Thus $\fork{}{cc'}{z}$ is identical to $z$ except in that $b$ has been forked into two branches, $c$ and $c'$ (\zcref{fig:swapnchop}E).
 Similarly, if $i,j,k\in\Demes$ and $b\in\cols{i}{y}$, we define
 $\fork{ijk}{cc'}{y}$ to be the coloring of $\fork{}{cc'}{z}$ such that when $y'=\fork{ijk}{cc'}{y}$, then $\col{y'(c)}=j$, $\col{y'(c')}=k$, and $\ctr{y'(c)}=\ctr{y'(c')}=1$.
 Therefore, the result of applying $\fork{ijk}{cc'}{}$ to a coloring $y$ is that the $i$-colored branch $c\cup{c'}$ is forked into a $j$-colored branch $c$ and a $k$-colored branch $c'$.
@@ -2419,11 +2419,6 @@ QL acknowledges the support of the Michigan Institute for Data Science.
   \end{tabular}
 \end{table}
 
-\phantomsection
-\bibliographystyle{preprint}
-\bibliography{phylopomp}
-\addcontentsline{toc}{section}{References}
-
 \clearpage
 \appendix
 \numberwithin{equation}{section}
@@ -2941,6 +2936,11 @@ Our purpose here is merely to illustrate the implications of \zcref{lemma:monte-
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
+\phantomsection
+\bibliographystyle{preprint}
+\bibliography{phylopomp}
+\addcontentsline{toc}{section}{References}
 
 \end{document}
 
