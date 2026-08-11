@@ -53,7 +53,7 @@ The figures and numerical results in the paper were prepared using the **R** pac
 - **pomp**  
 [![](https://img.shields.io/badge/R-pomp-blue)](https://kingaa.github.io/pomp/)&nbsp;&nbsp;
 [![](https://img.shields.io/badge/CRAN-pomp-blue)](https://doi.org/10.32614/CRAN.package.pomp)
-- A. A. King, Q-Y. Lin, and E. L. Ionides, Markov genealogy processes. *Theoretical Population Biology* **143:**77&ndash;91, 2022.  
+- A. A. King, Q-Y. Lin, and E. L. Ionides, Markov genealogy processes. *Theoretical Population Biology* **143:** 77&ndash;91, 2022.  
 [![](https://img.shields.io/badge/doi-10.1016/j.tpb.2021.11.003-green.svg)](https://doi.org/10.1016/j.tpb.2021.11.003)
 - A. A. King, Q-Y. Lin, and E. L. Ionides, The sampled Moran genealogy process.  *arXiv* 2002.11184, 2020.  
 [![](https://img.shields.io/badge/doi-10.48550/arXiv.2002.11184-green.svg)](https://doi.org/10.48550/arXiv.2002.11184)
