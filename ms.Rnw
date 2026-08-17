@@ -21,7 +21,7 @@
 \author[Lin]{Qianying~Lin}
 \address{
   Q.-Y.~Lin,
-  Department of Biostatistics,
+  Division of Biostatistics,
   College of Public Health,
   Ohio State University,
   Columbus, OH~43210~USA
